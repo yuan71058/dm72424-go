@@ -104,6 +104,9 @@ func (w *TextWorker) WriteText() {
 		return
 	}
 
+	// 延时，让文字显示更清晰
+	time.Sleep(500 * time.Millisecond)
+
 	w.Result <- fmt.Sprintf("[线程%d] 写入完成，共%d个字符", w.ID, len(w.Content))
 }
 
@@ -179,7 +182,6 @@ func main() {
 		log.Fatal("创建主对象失败")
 	}
 	mainDm.Init()
-	defer mainDm.Release()
 
 	nret := mainDm.Reg("", "")
 	if nret == 1 {
@@ -220,7 +222,7 @@ func main() {
 	fmt.Println()
 
 	// ========== 第六步：枚举所有记事本窗口 ==========
-	fmt.Println("========== 第五步：枚举所有记事本窗口 ==========")
+	fmt.Println("========== 第六步：枚举所有记事本窗口 ==========")
 
 	// 先尝试按类名枚举
 	hwndList := mainDm.EnumWindow(0, "", "Notepad", 2)
@@ -242,6 +244,34 @@ func main() {
 		log.Fatalf("记事本窗口数量不足，需要 %d 个，找到 %d 个", WorkerCount, len(hwnds))
 	}
 
+	// ========== 第七步：智能排列窗口 ==========
+	fmt.Println("\n========== 第七步：智能排列窗口 ==========")
+
+	// 计算窗口位置
+	windowWidth := 800
+	windowHeight := 600
+	margin := 20
+
+	for i := 0; i < WorkerCount; i++ {
+		// 计算窗口位置（网格排列）
+		row := i / 2
+		col := i % 2
+		x := int32(col * (windowWidth + margin))
+		y := int32(row * (windowHeight + margin))
+
+		// 移动窗口
+		ret := mainDm.MoveWindow(hwnds[i], x, y)
+		if ret == 1 {
+			fmt.Printf("窗口%d 移动到 (%d, %d)\n", i+1, x, y)
+		} else {
+			fmt.Printf("窗口%d 移动失败\n", i+1)
+		}
+	}
+
+	// 等待窗口移动完成
+	time.Sleep(500 * time.Millisecond)
+	fmt.Println()
+
 	// ========== 第七步：查找每个记事本的Edit编辑框控件 ==========
 	fmt.Println("\n========== 第六步：查找Edit编辑框控件 ==========")
 	editHwnds := make([]int32, WorkerCount)
@@ -262,7 +292,8 @@ func main() {
 	// 准备不同的文字内容
 	contents := make([]string, WorkerCount)
 	for i := 0; i < WorkerCount; i++ {
-		contents[i] = generateText(fmt.Sprintf("线程%d", i+1), TextCount)
+		contents[i] = generateTextForThread(i+1, TextCount)
+		fmt.Printf("线程%d 文本长度: %d\n", i+1, len(contents[i]))
 	}
 
 	// 创建工作线程（大漠子对象）
@@ -301,6 +332,10 @@ func main() {
 	fmt.Printf("总耗时: %v\n", elapsed)
 	fmt.Println()
 
+	// 延时5秒，让用户看到效果
+	fmt.Println("等待5秒，查看效果...")
+	time.Sleep(5 * time.Second)
+
 	// ========== 第十步：关闭记事本窗口 ==========
 	fmt.Println("========== 第九步：关闭窗口 ==========")
 	for i, proc := range processes {
@@ -317,6 +352,12 @@ func main() {
 
 	// ========== 第十二步：释放大漠插件 ==========
 	fmt.Println("\n========== 第十一步：释放资源 ==========")
+
+	// 先释放主对象
+	mainDm.Release()
+	fmt.Println("主对象已释放")
+
+	// 再释放大漠插件
 	dmsoft.Free()
 	fmt.Println("大漠插件已释放")
 	fmt.Println("\n========== 示例完成 ==========")
@@ -350,7 +391,18 @@ func parseHwndList(hwndList string) []int32 {
 func generateText(prefix string, count int) string {
 	text := ""
 	for i := 0; i < count; i++ {
-		text += fmt.Sprintf("[%s-%d] ", prefix, i+1)
+		text += fmt.Sprintf("%s%d ", prefix, i+1)
+		if (i+1)%10 == 0 {
+			text += "\n"
+		}
+	}
+	return text
+}
+
+func generateTextForThread(threadID int, count int) string {
+	text := ""
+	for i := 0; i < count; i++ {
+		text += fmt.Sprintf("%d ", threadID)
 		if (i+1)%10 == 0 {
 			text += "\n"
 		}

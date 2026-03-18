@@ -44,7 +44,10 @@ dm72424-go/
 ├── Go.dll              # 破解补丁
 ├── xd47243.dll         # 大漠插件主文件
 ├── example/            # 使用示例
-│   ├── main.go         # 示例代码
+│   ├── main.go         # 基础示例
+│   ├── multithread/     # 多线程示例
+│   │   ├── main.go     # 多线程写入文本示例
+│   │   └── go.mod      # 多线程示例模块
 │   └── go.mod          # 示例模块
 └── README.md           # 本文档
 ```
@@ -250,6 +253,46 @@ dm.WriteInt(hwnd, 0x12345678, 0, 12345)
 addr := dm.FindData(hwnd, 0x400000, 0x500000, "FF ?? 00 ??")
 ```
 
+#### 🧵 多线程操作
+
+```go
+// 多线程示例：同时向多个窗口写入文本
+// 完整示例请参考 example/multithread/main.go
+
+// 1. 创建主对象并注册
+mainDm := dmsoft.New()
+mainDm.Init()
+mainDm.Reg("", "")
+
+// 2. 为每个线程创建独立的子对象
+for i := 0; i < 3; i++ {
+    go func(threadID int) {
+        // 每个线程创建独立对象
+        subDm := dmsoft.New()
+        subDm.Init()
+        
+        // 绑定窗口
+        subDm.BindWindow(hwnd, "gdi", "windows", "windows", 0)
+        
+        // 执行操作
+        subDm.SendString(hwnd, text)
+        
+        // 解绑并释放
+        subDm.UnBindWindow()
+        subDm.Release()
+    }(i)
+}
+
+// 3. 主对象最后释放
+defer mainDm.Release()
+```
+
+**注意事项**：
+- 每个线程必须创建独立的 DmSoft 对象
+- 只需在主对象中注册一次
+- 子对象不需要再次注册
+- 释放顺序：先释放所有子对象，最后释放主对象
+
 ---
 
 ## 📋 函数分类
@@ -351,6 +394,14 @@ func gbkToUtf8(s string) string {
 ---
 
 ## 📝 更新日志
+
+### v1.1.0 (2026-03-18)
+
+- ✨ 添加多线程示例（example/multithread）
+- 🐛 修复 Release 函数释放后未清零指针的问题
+- 📝 添加多线程使用文档和注意事项
+- 🎯 智能窗口排列功能
+- 🔧 优化示例代码，添加详细调试信息
 
 ### v1.0.0 (2026-03-18)
 
