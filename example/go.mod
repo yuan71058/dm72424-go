@@ -2,6 +2,6 @@ module example
 
 go 1.21
 
-require gitee.com/yuan71058/dm72424-go v0.0.0
+require github.com/yuan71058/dm72424-go v0.0.0
 
-replace gitee.com/yuan71058/dm72424-go => ../
+replace github.com/yuan71058/dm72424-go => ../

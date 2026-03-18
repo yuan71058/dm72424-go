@@ -19,7 +19,7 @@ import (
 	"syscall"
 	"time"
 
-	dmsoft "gitee.com/yuan71058/dm72424-go"
+	dmsoft "github.com/yuan71058/dm72424-go"
 )
 
 const (

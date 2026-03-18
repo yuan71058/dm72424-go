@@ -3,7 +3,7 @@
 [![Go Version](https://img.shields.io/badge/Go-1.16%2B-00ADD8?style=flat&logo=go)](https://golang.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=flat&logo=windows)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
-[![Go Report Card](https://goreportcard.com/badge/gitee.com/yuan71058/dm72424-go)](https://goreportcard.com/report/gitee.com/yuan71058/dm72424-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/yuan71058/dm72424-go)](https://goreportcard.com/report/github.com/yuan71058/dm72424-go)
 
 > 大漠插件 7.2424 版本的 Go 语言封装库，支持 428 个函数接口，开箱即用！
 
@@ -69,7 +69,7 @@ import (
     "log"
     "syscall"
     
-    dmsoft "gitee.com/yuan71058/dm72424-go"
+    dmsoft "github.com/yuan71058/dm72424-go"
 )
 
 func main() {
@@ -109,17 +109,17 @@ func main() {
 
 ```bash
 # 在项目目录下执行
-go get gitee.com/yuan71058/dm72424-go
+go get github.com/yuan71058/dm72424-go
 ```
 
 ### 方法二：本地引用
 
 ```bash
 # 克隆项目
-git clone https://gitee.com/yuan71058/dm72424-go.git
+git clone https://github.com/yuan71058/dm72424-go.git
 
 # 在你的 go.mod 中添加 replace
-replace gitee.com/yuan71058/dm72424-go => ./dm72424-go
+replace github.com/yuan71058/dm72424-go => ./dm72424-go
 ```
 
 ### 编译说明
@@ -378,7 +378,7 @@ func gbkToUtf8(s string) string {
 
 ## 📮 联系方式
 
-- Gitee: [https://gitee.com/yuan71058/dm72424-go](https://gitee.com/yuan71058/dm72424-go)
+- GitHub: [https://github.com/yuan71058/dm72424-go](https://github.com/yuan71058/dm72424-go)
 
 ---
 
