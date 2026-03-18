@@ -50,13 +50,11 @@ func New() *DmSoft {
 	return dm
 }
 
-
 // Init 初始化大漠对象,创建内部对象实例
 func (dm *DmSoft) Init() {
 	createObjAddr := DmHModule + 98304
 	dm.obj, _, _ = syscall.Syscall(createObjAddr, 0, 0, 0, 0)
 }
-
 
 // Release 释放大漠对象,销毁内部对象实例
 func (dm *DmSoft) Release() {
@@ -66,9 +64,8 @@ func (dm *DmSoft) Release() {
 
 	releaseObjAddr := DmHModule + 98400
 	syscall.Syscall(releaseObjAddr, 1, dm.obj, 0, 0)
-
+	dm.obj = 0
 }
-
 
 // GetDiskReversion 获取磁盘版本信息
 // 参数: index - 索引(从0开始)
@@ -79,7 +76,6 @@ func (dm *DmSoft) GetDiskReversion(index int32) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // LoadAiMemory 从内存加载AI模型
 // 参数: addr - 内存地址
 // 参数: size - 大小(字节)
@@ -89,7 +85,6 @@ func (dm *DmSoft) LoadAiMemory(addr int32, size int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(addr), uintptr(size))
 	return int32(ret)
 }
-
 
 // FaqSend 发送FAQ请求到服务器
 // 参数: server - 服务器地址
@@ -103,7 +98,6 @@ func (dm *DmSoft) FaqSend(server string, handle int32, request_type int32, time_
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(serverPtr)), uintptr(handle), uintptr(request_type), uintptr(time_out), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // FindPicSimMem 在内存中查找图片(相似度模式)
 // 参数: x1 - 左上角X坐标
@@ -125,7 +119,6 @@ func (dm *DmSoft) FindPicSimMem(x1 int32, y1 int32, x2 int32, y2 int32, pic_info
 	return int32(ret)
 }
 
-
 // Ver 获取大漠插件版本号
 // 返回: 结果字符串
 func (dm *DmSoft) Ver() string {
@@ -133,7 +126,6 @@ func (dm *DmSoft) Ver() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // SetPath 设置资源文件路径
 // 参数: path - 资源路径
@@ -145,7 +137,6 @@ func (dm *DmSoft) SetPath(path string) int32 {
 	return int32(ret)
 }
 
-
 // SetShowAsmErrorMsg 设置是否显示汇编错误信息
 // 参数: show - 显示标志(1:显示,0:隐藏)
 // 返回: 成功返回1,失败返回0
@@ -154,7 +145,6 @@ func (dm *DmSoft) SetShowAsmErrorMsg(show int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(show), 0)
 	return int32(ret)
 }
-
 
 // FindStrS 查找文字,返回找到的文字字符串
 // 参数: x1 - 左上角X坐标
@@ -175,7 +165,6 @@ func (dm *DmSoft) FindStrS(x1 int32, y1 int32, x2 int32, y2 int32, str string, c
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetWordsNoDict 无字典获取区域内的所有文字
 // 参数: x1 - 左上角X坐标
 // 参数: y1 - 左上角Y坐标
@@ -190,7 +179,6 @@ func (dm *DmSoft) GetWordsNoDict(x1 int32, y1 int32, x2 int32, y2 int32, color s
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetOsBuildNumber 获取操作系统版本号
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetOsBuildNumber() int32 {
@@ -198,7 +186,6 @@ func (dm *DmSoft) GetOsBuildNumber() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // GetID 获取大漠ID
 // 返回: 成功返回1,失败返回0
@@ -208,7 +195,6 @@ func (dm *DmSoft) GetID() int32 {
 	return int32(ret)
 }
 
-
 // SetMouseSpeed 设置鼠标移动速度
 // 参数: speed - 移动速度(1-100)
 // 返回: 成功返回1,失败返回0
@@ -217,7 +203,6 @@ func (dm *DmSoft) SetMouseSpeed(speed int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(speed), 0)
 	return int32(ret)
 }
-
 
 // FindData 查找数据
 // 参数: hwnd - 窗口句柄
@@ -232,7 +217,6 @@ func (dm *DmSoft) FindData(hwnd int32, addr_range string, data string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // SendPaste 发送粘贴
 // 参数: hwnd - 窗口句柄
 // 返回: 成功返回1,失败返回0
@@ -241,7 +225,6 @@ func (dm *DmSoft) SendPaste(hwnd int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(hwnd), 0)
 	return int32(ret)
 }
-
 
 // GetColor 获取指定坐标的颜色
 // 参数: x - X坐标
@@ -252,7 +235,6 @@ func (dm *DmSoft) GetColor(x int32, y int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(x), uintptr(y))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // LoadPicByte 从字节数据加载图片到内存
 // 参数: addr - 内存地址
@@ -266,7 +248,6 @@ func (dm *DmSoft) LoadPicByte(addr int32, size int32, name string) int32 {
 	return int32(ret)
 }
 
-
 // WriteFloatAddr 写入浮点数(指定地址)
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -278,7 +259,6 @@ func (dm *DmSoft) WriteFloatAddr(hwnd int32, addr int64, float_value float32) in
 	return int32(ret)
 }
 
-
 // SetWordLineHeight 设置文字识别行高
 // 参数: line_height - 行高(像素)
 // 返回: 成功返回1,失败返回0
@@ -287,7 +267,6 @@ func (dm *DmSoft) SetWordLineHeight(line_height int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(line_height), 0)
 	return int32(ret)
 }
-
 
 // AsmCall 调用汇编代码
 // 参数: hwnd - 窗口句柄
@@ -298,7 +277,6 @@ func (dm *DmSoft) AsmCall(hwnd int32, mode int32) int64 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(mode))
 	return int64(ret)
 }
-
 
 // FindColorBlock 查找色块
 // 参数: x1 - 左上角X坐标
@@ -320,7 +298,6 @@ func (dm *DmSoft) FindColorBlock(x1 int32, y1 int32, x2 int32, y2 int32, color s
 	return int32(ret)
 }
 
-
 // DisAssemble 反汇编
 // 参数: asm_code - 汇编代码字符串
 // 参数: base_addr - 模块基址
@@ -332,7 +309,6 @@ func (dm *DmSoft) DisAssemble(asm_code string, base_addr int64, is_64bit int32) 
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(asm_codePtr)), uintptr(base_addr), uintptr(is_64bit), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // RegEx 扩展注册大漠插件
 // 参数: code - 注册码
@@ -348,7 +324,6 @@ func (dm *DmSoft) RegEx(code string, ver string, ip string) int32 {
 	return int32(ret)
 }
 
-
 // EncodeFile 加密文件
 // 参数: file - 文件路径
 // 参数: pwd - 密码
@@ -360,7 +335,6 @@ func (dm *DmSoft) EncodeFile(file string, pwd string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(filePtr)), uintptr(unsafe.Pointer(pwdPtr)))
 	return int32(ret)
 }
-
 
 // WriteString 写入字符串
 // 参数: hwnd - 窗口句柄
@@ -375,7 +349,6 @@ func (dm *DmSoft) WriteString(hwnd int32, addr string, type_ int32, v string) in
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)), uintptr(type_), uintptr(unsafe.Pointer(vPtr)), 0)
 	return int32(ret)
 }
-
 
 // FindStrFastEx 高级快速查找文字
 // 参数: x1 - 左上角X坐标
@@ -394,7 +367,6 @@ func (dm *DmSoft) FindStrFastEx(x1 int32, y1 int32, x2 int32, y2 int32, str stri
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // AsmCallEx 扩展调用汇编代码
 // 参数: hwnd - 窗口句柄
 // 参数: mode - 模式
@@ -406,7 +378,6 @@ func (dm *DmSoft) AsmCallEx(hwnd int32, mode int32, base_addr string) int64 {
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(mode), uintptr(unsafe.Pointer(base_addrPtr)), 0, 0)
 	return int64(ret)
 }
-
 
 // FindDoubleEx 高级查找双精度浮点数
 // 参数: hwnd - 窗口句柄
@@ -424,7 +395,6 @@ func (dm *DmSoft) FindDoubleEx(hwnd int32, addr_range string, double_value_min f
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // SetFindPicMultithreadLimit 设置找图多线程限制
 // 参数: limit - 限制数量
 // 返回: 成功返回1,失败返回0
@@ -433,7 +403,6 @@ func (dm *DmSoft) SetFindPicMultithreadLimit(limit int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(limit), 0)
 	return int32(ret)
 }
-
 
 // SendString2 发送字符串2
 // 参数: hwnd - 窗口句柄
@@ -446,7 +415,6 @@ func (dm *DmSoft) SendString2(hwnd int32, str string) int32 {
 	return int32(ret)
 }
 
-
 // DownCpu 降低CPU使用率
 // 参数: type_ - 类型
 // 参数: rate - 速率
@@ -456,7 +424,6 @@ func (dm *DmSoft) DownCpu(type_ int32, rate int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(type_), uintptr(rate))
 	return int32(ret)
 }
-
 
 // DmGuard 大漠守护
 // 参数: enable - 启用标志(1:启用,0:禁用)
@@ -469,7 +436,6 @@ func (dm *DmSoft) DmGuard(enable int32, type_ string) int32 {
 	return int32(ret)
 }
 
-
 // SpeedNormalGraphic 速度正常图形
 // 参数: en - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -478,7 +444,6 @@ func (dm *DmSoft) SpeedNormalGraphic(en int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(en), 0)
 	return int32(ret)
 }
-
 
 // FindPicSim 查找图片相似度
 // 参数: x1 - 左上角X坐标
@@ -500,7 +465,6 @@ func (dm *DmSoft) FindPicSim(x1 int32, y1 int32, x2 int32, y2 int32, pic_name st
 	return int32(ret)
 }
 
-
 // WriteInt 写入整数
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -514,7 +478,6 @@ func (dm *DmSoft) WriteInt(hwnd int32, addr string, type_ int32, v int64) int32 
 	return int32(ret)
 }
 
-
 // SetMemoryHwndAsProcessId 设置内存操作使用进程ID
 // 参数: en - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -523,7 +486,6 @@ func (dm *DmSoft) SetMemoryHwndAsProcessId(en int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(en), 0)
 	return int32(ret)
 }
-
 
 // WriteDataFromBin 从二进制写入数据
 // 参数: hwnd - 窗口句柄
@@ -538,7 +500,6 @@ func (dm *DmSoft) WriteDataFromBin(hwnd int32, addr string, data int32, len int3
 	return int32(ret)
 }
 
-
 // SetMinColGap 设置最小列间距
 // 参数: col_gap - 列间距(像素)
 // 返回: 成功返回1,失败返回0
@@ -547,7 +508,6 @@ func (dm *DmSoft) SetMinColGap(col_gap int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(col_gap), 0)
 	return int32(ret)
 }
-
 
 // KeyPressStr 按键字符串序列
 // 参数: key_str - 按键字符串
@@ -560,7 +520,6 @@ func (dm *DmSoft) KeyPressStr(key_str string, delay int32) int32 {
 	return int32(ret)
 }
 
-
 // LockDisplay 锁定显示区域
 // 参数: lock - 锁定标志
 // 返回: 成功返回1,失败返回0
@@ -569,7 +528,6 @@ func (dm *DmSoft) LockDisplay(lock int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(lock), 0)
 	return int32(ret)
 }
-
 
 // FindStrWithFontE 指定字体查找文字,返回坐标字符串
 // 参数: x1 - 左上角X坐标
@@ -592,7 +550,6 @@ func (dm *DmSoft) FindStrWithFontE(x1 int32, y1 int32, x2 int32, y2 int32, str s
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // EnumIniKey 枚举INI键
 // 参数: section - INI节名
 // 参数: file - 文件路径
@@ -605,7 +562,6 @@ func (dm *DmSoft) EnumIniKey(section string, file string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // MatchPicName 匹配图片名称
 // 参数: pic_name - 图片名称(多个用|分隔)
 // 返回: 结果字符串
@@ -616,7 +572,6 @@ func (dm *DmSoft) MatchPicName(pic_name string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // EnableFakeActive 启用假激活
 // 参数: en - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -626,7 +581,6 @@ func (dm *DmSoft) EnableFakeActive(en int32) int32 {
 	return int32(ret)
 }
 
-
 // FaqGetSize 获取FAQ数据大小
 // 参数: handle - 句柄
 // 返回: 成功返回1,失败返回0
@@ -635,7 +589,6 @@ func (dm *DmSoft) FaqGetSize(handle int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(handle), 0)
 	return int32(ret)
 }
-
 
 // ExecuteCmd 执行命令
 // 参数: cmd - 命令字符串
@@ -650,7 +603,6 @@ func (dm *DmSoft) ExecuteCmd(cmd string, current_dir string, time_out int32) str
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // EnableRealKeypad 启用真实键盘
 // 参数: en - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -659,7 +611,6 @@ func (dm *DmSoft) EnableRealKeypad(en int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(en), 0)
 	return int32(ret)
 }
-
 
 // SetDisplayRefreshDelay 设置显示刷新延迟
 // 参数: t - 时间(毫秒)
@@ -670,7 +621,6 @@ func (dm *DmSoft) SetDisplayRefreshDelay(t int32) int32 {
 	return int32(ret)
 }
 
-
 // MiddleClick 鼠标中键单击
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) MiddleClick() int32 {
@@ -678,7 +628,6 @@ func (dm *DmSoft) MiddleClick() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // AiYoloSortsObjects YOLO检测结果排序
 // 参数: objects - 检测到的对象
@@ -690,7 +639,6 @@ func (dm *DmSoft) AiYoloSortsObjects(objects string, height int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(objectsPtr)), uintptr(height))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // WriteDataAddr 写入数据(指定地址)
 // 参数: hwnd - 窗口句柄
@@ -704,7 +652,6 @@ func (dm *DmSoft) WriteDataAddr(hwnd int32, addr int64, data string) int32 {
 	return int32(ret)
 }
 
-
 // RGB2BGR RGB颜色转BGR
 // 参数: rgb_color - rgb_color
 // 返回: 结果字符串
@@ -715,7 +662,6 @@ func (dm *DmSoft) RGB2BGR(rgb_color string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // DisablePowerSave 禁用节能模式
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DisablePowerSave() int32 {
@@ -723,7 +669,6 @@ func (dm *DmSoft) DisablePowerSave() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // GetClientSize 获取客户区大小
 // 参数: hwnd - 窗口句柄
@@ -736,7 +681,6 @@ func (dm *DmSoft) GetClientSize(hwnd int32, width *int32, height *int32) int32 {
 	return int32(ret)
 }
 
-
 // EnableMouseMsg 启用鼠标消息模拟
 // 参数: en - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -745,7 +689,6 @@ func (dm *DmSoft) EnableMouseMsg(en int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(en), 0)
 	return int32(ret)
 }
-
 
 // EnableKeypadMsg 启用键盘消息
 // 参数: en - 启用标志(1:启用,0:禁用)
@@ -756,7 +699,6 @@ func (dm *DmSoft) EnableKeypadMsg(en int32) int32 {
 	return int32(ret)
 }
 
-
 // GetFileLength 获取文件长度
 // 参数: file - 文件路径
 // 返回: 成功返回1,失败返回0
@@ -766,7 +708,6 @@ func (dm *DmSoft) GetFileLength(file string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return int32(ret)
 }
-
 
 // GetRemoteApiAddress 获取远程API地址
 // 参数: hwnd - 窗口句柄
@@ -779,7 +720,6 @@ func (dm *DmSoft) GetRemoteApiAddress(hwnd int32, base_addr int64, fun_name stri
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(base_addr), uintptr(unsafe.Pointer(fun_namePtr)), 0, 0)
 	return int64(ret)
 }
-
 
 // DmGuardParams 大漠守护参数
 // 参数: cmd - 命令字符串
@@ -795,7 +735,6 @@ func (dm *DmSoft) DmGuardParams(cmd string, sub_cmd string, param string) string
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // DownloadFile 下载文件
 // 参数: url - URL地址
 // 参数: save_file - 保存文件路径
@@ -809,7 +748,6 @@ func (dm *DmSoft) DownloadFile(url string, save_file string, timeout int32) int3
 	return int32(ret)
 }
 
-
 // WriteDoubleAddr 写入双精度浮点数(指定地址)
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -821,7 +759,6 @@ func (dm *DmSoft) WriteDoubleAddr(hwnd int32, addr int64, double_value float64) 
 	return int32(ret)
 }
 
-
 // EnableIme 启用输入法
 // 参数: en - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -830,7 +767,6 @@ func (dm *DmSoft) EnableIme(en int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(en), 0)
 	return int32(ret)
 }
-
 
 // TerminateProcessTree 终止进程树
 // 参数: pid - 进程ID
@@ -841,7 +777,6 @@ func (dm *DmSoft) TerminateProcessTree(pid int32) int32 {
 	return int32(ret)
 }
 
-
 // FoobarClose 关闭Foobar窗口
 // 参数: hwnd - 窗口句柄
 // 返回: 成功返回1,失败返回0
@@ -850,7 +785,6 @@ func (dm *DmSoft) FoobarClose(hwnd int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(hwnd), 0)
 	return int32(ret)
 }
-
 
 // FindNearestPos 查找最近位置
 // 参数: all_pos - 所有位置字符串
@@ -865,7 +799,6 @@ func (dm *DmSoft) FindNearestPos(all_pos string, type_ int32, x int32, y int32) 
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // CreateFoobarRect 创建矩形Foobar窗口
 // 参数: hwnd - 窗口句柄
 // 参数: x - X坐标
@@ -879,7 +812,6 @@ func (dm *DmSoft) CreateFoobarRect(hwnd int32, x int32, y int32, w int32, h int3
 	return int32(ret)
 }
 
-
 // GetCursorPos 获取鼠标当前位置
 // 参数: x - X坐标(输出参数)
 // 参数: y - Y坐标(输出参数)
@@ -889,7 +821,6 @@ func (dm *DmSoft) GetCursorPos(x *int32, y *int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)))
 	return int32(ret)
 }
-
 
 // FindColorBlockEx 高级查找色块
 // 参数: x1 - 左上角X坐标
@@ -909,7 +840,6 @@ func (dm *DmSoft) FindColorBlockEx(x1 int32, y1 int32, x2 int32, y2 int32, color
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // FindFloat 查找浮点数
 // 参数: hwnd - 窗口句柄
 // 参数: addr_range - 地址范围
@@ -923,7 +853,6 @@ func (dm *DmSoft) FindFloat(hwnd int32, addr_range string, float_value_min float
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetProcessInfo 获取进程信息
 // 参数: pid - 进程ID
 // 返回: 结果字符串
@@ -932,7 +861,6 @@ func (dm *DmSoft) GetProcessInfo(pid int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(pid), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // ReadFile 读取文件内容
 // 参数: file - 文件路径
@@ -943,7 +871,6 @@ func (dm *DmSoft) ReadFile(file string) string {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // FindShapeEx 高级查找形状
 // 参数: x1 - 左上角X坐标
@@ -961,7 +888,6 @@ func (dm *DmSoft) FindShapeEx(x1 int32, y1 int32, x2 int32, y2 int32, offset_col
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // SetWindowText SetWindowText
 // 参数: hwnd - 窗口句柄
 // 参数: text - 文本内容
@@ -973,7 +899,6 @@ func (dm *DmSoft) SetWindowText(hwnd int32, text string) int32 {
 	return int32(ret)
 }
 
-
 // ForceUnBindWindow 强制解绑窗口
 // 参数: hwnd - 窗口句柄
 // 返回: 成功返回1,失败返回0
@@ -982,7 +907,6 @@ func (dm *DmSoft) ForceUnBindWindow(hwnd int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(hwnd), 0)
 	return int32(ret)
 }
-
 
 // ReadIntAddr 读取整数(指定地址)
 // 参数: hwnd - 窗口句柄
@@ -994,7 +918,6 @@ func (dm *DmSoft) ReadIntAddr(hwnd int32, addr int64, type_ int32) int64 {
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(addr), uintptr(type_), 0, 0)
 	return int64(ret)
 }
-
 
 // FindShape 查找形状
 // 参数: x1 - 左上角X坐标
@@ -1014,7 +937,6 @@ func (dm *DmSoft) FindShape(x1 int32, y1 int32, x2 int32, y2 int32, offset_color
 	return int32(ret)
 }
 
-
 // GetRealPath 获取真实文件路径
 // 参数: path - 资源路径
 // 返回: 结果字符串
@@ -1025,7 +947,6 @@ func (dm *DmSoft) GetRealPath(path string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // EnableSpeedDx 启用速度DX
 // 参数: en - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -1035,7 +956,6 @@ func (dm *DmSoft) EnableSpeedDx(en int32) int32 {
 	return int32(ret)
 }
 
-
 // UnLoadDriver 卸载驱动
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) UnLoadDriver() int32 {
@@ -1043,7 +963,6 @@ func (dm *DmSoft) UnLoadDriver() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // GetMemoryUsage 获取内存使用情况
 // 返回: 成功返回1,失败返回0
@@ -1053,7 +972,6 @@ func (dm *DmSoft) GetMemoryUsage() int32 {
 	return int32(ret)
 }
 
-
 // MiddleDown 鼠标中键按下
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) MiddleDown() int32 {
@@ -1061,7 +979,6 @@ func (dm *DmSoft) MiddleDown() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // EnumIniSection 枚举INI节
 // 参数: file - 文件路径
@@ -1073,7 +990,6 @@ func (dm *DmSoft) EnumIniSection(file string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // CheckUAC 检查UAC状态
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) CheckUAC() int32 {
@@ -1081,7 +997,6 @@ func (dm *DmSoft) CheckUAC() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // OpenProcess 打开进程
 // 参数: pid - 进程ID
@@ -1091,7 +1006,6 @@ func (dm *DmSoft) OpenProcess(pid int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(pid), 0)
 	return int32(ret)
 }
-
 
 // IsDisplayDead 检测屏幕是否死机
 // 参数: x1 - 左上角X坐标
@@ -1105,7 +1019,6 @@ func (dm *DmSoft) IsDisplayDead(x1 int32, y1 int32, x2 int32, y2 int32, t int32)
 	ret, _, _ := syscall.Syscall6(funAddr, 6, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(t))
 	return int32(ret)
 }
-
 
 // WriteIniPwd 写入INI配置(带密码)
 // 参数: section - INI节名
@@ -1125,7 +1038,6 @@ func (dm *DmSoft) WriteIniPwd(section string, key string, v string, file string,
 	return int32(ret)
 }
 
-
 // GetNetTime 获取网络时间
 // 返回: 结果字符串
 func (dm *DmSoft) GetNetTime() string {
@@ -1133,7 +1045,6 @@ func (dm *DmSoft) GetNetTime() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // ReadFloat 读取浮点数
 // 参数: hwnd - 窗口句柄
@@ -1146,7 +1057,6 @@ func (dm *DmSoft) ReadFloat(hwnd int32, addr string) float32 {
 	return float32(ret)
 }
 
-
 // DisableCloseDisplayAndSleep 禁用关闭显示器和睡眠
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DisableCloseDisplayAndSleep() int32 {
@@ -1154,7 +1064,6 @@ func (dm *DmSoft) DisableCloseDisplayAndSleep() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // GetWindowTitle 获取窗口标题
 // 参数: hwnd - 窗口句柄
@@ -1164,7 +1073,6 @@ func (dm *DmSoft) GetWindowTitle(hwnd int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(hwnd), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // Assemble Assemble
 // 参数: base_addr - 模块基址
@@ -1176,7 +1084,6 @@ func (dm *DmSoft) Assemble(base_addr int64, is_64bit int32) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetMousePointWindow 获取鼠标指向的窗口
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetMousePointWindow() int32 {
@@ -1184,7 +1091,6 @@ func (dm *DmSoft) GetMousePointWindow() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // SetExportDict 设置导出字库
 // 参数: index - 索引(从0开始)
@@ -1197,7 +1103,6 @@ func (dm *DmSoft) SetExportDict(index int32, dict_name string) int32 {
 	return int32(ret)
 }
 
-
 // Delay 延迟指定时间
 // 参数: mis - mis
 // 返回: 成功返回1,失败返回0
@@ -1206,7 +1111,6 @@ func (dm *DmSoft) Delay(mis int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(mis), 0)
 	return int32(ret)
 }
-
 
 // Reg 注册大漠插件
 // 参数: code - 注册码
@@ -1219,7 +1123,6 @@ func (dm *DmSoft) Reg(code string, ver string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(codePtr)), uintptr(unsafe.Pointer(verPtr)))
 	return int32(ret)
 }
-
 
 // FoobarStopGif Foobar停止播放GIF
 // 参数: hwnd - 窗口句柄
@@ -1234,7 +1137,6 @@ func (dm *DmSoft) FoobarStopGif(hwnd int32, x int32, y int32, pic_name string) i
 	return int32(ret)
 }
 
-
 // ReadFileData 读取文件数据
 // 参数: file - 文件路径
 // 参数: start_pos - 起始位置
@@ -1246,7 +1148,6 @@ func (dm *DmSoft) ReadFileData(file string, start_pos int32, end_pos int32) stri
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(filePtr)), uintptr(start_pos), uintptr(end_pos), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // FindPicSimEx 高级查找图片相似度
 // 参数: x1 - 左上角X坐标
@@ -1266,7 +1167,6 @@ func (dm *DmSoft) FindPicSimEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_name 
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // Capture 截取屏幕区域
 // 参数: x1 - 左上角X坐标
 // 参数: y1 - 左上角Y坐标
@@ -1281,7 +1181,6 @@ func (dm *DmSoft) Capture(x1 int32, y1 int32, x2 int32, y2 int32, file string) i
 	return int32(ret)
 }
 
-
 // GetScreenWidth 获取屏幕宽度
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetScreenWidth() int32 {
@@ -1289,7 +1188,6 @@ func (dm *DmSoft) GetScreenWidth() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // FindStrWithFontEx 高级指定字体查找文字
 // 参数: x1 - 左上角X坐标
@@ -1312,7 +1210,6 @@ func (dm *DmSoft) FindStrWithFontEx(x1 int32, y1 int32, x2 int32, y2 int32, str 
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // SetLocale 设置区域
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetLocale() int32 {
@@ -1320,7 +1217,6 @@ func (dm *DmSoft) SetLocale() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // AsmAdd 添加汇编指令
 // 参数: asm_ins - 汇编指令
@@ -1332,7 +1228,6 @@ func (dm *DmSoft) AsmAdd(asm_ins string) int32 {
 	return int32(ret)
 }
 
-
 // GetScreenHeight 获取屏幕高度
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetScreenHeight() int32 {
@@ -1340,7 +1235,6 @@ func (dm *DmSoft) GetScreenHeight() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // CaptureGif 截取屏幕区域为GIF
 // 参数: x1 - 左上角X坐标
@@ -1358,7 +1252,6 @@ func (dm *DmSoft) CaptureGif(x1 int32, y1 int32, x2 int32, y2 int32, file string
 	return int32(ret)
 }
 
-
 // ReadDataAddrToBin 读取数据到二进制(指定地址)
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -1369,7 +1262,6 @@ func (dm *DmSoft) ReadDataAddrToBin(hwnd int32, addr int64, len int32) int32 {
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(addr), uintptr(len), 0, 0)
 	return int32(ret)
 }
-
 
 // ReadDataToBin 读取数据到二进制
 // 参数: hwnd - 窗口句柄
@@ -1382,7 +1274,6 @@ func (dm *DmSoft) ReadDataToBin(hwnd int32, addr string, len int32) int32 {
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)), uintptr(len), 0, 0)
 	return int32(ret)
 }
-
 
 // FindPicS 查找图片,返回图片索引
 // 参数: x1 - 左上角X坐标
@@ -1404,7 +1295,6 @@ func (dm *DmSoft) FindPicS(x1 int32, y1 int32, x2 int32, y2 int32, pic_name stri
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // FindPic 在指定区域查找图片
 // 参数: x1 - 左上角X坐标
 // 参数: y1 - 左上角Y坐标
@@ -1424,7 +1314,6 @@ func (dm *DmSoft) FindPic(x1 int32, y1 int32, x2 int32, y2 int32, pic_name strin
 	ret, _, _ := syscall.Syscall12(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0)
 	return int32(ret)
 }
-
 
 // FindMultiColor 多点找色
 // 参数: x1 - 左上角X坐标
@@ -1446,7 +1335,6 @@ func (dm *DmSoft) FindMultiColor(x1 int32, y1 int32, x2 int32, y2 int32, first_c
 	return int32(ret)
 }
 
-
 // HackSpeed 加速
 // 参数: rate - 速率
 // 返回: 成功返回1,失败返回0
@@ -1455,7 +1343,6 @@ func (dm *DmSoft) HackSpeed(rate float64) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(rate), 0)
 	return int32(ret)
 }
-
 
 // FindPicE 查找图片,返回坐标字符串
 // 参数: x1 - 左上角X坐标
@@ -1475,7 +1362,6 @@ func (dm *DmSoft) FindPicE(x1 int32, y1 int32, x2 int32, y2 int32, pic_name stri
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // MiddleUp 鼠标中键弹起
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) MiddleUp() int32 {
@@ -1483,7 +1369,6 @@ func (dm *DmSoft) MiddleUp() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // GetWindow 获取窗口
 // 参数: hwnd - 窗口句柄
@@ -1495,7 +1380,6 @@ func (dm *DmSoft) GetWindow(hwnd int32, flag int32) int32 {
 	return int32(ret)
 }
 
-
 // SetUAC 设置UAC状态
 // 参数: uac - UAC标志
 // 返回: 成功返回1,失败返回0
@@ -1504,7 +1388,6 @@ func (dm *DmSoft) SetUAC(uac int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(uac), 0)
 	return int32(ret)
 }
-
 
 // FoobarSetSave 设置Foobar保存
 // 参数: hwnd - 窗口句柄
@@ -1520,7 +1403,6 @@ func (dm *DmSoft) FoobarSetSave(hwnd int32, file string, en int32, header string
 	return int32(ret)
 }
 
-
 // WheelDown 鼠标滚轮向下
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WheelDown() int32 {
@@ -1528,7 +1410,6 @@ func (dm *DmSoft) WheelDown() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // FloatToData 浮点数转数据
 // 参数: float_value - 浮点数值
@@ -1539,7 +1420,6 @@ func (dm *DmSoft) FloatToData(float_value float32) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // EnableFindPicMultithread 启用找图多线程
 // 参数: en - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -1549,7 +1429,6 @@ func (dm *DmSoft) EnableFindPicMultithread(en int32) int32 {
 	return int32(ret)
 }
 
-
 // DisableScreenSave 禁用屏保
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DisableScreenSave() int32 {
@@ -1557,7 +1436,6 @@ func (dm *DmSoft) DisableScreenSave() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // AiFindPicEx AI高级查找图片
 // 参数: x1 - 左上角X坐标
@@ -1575,7 +1453,6 @@ func (dm *DmSoft) AiFindPicEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_name s
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // SendString 发送字符串
 // 参数: hwnd - 窗口句柄
 // 参数: str - 要查找的字符串
@@ -1587,7 +1464,6 @@ func (dm *DmSoft) SendString(hwnd int32, str string) int32 {
 	return int32(ret)
 }
 
-
 // EnterCri 进入临界区
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) EnterCri() int32 {
@@ -1595,7 +1471,6 @@ func (dm *DmSoft) EnterCri() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // FindPicSimMemE 在内存中查找图片,返回坐标字符串
 // 参数: x1 - 左上角X坐标
@@ -1615,7 +1490,6 @@ func (dm *DmSoft) FindPicSimMemE(x1 int32, y1 int32, x2 int32, y2 int32, pic_inf
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // Delays 随机延迟
 // 参数: min_s - min_s
 // 参数: max_s - max_s
@@ -1625,7 +1499,6 @@ func (dm *DmSoft) Delays(min_s int32, max_s int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(min_s), uintptr(max_s))
 	return int32(ret)
 }
-
 
 // CreateFoobarCustom 创建自定义Foobar窗口
 // 参数: hwnd - 窗口句柄
@@ -1642,7 +1515,6 @@ func (dm *DmSoft) CreateFoobarCustom(hwnd int32, x int32, y int32, pic string, t
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(hwnd), uintptr(x), uintptr(y), uintptr(unsafe.Pointer(picPtr)), uintptr(unsafe.Pointer(trans_colorPtr)), uintptr(sim), 0, 0)
 	return int32(ret)
 }
-
 
 // FindStringEx 高级查找字符串
 // 参数: hwnd - 窗口句柄
@@ -1661,7 +1533,6 @@ func (dm *DmSoft) FindStringEx(hwnd int32, addr_range string, string_value strin
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetClientRect 获取客户区矩形
 // 参数: hwnd - 窗口句柄
 // 参数: x1 - 左上角X坐标(输出参数)
@@ -1674,7 +1545,6 @@ func (dm *DmSoft) GetClientRect(hwnd int32, x1 *int32, y1 *int32, x2 *int32, y2 
 	ret, _, _ := syscall.Syscall6(funAddr, 6, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(x1)), uintptr(unsafe.Pointer(y1)), uintptr(unsafe.Pointer(x2)), uintptr(unsafe.Pointer(y2)))
 	return int32(ret)
 }
-
 
 // AiYoloSetModel 从文件加载YOLO模型
 // 参数: index - 索引(从0开始)
@@ -1689,7 +1559,6 @@ func (dm *DmSoft) AiYoloSetModel(index int32, file string, pwd string) int32 {
 	return int32(ret)
 }
 
-
 // FoobarSetTrans 设置Foobar透明度
 // 参数: hwnd - 窗口句柄
 // 参数: trans - trans
@@ -1703,7 +1572,6 @@ func (dm *DmSoft) FoobarSetTrans(hwnd int32, trans int32, color string, sim floa
 	return int32(ret)
 }
 
-
 // GetForegroundFocus 获取前台焦点窗口
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetForegroundFocus() int32 {
@@ -1712,7 +1580,6 @@ func (dm *DmSoft) GetForegroundFocus() int32 {
 	return int32(ret)
 }
 
-
 // GetForegroundWindow 获取前台窗口
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetForegroundWindow() int32 {
@@ -1720,7 +1587,6 @@ func (dm *DmSoft) GetForegroundWindow() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // SetExcludeRegion 设置排除区域
 // 参数: type_ - 类型
@@ -1732,7 +1598,6 @@ func (dm *DmSoft) SetExcludeRegion(type_ int32, info string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(type_), uintptr(unsafe.Pointer(infoPtr)))
 	return int32(ret)
 }
-
 
 // SendStringIme2 通过输入法发送字符串2
 // 参数: hwnd - 窗口句柄
@@ -1746,7 +1611,6 @@ func (dm *DmSoft) SendStringIme2(hwnd int32, str string, mode int32) int32 {
 	return int32(ret)
 }
 
-
 // ActiveInputMethod 激活输入法
 // 参数: hwnd - 窗口句柄
 // 参数: id - 标识ID
@@ -1757,7 +1621,6 @@ func (dm *DmSoft) ActiveInputMethod(hwnd int32, id string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(idPtr)))
 	return int32(ret)
 }
-
 
 // FoobarDrawPic Foobar绘制图片
 // 参数: hwnd - 窗口句柄
@@ -1774,7 +1637,6 @@ func (dm *DmSoft) FoobarDrawPic(hwnd int32, x int32, y int32, pic string, trans_
 	return int32(ret)
 }
 
-
 // AiYoloSetVersion 设置YOLO模型版本
 // 参数: ver - 版本号
 // 返回: 成功返回1,失败返回0
@@ -1784,7 +1646,6 @@ func (dm *DmSoft) AiYoloSetVersion(ver string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(verPtr)), 0)
 	return int32(ret)
 }
-
 
 // FindColorE 查找颜色,返回坐标字符串
 // 参数: x1 - 左上角X坐标
@@ -1802,7 +1663,6 @@ func (dm *DmSoft) FindColorE(x1 int32, y1 int32, x2 int32, y2 int32, color strin
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // LeftClick 鼠标左键单击
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) LeftClick() int32 {
@@ -1810,7 +1670,6 @@ func (dm *DmSoft) LeftClick() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // IsFileExist 判断文件是否存在
 // 参数: file - 文件路径
@@ -1822,7 +1681,6 @@ func (dm *DmSoft) IsFileExist(file string) int32 {
 	return int32(ret)
 }
 
-
 // Is64Bit 判断是否64位系统
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) Is64Bit() int32 {
@@ -1830,7 +1688,6 @@ func (dm *DmSoft) Is64Bit() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // FindShapeE 查找形状,返回坐标字符串
 // 参数: x1 - 左上角X坐标
@@ -1848,7 +1705,6 @@ func (dm *DmSoft) FindShapeE(x1 int32, y1 int32, x2 int32, y2 int32, offset_colo
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetDisplayInfo 获取显示器信息
 // 返回: 结果字符串
 func (dm *DmSoft) GetDisplayInfo() string {
@@ -1856,7 +1712,6 @@ func (dm *DmSoft) GetDisplayInfo() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // SetEnumWindowDelay 设置枚举窗口延迟
 // 参数: delay - 延迟时间(毫秒)
@@ -1866,7 +1721,6 @@ func (dm *DmSoft) SetEnumWindowDelay(delay int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(delay), 0)
 	return int32(ret)
 }
-
 
 // RegNoMac 注册大漠插件(不含MAC)
 // 参数: code - 注册码
@@ -1880,7 +1734,6 @@ func (dm *DmSoft) RegNoMac(code string, ver string) int32 {
 	return int32(ret)
 }
 
-
 // KeyUpChar 弹起按键(字符形式)
 // 参数: key_str - 按键字符串
 // 返回: 成功返回1,失败返回0
@@ -1891,7 +1744,6 @@ func (dm *DmSoft) KeyUpChar(key_str string) int32 {
 	return int32(ret)
 }
 
-
 // SetDisplayAcceler 设置显示加速
 // 参数: level - 级别
 // 返回: 成功返回1,失败返回0
@@ -1900,7 +1752,6 @@ func (dm *DmSoft) SetDisplayAcceler(level int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(level), 0)
 	return int32(ret)
 }
-
 
 // SetRowGapNoDict 设置行间距(无字典模式)
 // 参数: row_gap - 行间距(像素)
@@ -1911,7 +1762,6 @@ func (dm *DmSoft) SetRowGapNoDict(row_gap int32) int32 {
 	return int32(ret)
 }
 
-
 // EnableMouseAccuracy 启用鼠标精度
 // 参数: en - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -1920,7 +1770,6 @@ func (dm *DmSoft) EnableMouseAccuracy(en int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(en), 0)
 	return int32(ret)
 }
-
 
 // MoveTo 移动鼠标到指定坐标
 // 参数: x - X坐标
@@ -1932,7 +1781,6 @@ func (dm *DmSoft) MoveTo(x int32, y int32) int32 {
 	return int32(ret)
 }
 
-
 // KeyPressChar 按键(字符形式)
 // 参数: key_str - 按键字符串
 // 返回: 成功返回1,失败返回0
@@ -1943,7 +1791,6 @@ func (dm *DmSoft) KeyPressChar(key_str string) int32 {
 	return int32(ret)
 }
 
-
 // RightDown 鼠标右键按下
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) RightDown() int32 {
@@ -1951,7 +1798,6 @@ func (dm *DmSoft) RightDown() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // AiYoloSetModelMemory 从内存加载YOLO模型
 // 参数: index - 索引(从0开始)
@@ -1965,7 +1811,6 @@ func (dm *DmSoft) AiYoloSetModelMemory(index int32, addr int32, size int32, pwd 
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(index), uintptr(addr), uintptr(size), uintptr(unsafe.Pointer(pwdPtr)), 0)
 	return int32(ret)
 }
-
 
 // WriteIni 写入INI配置
 // 参数: section - INI节名
@@ -1983,7 +1828,6 @@ func (dm *DmSoft) WriteIni(section string, key string, v string, file string) in
 	return int32(ret)
 }
 
-
 // DmGuardLoadCustom 大漠守护加载自定义模块
 // 参数: type_ - 类型
 // 参数: path - 资源路径
@@ -1996,7 +1840,6 @@ func (dm *DmSoft) DmGuardLoadCustom(type_ string, path string) int32 {
 	return int32(ret)
 }
 
-
 // CreateFolder 创建文件夹
 // 参数: folder_name - folder_name
 // 返回: 成功返回1,失败返回0
@@ -2006,7 +1849,6 @@ func (dm *DmSoft) CreateFolder(folder_name string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(folder_namePtr)), 0)
 	return int32(ret)
 }
-
 
 // EnableRealMouse 启用真实鼠标模拟
 // 参数: en - 启用标志(1:启用,0:禁用)
@@ -2019,7 +1861,6 @@ func (dm *DmSoft) EnableRealMouse(en int32, mousedelay int32, mousestep int32) i
 	return int32(ret)
 }
 
-
 // GetBasePath 获取大漠基础路径
 // 返回: 结果字符串
 func (dm *DmSoft) GetBasePath() string {
@@ -2027,7 +1868,6 @@ func (dm *DmSoft) GetBasePath() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // GetFps 获取FPS
 // 返回: 成功返回1,失败返回0
@@ -2037,7 +1877,6 @@ func (dm *DmSoft) GetFps() int32 {
 	return int32(ret)
 }
 
-
 // EnableGetColorByCapture 启用截图取色模式
 // 参数: enable - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -2046,7 +1885,6 @@ func (dm *DmSoft) EnableGetColorByCapture(enable int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(enable), 0)
 	return int32(ret)
 }
-
 
 // SetDisplayInput 设置显示输入方式
 // 参数: mode - 模式
@@ -2058,7 +1896,6 @@ func (dm *DmSoft) SetDisplayInput(mode string) int32 {
 	return int32(ret)
 }
 
-
 // Hex64 64位整数转十六进制字符串
 // 参数: v - 值
 // 返回: 结果字符串
@@ -2067,7 +1904,6 @@ func (dm *DmSoft) Hex64(v int64) string {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(v), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // ScreenToClient 屏幕坐标转客户区坐标
 // 参数: hwnd - 窗口句柄
@@ -2080,7 +1916,6 @@ func (dm *DmSoft) ScreenToClient(hwnd int32, x *int32, y *int32) int32 {
 	return int32(ret)
 }
 
-
 // AiEnableFindPicWindow 启用AI找图窗口模式
 // 参数: enable - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -2089,7 +1924,6 @@ func (dm *DmSoft) AiEnableFindPicWindow(enable int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(enable), 0)
 	return int32(ret)
 }
-
 
 // ReadIni 读取INI配置
 // 参数: section - INI节名
@@ -2105,7 +1939,6 @@ func (dm *DmSoft) ReadIni(section string, key string, file string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // ImageToBmp 图片转换为BMP格式
 // 参数: pic_name - 图片名称(多个用|分隔)
 // 参数: bmp_name - bmp_name
@@ -2118,7 +1951,6 @@ func (dm *DmSoft) ImageToBmp(pic_name string, bmp_name string) int32 {
 	return int32(ret)
 }
 
-
 // SetDisplayDelay 设置显示延迟
 // 参数: t - 时间(毫秒)
 // 返回: 成功返回1,失败返回0
@@ -2128,7 +1960,6 @@ func (dm *DmSoft) SetDisplayDelay(t int32) int32 {
 	return int32(ret)
 }
 
-
 // WheelUp 鼠标滚轮向上
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WheelUp() int32 {
@@ -2136,7 +1967,6 @@ func (dm *DmSoft) WheelUp() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // CopyFile 复制文件
 // 参数: src_file - 源文件路径
@@ -2152,7 +1982,6 @@ func (dm *DmSoft) CopyFile(src_file string, dst_file string, over int32) int32 {
 	return int32(ret)
 }
 
-
 // FindWindowEx 扩展查找窗口
 // 参数: parent - 父窗口句柄
 // 参数: class_name - 窗口类名
@@ -2166,7 +1995,6 @@ func (dm *DmSoft) FindWindowEx(parent int32, class_name string, title_name strin
 	return int32(ret)
 }
 
-
 // SetFindPicMultithreadCount 设置找图多线程数量
 // 参数: count - 数量
 // 返回: 成功返回1,失败返回0
@@ -2175,7 +2003,6 @@ func (dm *DmSoft) SetFindPicMultithreadCount(count int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(count), 0)
 	return int32(ret)
 }
-
 
 // GetScreenDataBmp 获取屏幕BMP数据
 // 参数: x1 - 左上角X坐标
@@ -2191,7 +2018,6 @@ func (dm *DmSoft) GetScreenDataBmp(x1 int32, y1 int32, x2 int32, y2 int32, data 
 	return int32(ret)
 }
 
-
 // GetWordResultPos 获取文字识别结果位置
 // 参数: str - 要查找的字符串
 // 参数: index - 索引(从0开始)
@@ -2205,7 +2031,6 @@ func (dm *DmSoft) GetWordResultPos(str string, index int32, x *int32, y *int32) 
 	return int32(ret)
 }
 
-
 // LeftDoubleClick 鼠标左键双击
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) LeftDoubleClick() int32 {
@@ -2213,7 +2038,6 @@ func (dm *DmSoft) LeftDoubleClick() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // ReadStringAddr 读取字符串(指定地址)
 // 参数: hwnd - 窗口句柄
@@ -2228,7 +2052,6 @@ func (dm *DmSoft) ReadStringAddr(hwnd int32, addr int64, type_ int32, len int32)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // ReadData 读取数据
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -2241,7 +2064,6 @@ func (dm *DmSoft) ReadData(hwnd int32, addr string, len int32) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // AddDict 添加字库条目
 // 参数: index - 索引(从0开始)
 // 参数: dict_info - 字库信息
@@ -2252,7 +2074,6 @@ func (dm *DmSoft) AddDict(index int32, dict_info string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(index), uintptr(unsafe.Pointer(dict_infoPtr)))
 	return int32(ret)
 }
-
 
 // SetInputDm 设置输入大漠
 // 参数: input_dm - input_dm
@@ -2265,7 +2086,6 @@ func (dm *DmSoft) SetInputDm(input_dm int32, rx int32, ry int32) int32 {
 	return int32(ret)
 }
 
-
 // GetWindowProcessId 获取窗口进程ID
 // 参数: hwnd - 窗口句柄
 // 返回: 成功返回1,失败返回0
@@ -2274,7 +2094,6 @@ func (dm *DmSoft) GetWindowProcessId(hwnd int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(hwnd), 0)
 	return int32(ret)
 }
-
 
 // WriteDataAddrFromBin 从二进制写入数据(指定地址)
 // 参数: hwnd - 窗口句柄
@@ -2287,7 +2106,6 @@ func (dm *DmSoft) WriteDataAddrFromBin(hwnd int32, addr int64, data int32, len i
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(addr), uintptr(data), uintptr(len), 0)
 	return int32(ret)
 }
-
 
 // AiFindPicMemEx AI高级内存查找图片
 // 参数: x1 - 左上角X坐标
@@ -2305,7 +2123,6 @@ func (dm *DmSoft) AiFindPicMemEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_inf
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // TerminateProcess 终止进程
 // 参数: pid - 进程ID
 // 返回: 成功返回1,失败返回0
@@ -2314,7 +2131,6 @@ func (dm *DmSoft) TerminateProcess(pid int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(pid), 0)
 	return int32(ret)
 }
-
 
 // VirtualQueryEx 查询目标进程内存信息
 // 参数: hwnd - 窗口句柄
@@ -2327,7 +2143,6 @@ func (dm *DmSoft) VirtualQueryEx(hwnd int32, addr int64, pmbi int32) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // EnableKeypadSync 启用键盘同步
 // 参数: enable - 启用标志(1:启用,0:禁用)
 // 参数: time_out - 超时时间(毫秒)
@@ -2338,7 +2153,6 @@ func (dm *DmSoft) EnableKeypadSync(enable int32, time_out int32) int32 {
 	return int32(ret)
 }
 
-
 // AiYoloUseModel 切换使用已加载的YOLO模型
 // 参数: index - 索引(从0开始)
 // 返回: 成功返回1,失败返回0
@@ -2347,7 +2161,6 @@ func (dm *DmSoft) AiYoloUseModel(index int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(index), 0)
 	return int32(ret)
 }
-
 
 // DeleteFile 删除文件
 // 参数: file - 文件路径
@@ -2359,7 +2172,6 @@ func (dm *DmSoft) DeleteFile(file string) int32 {
 	return int32(ret)
 }
 
-
 // GetScreenDepth 获取屏幕色深
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetScreenDepth() int32 {
@@ -2367,7 +2179,6 @@ func (dm *DmSoft) GetScreenDepth() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // FindColor 在区域查找颜色
 // 参数: x1 - 左上角X坐标
@@ -2387,7 +2198,6 @@ func (dm *DmSoft) FindColor(x1 int32, y1 int32, x2 int32, y2 int32, color string
 	return int32(ret)
 }
 
-
 // MoveR 相对移动鼠标
 // 参数: rx - 相对X偏移
 // 参数: ry - 相对Y偏移
@@ -2398,7 +2208,6 @@ func (dm *DmSoft) MoveR(rx int32, ry int32) int32 {
 	return int32(ret)
 }
 
-
 // LockInput 锁定输入
 // 参数: lock - 锁定标志
 // 返回: 成功返回1,失败返回0
@@ -2407,7 +2216,6 @@ func (dm *DmSoft) LockInput(lock int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(lock), 0)
 	return int32(ret)
 }
-
 
 // IntToData 整数转数据
 // 参数: int_value - 整数值
@@ -2418,7 +2226,6 @@ func (dm *DmSoft) IntToData(int_value int64, type_ int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(int_value), uintptr(type_))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // FaqPost 异步发送FAQ请求
 // 参数: server - 服务器地址
@@ -2433,7 +2240,6 @@ func (dm *DmSoft) FaqPost(server string, handle int32, request_type int32, time_
 	return int32(ret)
 }
 
-
 // GetColorHSV 获取指定坐标的HSV颜色
 // 参数: x - X坐标
 // 参数: y - Y坐标
@@ -2443,7 +2249,6 @@ func (dm *DmSoft) GetColorHSV(x int32, y int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(x), uintptr(y))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // FindWindowSuper 超级查找窗口
 // 参数: spec1 - 条件1字符串
@@ -2461,7 +2266,6 @@ func (dm *DmSoft) FindWindowSuper(spec1 string, flag1 int32, type1 int32, spec2 
 	return int32(ret)
 }
 
-
 // EnableBind 启用/禁用绑定
 // 参数: en - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -2471,7 +2275,6 @@ func (dm *DmSoft) EnableBind(en int32) int32 {
 	return int32(ret)
 }
 
-
 // SetAero 设置Aero效果
 // 参数: enable - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -2480,7 +2283,6 @@ func (dm *DmSoft) SetAero(enable int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(enable), 0)
 	return int32(ret)
 }
-
 
 // DecodeFile 解密文件
 // 参数: file - 文件路径
@@ -2493,7 +2295,6 @@ func (dm *DmSoft) DecodeFile(file string, pwd string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(filePtr)), uintptr(unsafe.Pointer(pwdPtr)))
 	return int32(ret)
 }
-
 
 // FindPicExS 高级查找图片,返回详细字符串
 // 参数: x1 - 左上角X坐标
@@ -2513,7 +2314,6 @@ func (dm *DmSoft) FindPicExS(x1 int32, y1 int32, x2 int32, y2 int32, pic_name st
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // WriteStringAddr 写入字符串(指定地址)
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -2527,7 +2327,6 @@ func (dm *DmSoft) WriteStringAddr(hwnd int32, addr int64, type_ int32, v string)
 	return int32(ret)
 }
 
-
 // GetCommandLine 获取命令行
 // 参数: hwnd - 窗口句柄
 // 返回: 结果字符串
@@ -2537,7 +2336,6 @@ func (dm *DmSoft) GetCommandLine(hwnd int32) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // SelectFile 选择文件对话框
 // 返回: 结果字符串
 func (dm *DmSoft) SelectFile() string {
@@ -2545,7 +2343,6 @@ func (dm *DmSoft) SelectFile() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // FindPicSimMemEx 高级在内存中查找图片
 // 参数: x1 - 左上角X坐标
@@ -2565,7 +2362,6 @@ func (dm *DmSoft) FindPicSimMemEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_in
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetWordResultStr 获取文字识别结果字符串
 // 参数: str - 要查找的字符串
 // 参数: index - 索引(从0开始)
@@ -2577,7 +2373,6 @@ func (dm *DmSoft) GetWordResultStr(str string, index int32) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // EnablePicCache 启用图片缓存
 // 参数: en - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -2586,7 +2381,6 @@ func (dm *DmSoft) EnablePicCache(en int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(en), 0)
 	return int32(ret)
 }
-
 
 // FindStrExS 高级查找文字,返回详细字符串
 // 参数: x1 - 左上角X坐标
@@ -2605,7 +2399,6 @@ func (dm *DmSoft) FindStrExS(x1 int32, y1 int32, x2 int32, y2 int32, str string,
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // LoadPic 预加载图片到内存
 // 参数: pic_name - 图片名称(多个用|分隔)
 // 返回: 成功返回1,失败返回0
@@ -2615,7 +2408,6 @@ func (dm *DmSoft) LoadPic(pic_name string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(pic_namePtr)), 0)
 	return int32(ret)
 }
-
 
 // FindStrFast 快速查找文字
 // 参数: x1 - 左上角X坐标
@@ -2636,7 +2428,6 @@ func (dm *DmSoft) FindStrFast(x1 int32, y1 int32, x2 int32, y2 int32, str string
 	return int32(ret)
 }
 
-
 // FindDouble 查找双精度浮点数
 // 参数: hwnd - 窗口句柄
 // 参数: addr_range - 地址范围
@@ -2650,7 +2441,6 @@ func (dm *DmSoft) FindDouble(hwnd int32, addr_range string, double_value_min flo
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // SetParam64ToPointer 设置64位参数转指针
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetParam64ToPointer() int32 {
@@ -2658,7 +2448,6 @@ func (dm *DmSoft) SetParam64ToPointer() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // SetMemoryFindResultToFile 设置内存查找结果输出到文件
 // 参数: file - 文件路径
@@ -2670,7 +2459,6 @@ func (dm *DmSoft) SetMemoryFindResultToFile(file string) int32 {
 	return int32(ret)
 }
 
-
 // WaitKey 等待按键
 // 参数: key_code - 键码
 // 参数: time_out - 超时时间(毫秒)
@@ -2680,7 +2468,6 @@ func (dm *DmSoft) WaitKey(key_code int32, time_out int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(key_code), uintptr(time_out))
 	return int32(ret)
 }
-
 
 // CreateFoobarEllipse 创建椭圆Foobar窗口
 // 参数: hwnd - 窗口句柄
@@ -2695,7 +2482,6 @@ func (dm *DmSoft) CreateFoobarEllipse(hwnd int32, x int32, y int32, w int32, h i
 	return int32(ret)
 }
 
-
 // MoveFile 移动文件
 // 参数: src_file - 源文件路径
 // 参数: dst_file - 目标文件路径
@@ -2708,7 +2494,6 @@ func (dm *DmSoft) MoveFile(src_file string, dst_file string) int32 {
 	return int32(ret)
 }
 
-
 // Stop 停止
 // 参数: id - 标识ID
 // 返回: 成功返回1,失败返回0
@@ -2718,7 +2503,6 @@ func (dm *DmSoft) Stop(id int32) int32 {
 	return int32(ret)
 }
 
-
 // ReleaseRef 释放引用
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) ReleaseRef() int32 {
@@ -2726,7 +2510,6 @@ func (dm *DmSoft) ReleaseRef() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // GetColorBGR 获取指定坐标的BGR颜色
 // 参数: x - X坐标
@@ -2737,7 +2520,6 @@ func (dm *DmSoft) GetColorBGR(x int32, y int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(x), uintptr(y))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // EnumIniKeyPwd 枚举INI键(带密码)
 // 参数: section - INI节名
@@ -2753,7 +2535,6 @@ func (dm *DmSoft) EnumIniKeyPwd(section string, file string, pwd string) string 
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetMac 获取本机MAC地址
 // 返回: 结果字符串
 func (dm *DmSoft) GetMac() string {
@@ -2761,7 +2542,6 @@ func (dm *DmSoft) GetMac() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // UseDict 切换使用指定索引的字库
 // 参数: index - 索引(从0开始)
@@ -2771,7 +2551,6 @@ func (dm *DmSoft) UseDict(index int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(index), 0)
 	return int32(ret)
 }
-
 
 // FindDataEx 高级查找数据
 // 参数: hwnd - 窗口句柄
@@ -2789,7 +2568,6 @@ func (dm *DmSoft) FindDataEx(hwnd int32, addr_range string, data string, step in
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // Md5 计算MD5值
 // 参数: str - 要查找的字符串
 // 返回: 结果字符串
@@ -2800,7 +2578,6 @@ func (dm *DmSoft) Md5(str string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // BGR2RGB BGR颜色转RGB
 // 参数: bgr_color - bgr_color
 // 返回: 结果字符串
@@ -2810,7 +2587,6 @@ func (dm *DmSoft) BGR2RGB(bgr_color string) string {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(bgr_colorPtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // FindColorEx 高级查找颜色
 // 参数: x1 - 左上角X坐标
@@ -2828,7 +2604,6 @@ func (dm *DmSoft) FindColorEx(x1 int32, y1 int32, x2 int32, y2 int32, color stri
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // OcrExOne OCR识别单个区域
 // 参数: x1 - 左上角X坐标
 // 参数: y1 - 左上角Y坐标
@@ -2844,7 +2619,6 @@ func (dm *DmSoft) OcrExOne(x1 int32, y1 int32, x2 int32, y2 int32, color string,
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // CmpColor 比较颜色
 // 参数: x - X坐标
 // 参数: y - Y坐标
@@ -2857,7 +2631,6 @@ func (dm *DmSoft) CmpColor(x int32, y int32, color string, sim float64) int32 {
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(x), uintptr(y), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0)
 	return int32(ret)
 }
-
 
 // OcrInFile 从图片文件进行OCR识别
 // 参数: x1 - 左上角X坐标
@@ -2876,7 +2649,6 @@ func (dm *DmSoft) OcrInFile(x1 int32, y1 int32, x2 int32, y2 int32, pic_name str
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // CheckInputMethod 检查输入法状态
 // 参数: hwnd - 窗口句柄
 // 参数: id - 标识ID
@@ -2887,7 +2659,6 @@ func (dm *DmSoft) CheckInputMethod(hwnd int32, id string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(idPtr)))
 	return int32(ret)
 }
-
 
 // MoveWindow 移动窗口
 // 参数: hwnd - 窗口句柄
@@ -2900,7 +2671,6 @@ func (dm *DmSoft) MoveWindow(hwnd int32, x int32, y int32) int32 {
 	return int32(ret)
 }
 
-
 // GetClipboard 获取剪贴板内容
 // 返回: 结果字符串
 func (dm *DmSoft) GetClipboard() string {
@@ -2908,7 +2678,6 @@ func (dm *DmSoft) GetClipboard() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // FindStr 在指定区域查找文字
 // 参数: x1 - 左上角X坐标
@@ -2929,7 +2698,6 @@ func (dm *DmSoft) FindStr(x1 int32, y1 int32, x2 int32, y2 int32, str string, co
 	return int32(ret)
 }
 
-
 // FoobarClearText Foobar清除文字
 // 参数: hwnd - 窗口句柄
 // 返回: 成功返回1,失败返回0
@@ -2938,7 +2706,6 @@ func (dm *DmSoft) FoobarClearText(hwnd int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(hwnd), 0)
 	return int32(ret)
 }
-
 
 // ClientToScreen 客户区坐标转屏幕坐标
 // 参数: hwnd - 窗口句柄
@@ -2951,7 +2718,6 @@ func (dm *DmSoft) ClientToScreen(hwnd int32, x *int32, y *int32) int32 {
 	return int32(ret)
 }
 
-
 // GetCursorShape 获取鼠标形状
 // 返回: 结果字符串
 func (dm *DmSoft) GetCursorShape() string {
@@ -2959,7 +2725,6 @@ func (dm *DmSoft) GetCursorShape() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // GetWordResultCount 获取文字识别结果数量
 // 参数: str - 要查找的字符串
@@ -2971,7 +2736,6 @@ func (dm *DmSoft) GetWordResultCount(str string) int32 {
 	return int32(ret)
 }
 
-
 // SelectDirectory 选择目录对话框
 // 返回: 结果字符串
 func (dm *DmSoft) SelectDirectory() string {
@@ -2979,7 +2743,6 @@ func (dm *DmSoft) SelectDirectory() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // CapturePng 截取屏幕区域为PNG
 // 参数: x1 - 左上角X坐标
@@ -2995,7 +2758,6 @@ func (dm *DmSoft) CapturePng(x1 int32, y1 int32, x2 int32, y2 int32, file string
 	return int32(ret)
 }
 
-
 // KeyDownChar 按下按键(字符形式)
 // 参数: key_str - 按键字符串
 // 返回: 成功返回1,失败返回0
@@ -3005,7 +2767,6 @@ func (dm *DmSoft) KeyDownChar(key_str string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(key_strPtr)), 0)
 	return int32(ret)
 }
-
 
 // CaptureJpg 截取屏幕区域为JPG
 // 参数: x1 - 左上角X坐标
@@ -3021,7 +2782,6 @@ func (dm *DmSoft) CaptureJpg(x1 int32, y1 int32, x2 int32, y2 int32, file string
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(filePtr)), uintptr(quality), 0, 0)
 	return int32(ret)
 }
-
 
 // FindStrEx 高级查找文字,返回所有匹配位置
 // 参数: x1 - 左上角X坐标
@@ -3040,7 +2800,6 @@ func (dm *DmSoft) FindStrEx(x1 int32, y1 int32, x2 int32, y2 int32, str string, 
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // FaqCapture FAQ截图并保存到缓存
 // 参数: x1 - 左上角X坐标
 // 参数: y1 - 左上角Y坐标
@@ -3055,7 +2814,6 @@ func (dm *DmSoft) FaqCapture(x1 int32, y1 int32, x2 int32, y2 int32, quality int
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(quality), uintptr(delay), uintptr(time), 0)
 	return int32(ret)
 }
-
 
 // ShowScrMsg 显示屏幕消息
 // 参数: x1 - 左上角X坐标
@@ -3073,7 +2831,6 @@ func (dm *DmSoft) ShowScrMsg(x1 int32, y1 int32, x2 int32, y2 int32, msg string,
 	return int32(ret)
 }
 
-
 // SetKeypadDelay 设置键盘按键延迟
 // 参数: type_ - 类型
 // 参数: delay - 延迟时间(毫秒)
@@ -3084,7 +2841,6 @@ func (dm *DmSoft) SetKeypadDelay(type_ string, delay int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(type_Ptr)), uintptr(delay))
 	return int32(ret)
 }
-
 
 // SetScreen 设置屏幕参数
 // 参数: width - 宽度
@@ -3097,7 +2853,6 @@ func (dm *DmSoft) SetScreen(width int32, height int32, depth int32) int32 {
 	return int32(ret)
 }
 
-
 // Play 播放声音文件
 // 参数: file - 文件路径
 // 返回: 成功返回1,失败返回0
@@ -3107,7 +2862,6 @@ func (dm *DmSoft) Play(file string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return int32(ret)
 }
-
 
 // FindWindowByProcessId 通过进程ID查找窗口
 // 参数: process_id - 进程ID
@@ -3122,7 +2876,6 @@ func (dm *DmSoft) FindWindowByProcessId(process_id int32, class_name string, tit
 	return int32(ret)
 }
 
-
 // WriteDouble 写入双精度浮点数
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -3135,7 +2888,6 @@ func (dm *DmSoft) WriteDouble(hwnd int32, addr string, double_value float64) int
 	return int32(ret)
 }
 
-
 // GetWindowThreadId 获取窗口线程ID
 // 参数: hwnd - 窗口句柄
 // 返回: 成功返回1,失败返回0
@@ -3145,7 +2897,6 @@ func (dm *DmSoft) GetWindowThreadId(hwnd int32) int32 {
 	return int32(ret)
 }
 
-
 // GetBindWindow 获取绑定的窗口句柄
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetBindWindow() int32 {
@@ -3153,7 +2904,6 @@ func (dm *DmSoft) GetBindWindow() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // FindWindow 查找窗口
 // 参数: class_name - 窗口类名
@@ -3166,7 +2916,6 @@ func (dm *DmSoft) FindWindow(class_name string, title_name string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(class_namePtr)), uintptr(unsafe.Pointer(title_namePtr)))
 	return int32(ret)
 }
-
 
 // AiFindPic 使用AI模型查找图片
 // 参数: x1 - 左上角X坐标
@@ -3186,7 +2935,6 @@ func (dm *DmSoft) AiFindPic(x1 int32, y1 int32, x2 int32, y2 int32, pic_name str
 	return int32(ret)
 }
 
-
 // FindInt 查找整数
 // 参数: hwnd - 窗口句柄
 // 参数: addr_range - 地址范围
@@ -3201,7 +2949,6 @@ func (dm *DmSoft) FindInt(hwnd int32, addr_range string, int_value_min int64, in
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // IsBind 判断是否已绑定窗口
 // 参数: hwnd - 窗口句柄
 // 返回: 成功返回1,失败返回0
@@ -3210,7 +2957,6 @@ func (dm *DmSoft) IsBind(hwnd int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(hwnd), 0)
 	return int32(ret)
 }
-
 
 // SetSimMode 设置模拟模式
 // 参数: mode - 模式
@@ -3221,7 +2967,6 @@ func (dm *DmSoft) SetSimMode(mode int32) int32 {
 	return int32(ret)
 }
 
-
 // GetNowDict 获取当前使用的字库索引
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetNowDict() int32 {
@@ -3229,7 +2974,6 @@ func (dm *DmSoft) GetNowDict() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // GetNetTimeSafe 安全获取网络时间
 // 返回: 结果字符串
@@ -3239,7 +2983,6 @@ func (dm *DmSoft) GetNetTimeSafe() string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetMachineCode 获取机器码
 // 返回: 结果字符串
 func (dm *DmSoft) GetMachineCode() string {
@@ -3247,7 +2990,6 @@ func (dm *DmSoft) GetMachineCode() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // VirtualAllocEx 在目标进程分配内存
 // 参数: hwnd - 窗口句柄
@@ -3261,7 +3003,6 @@ func (dm *DmSoft) VirtualAllocEx(hwnd int32, addr int64, size int32, type_ int32
 	return int64(ret)
 }
 
-
 // GetPath 获取当前资源路径
 // 返回: 结果字符串
 func (dm *DmSoft) GetPath() string {
@@ -3269,7 +3010,6 @@ func (dm *DmSoft) GetPath() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // EnumWindowSuper 超级枚举窗口
 // 参数: spec1 - 条件1字符串
@@ -3288,7 +3028,6 @@ func (dm *DmSoft) EnumWindowSuper(spec1 string, flag1 int32, type1 int32, spec2 
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetModuleBaseAddr 获取模块基址
 // 参数: hwnd - 窗口句柄
 // 参数: module_name - 模块名称
@@ -3299,7 +3038,6 @@ func (dm *DmSoft) GetModuleBaseAddr(hwnd int32, module_name string) int64 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(module_namePtr)))
 	return int64(ret)
 }
-
 
 // EnumWindowByProcessId 通过进程ID枚举窗口
 // 参数: pid - 进程ID
@@ -3315,7 +3053,6 @@ func (dm *DmSoft) EnumWindowByProcessId(pid int32, title string, class_name stri
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // UnBindWindow 解绑窗口
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) UnBindWindow() int32 {
@@ -3324,7 +3061,6 @@ func (dm *DmSoft) UnBindWindow() int32 {
 	return int32(ret)
 }
 
-
 // GetLastError 获取最后一次错误码
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetLastError() int32 {
@@ -3332,7 +3068,6 @@ func (dm *DmSoft) GetLastError() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // FoobarDrawText Foobar绘制文字
 // 参数: hwnd - 窗口句柄
@@ -3352,7 +3087,6 @@ func (dm *DmSoft) FoobarDrawText(hwnd int32, x int32, y int32, w int32, h int32,
 	return int32(ret)
 }
 
-
 // SetMinRowGap 设置最小行间距
 // 参数: row_gap - 行间距(像素)
 // 返回: 成功返回1,失败返回0
@@ -3362,7 +3096,6 @@ func (dm *DmSoft) SetMinRowGap(row_gap int32) int32 {
 	return int32(ret)
 }
 
-
 // LeftUp 鼠标左键弹起
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) LeftUp() int32 {
@@ -3370,7 +3103,6 @@ func (dm *DmSoft) LeftUp() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // WriteFile 写入文件
 // 参数: file - 文件路径
@@ -3384,7 +3116,6 @@ func (dm *DmSoft) WriteFile(file string, content string) int32 {
 	return int32(ret)
 }
 
-
 // SetWindowSize 设置窗口大小
 // 参数: hwnd - 窗口句柄
 // 参数: width - 宽度
@@ -3395,7 +3126,6 @@ func (dm *DmSoft) SetWindowSize(hwnd int32, width int32, height int32) int32 {
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(width), uintptr(height), 0, 0)
 	return int32(ret)
 }
-
 
 // FaqCaptureFromFile 从文件加载图片到FAQ缓存
 // 参数: x1 - 左上角X坐标
@@ -3412,7 +3142,6 @@ func (dm *DmSoft) FaqCaptureFromFile(x1 int32, y1 int32, x2 int32, y2 int32, fil
 	return int32(ret)
 }
 
-
 // ReadDataAddr 读取数据(指定地址)
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -3424,7 +3153,6 @@ func (dm *DmSoft) ReadDataAddr(hwnd int32, addr int64, length int32) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // IsSurrpotVt 判断是否支持VT虚拟化
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) IsSurrpotVt() int32 {
@@ -3432,7 +3160,6 @@ func (dm *DmSoft) IsSurrpotVt() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // GetWindowProcessPath 获取窗口进程路径
 // 参数: hwnd - 窗口句柄
@@ -3443,7 +3170,6 @@ func (dm *DmSoft) GetWindowProcessPath(hwnd int32) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // ClearDict 清除指定索引的字库
 // 参数: index - 索引(从0开始)
 // 返回: 成功返回1,失败返回0
@@ -3452,7 +3178,6 @@ func (dm *DmSoft) ClearDict(index int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(index), 0)
 	return int32(ret)
 }
-
 
 // SaveDict 保存字库到文件
 // 参数: index - 索引(从0开始)
@@ -3465,7 +3190,6 @@ func (dm *DmSoft) SaveDict(index int32, file string) int32 {
 	return int32(ret)
 }
 
-
 // ShowTaskBarIcon 显示/隐藏任务栏图标
 // 参数: hwnd - 窗口句柄
 // 参数: is_show - is_show
@@ -3475,7 +3199,6 @@ func (dm *DmSoft) ShowTaskBarIcon(hwnd int32, is_show int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(is_show))
 	return int32(ret)
 }
-
 
 // GetAveHSV 获取区域平均HSV值
 // 参数: x1 - 左上角X坐标
@@ -3488,7 +3211,6 @@ func (dm *DmSoft) GetAveHSV(x1 int32, y1 int32, x2 int32, y2 int32) string {
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // ReadIniPwd 读取INI配置(带密码)
 // 参数: section - INI节名
@@ -3506,7 +3228,6 @@ func (dm *DmSoft) ReadIniPwd(section string, key string, file string, pwd string
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // FaqIsPosted 检查FAQ请求是否完成
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FaqIsPosted() int32 {
@@ -3515,7 +3236,6 @@ func (dm *DmSoft) FaqIsPosted() int32 {
 	return int32(ret)
 }
 
-
 // LeftDown 鼠标左键按下
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) LeftDown() int32 {
@@ -3523,7 +3243,6 @@ func (dm *DmSoft) LeftDown() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // DmGuardExtract 大漠守护解压
 // 参数: type_ - 类型
@@ -3537,7 +3256,6 @@ func (dm *DmSoft) DmGuardExtract(type_ string, path string) int32 {
 	return int32(ret)
 }
 
-
 // ExitOs 退出系统
 // 参数: type_ - 类型
 // 返回: 成功返回1,失败返回0
@@ -3546,7 +3264,6 @@ func (dm *DmSoft) ExitOs(type_ int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(type_), 0)
 	return int32(ret)
 }
-
 
 // FetchWord 提取文字
 // 参数: x1 - 左上角X坐标
@@ -3564,7 +3281,6 @@ func (dm *DmSoft) FetchWord(x1 int32, y1 int32, x2 int32, y2 int32, color string
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetDiskSerial 获取磁盘序列号
 // 参数: index - 索引(从0开始)
 // 返回: 结果字符串
@@ -3573,7 +3289,6 @@ func (dm *DmSoft) GetDiskSerial(index int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(index), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // GetDictCount 获取字库条目数量
 // 参数: index - 索引(从0开始)
@@ -3584,7 +3299,6 @@ func (dm *DmSoft) GetDictCount(index int32) int32 {
 	return int32(ret)
 }
 
-
 // GetDict 获取字库内容
 // 参数: index - 索引(从0开始)
 // 参数: font_index - 字体索引
@@ -3594,7 +3308,6 @@ func (dm *DmSoft) GetDict(index int32, font_index int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(index), uintptr(font_index))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // SetDict 设置字库文件
 // 参数: index - 索引(从0开始)
@@ -3607,7 +3320,6 @@ func (dm *DmSoft) SetDict(index int32, dict_name string) int32 {
 	return int32(ret)
 }
 
-
 // AiYoloObjectsToString YOLO检测结果转字符串
 // 参数: objects - 检测到的对象
 // 返回: 结果字符串
@@ -3618,7 +3330,6 @@ func (dm *DmSoft) AiYoloObjectsToString(objects string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetKeyState 获取按键状态
 // 参数: vk - 虚拟键码
 // 返回: 成功返回1,失败返回0
@@ -3628,7 +3339,6 @@ func (dm *DmSoft) GetKeyState(vk int32) int32 {
 	return int32(ret)
 }
 
-
 // RightClick 鼠标右键单击
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) RightClick() int32 {
@@ -3636,7 +3346,6 @@ func (dm *DmSoft) RightClick() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // EnumWindowByProcess 通过进程名枚举窗口
 // 参数: process_name - 进程名称
@@ -3653,7 +3362,6 @@ func (dm *DmSoft) EnumWindowByProcess(process_name string, title string, class_n
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetDiskModel 获取磁盘型号
 // 参数: index - 索引(从0开始)
 // 返回: 结果字符串
@@ -3662,7 +3370,6 @@ func (dm *DmSoft) GetDiskModel(index int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(index), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // SendStringIme 通过输入法发送字符串
 // 参数: str - 要查找的字符串
@@ -3673,7 +3380,6 @@ func (dm *DmSoft) SendStringIme(str string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(strPtr)), 0)
 	return int32(ret)
 }
-
 
 // AppendPicAddr 追加图片地址
 // 参数: pic_info - 图片信息
@@ -3687,7 +3393,6 @@ func (dm *DmSoft) AppendPicAddr(pic_info string, addr int32, size int32) string 
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // DeleteFolder 删除文件夹
 // 参数: folder_name - folder_name
 // 返回: 成功返回1,失败返回0
@@ -3698,7 +3403,6 @@ func (dm *DmSoft) DeleteFolder(folder_name string) int32 {
 	return int32(ret)
 }
 
-
 // GetDPI 获取系统DPI
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetDPI() int32 {
@@ -3707,7 +3411,6 @@ func (dm *DmSoft) GetDPI() int32 {
 	return int32(ret)
 }
 
-
 // GetCpuType 获取CPU类型
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetCpuType() int32 {
@@ -3715,7 +3418,6 @@ func (dm *DmSoft) GetCpuType() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // WriteIntAddr 写入整数(指定地址)
 // 参数: hwnd - 窗口句柄
@@ -3729,7 +3431,6 @@ func (dm *DmSoft) WriteIntAddr(hwnd int32, addr int64, type_ int32, v int64) int
 	return int32(ret)
 }
 
-
 // GetSpecialWindow GetSpecialWindow
 // 参数: flag - 查找标志
 // 返回: 成功返回1,失败返回0
@@ -3738,7 +3439,6 @@ func (dm *DmSoft) GetSpecialWindow(flag int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(flag), 0)
 	return int32(ret)
 }
-
 
 // EnumProcess 枚举进程
 // 参数: name - 名称
@@ -3750,7 +3450,6 @@ func (dm *DmSoft) EnumProcess(name string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // AsmClear 清除汇编代码
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) AsmClear() int32 {
@@ -3758,7 +3457,6 @@ func (dm *DmSoft) AsmClear() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // GetWindowState 获取窗口状态
 // 参数: hwnd - 窗口句柄
@@ -3769,7 +3467,6 @@ func (dm *DmSoft) GetWindowState(hwnd int32, flag int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(flag))
 	return int32(ret)
 }
-
 
 // FindStrFastE 快速查找文字,返回坐标字符串
 // 参数: x1 - 左上角X坐标
@@ -3788,7 +3485,6 @@ func (dm *DmSoft) FindStrFastE(x1 int32, y1 int32, x2 int32, y2 int32, str strin
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // SetColGapNoDict 设置列间距(无字典模式)
 // 参数: col_gap - 列间距(像素)
 // 返回: 成功返回1,失败返回0
@@ -3797,7 +3493,6 @@ func (dm *DmSoft) SetColGapNoDict(col_gap int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(col_gap), 0)
 	return int32(ret)
 }
-
 
 // AiYoloDetectObjects YOLO目标检测
 // 参数: x1 - 左上角X坐标
@@ -3813,7 +3508,6 @@ func (dm *DmSoft) AiYoloDetectObjects(x1 int32, y1 int32, x2 int32, y2 int32, pr
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // RunApp 运行程序
 // 参数: path - 资源路径
 // 参数: mode - 模式
@@ -3824,7 +3518,6 @@ func (dm *DmSoft) RunApp(path string, mode int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(pathPtr)), uintptr(mode))
 	return int32(ret)
 }
-
 
 // FindString 查找字符串
 // 参数: hwnd - 窗口句柄
@@ -3840,7 +3533,6 @@ func (dm *DmSoft) FindString(hwnd int32, addr_range string, string_value string,
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetOsType 获取操作系统类型
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetOsType() int32 {
@@ -3848,7 +3540,6 @@ func (dm *DmSoft) GetOsType() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // Ocr OCR识别指定区域文字
 // 参数: x1 - 左上角X坐标
@@ -3865,7 +3556,6 @@ func (dm *DmSoft) Ocr(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim 
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // ReadString 读取字符串
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -3879,7 +3569,6 @@ func (dm *DmSoft) ReadString(hwnd int32, addr string, type_ int32, length int32)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // ReadFloatAddr 读取浮点数(指定地址)
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -3889,7 +3578,6 @@ func (dm *DmSoft) ReadFloatAddr(hwnd int32, addr int64) float32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(addr))
 	return float32(ret)
 }
-
 
 // Beep 蜂鸣器
 // 参数: fre - 频率(Hz)
@@ -3901,7 +3589,6 @@ func (dm *DmSoft) Beep(fre int32, delay int32) int32 {
 	return int32(ret)
 }
 
-
 // LoadAi 从文件加载AI模型
 // 参数: file - 文件路径
 // 返回: 成功返回1,失败返回0
@@ -3912,7 +3599,6 @@ func (dm *DmSoft) LoadAi(file string) int32 {
 	return int32(ret)
 }
 
-
 // GetCpuUsage 获取CPU使用率
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetCpuUsage() int32 {
@@ -3920,7 +3606,6 @@ func (dm *DmSoft) GetCpuUsage() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // EnableShareDict 启用共享字库
 // 参数: en - 启用标志(1:启用,0:禁用)
@@ -3930,7 +3615,6 @@ func (dm *DmSoft) EnableShareDict(en int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(en), 0)
 	return int32(ret)
 }
-
 
 // AiYoloDetectObjectsToFile YOLO目标检测并保存到文件
 // 参数: x1 - 左上角X坐标
@@ -3949,7 +3633,6 @@ func (dm *DmSoft) AiYoloDetectObjectsToFile(x1 int32, y1 int32, x2 int32, y2 int
 	return int32(ret)
 }
 
-
 // FoobarUnlock 解锁Foobar窗口
 // 参数: hwnd - 窗口句柄
 // 返回: 成功返回1,失败返回0
@@ -3958,7 +3641,6 @@ func (dm *DmSoft) FoobarUnlock(hwnd int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(hwnd), 0)
 	return int32(ret)
 }
-
 
 // GetSystemInfo 获取系统信息
 // 参数: type_ - 类型
@@ -3971,7 +3653,6 @@ func (dm *DmSoft) GetSystemInfo(type_ string, method int32) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetResultCount GetResultCount
 // 参数: str - 要查找的字符串
 // 返回: 成功返回1,失败返回0
@@ -3981,7 +3662,6 @@ func (dm *DmSoft) GetResultCount(str string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(strPtr)), 0)
 	return int32(ret)
 }
-
 
 // EnumWindow 枚举窗口
 // 参数: parent - 父窗口句柄
@@ -3997,7 +3677,6 @@ func (dm *DmSoft) EnumWindow(parent int32, title string, class_name string, filt
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetResultPos GetResultPos
 // 参数: str - 要查找的字符串
 // 参数: index - 索引(从0开始)
@@ -4011,7 +3690,6 @@ func (dm *DmSoft) GetResultPos(str string, index int32, x *int32, y *int32) int3
 	return int32(ret)
 }
 
-
 // KeyDown 按下按键(虚拟键码)
 // 参数: vk - 虚拟键码
 // 返回: 成功返回1,失败返回0
@@ -4021,7 +3699,6 @@ func (dm *DmSoft) KeyDown(vk int32) int32 {
 	return int32(ret)
 }
 
-
 // SetWordLineHeightNoDict 设置文字识别行高(无字典模式)
 // 参数: line_height - 行高(像素)
 // 返回: 成功返回1,失败返回0
@@ -4030,7 +3707,6 @@ func (dm *DmSoft) SetWordLineHeightNoDict(line_height int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(line_height), 0)
 	return int32(ret)
 }
-
 
 // AiFindPicMem AI内存查找图片
 // 参数: x1 - 左上角X坐标
@@ -4050,7 +3726,6 @@ func (dm *DmSoft) AiFindPicMem(x1 int32, y1 int32, x2 int32, y2 int32, pic_info 
 	return int32(ret)
 }
 
-
 // FoobarTextRect 设置Foobar文字区域
 // 参数: hwnd - 窗口句柄
 // 参数: x - X坐标
@@ -4064,7 +3739,6 @@ func (dm *DmSoft) FoobarTextRect(hwnd int32, x int32, y int32, w int32, h int32)
 	return int32(ret)
 }
 
-
 // GetPointWindow 获取指定坐标的窗口
 // 参数: x - X坐标
 // 参数: y - Y坐标
@@ -4074,7 +3748,6 @@ func (dm *DmSoft) GetPointWindow(x int32, y int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(x), uintptr(y))
 	return int32(ret)
 }
-
 
 // FindMultiColorEx 高级多点找色
 // 参数: x1 - 左上角X坐标
@@ -4094,7 +3767,6 @@ func (dm *DmSoft) FindMultiColorEx(x1 int32, y1 int32, x2 int32, y2 int32, first
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // FreeProcessMemory 释放进程内存
 // 参数: hwnd - 窗口句柄
 // 返回: 成功返回1,失败返回0
@@ -4104,7 +3776,6 @@ func (dm *DmSoft) FreeProcessMemory(hwnd int32) int32 {
 	return int32(ret)
 }
 
-
 // GetMachineCodeNoMac 获取机器码(不含MAC地址)
 // 返回: 结果字符串
 func (dm *DmSoft) GetMachineCodeNoMac() string {
@@ -4112,7 +3783,6 @@ func (dm *DmSoft) GetMachineCodeNoMac() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // FindWindowByProcess 通过进程名查找窗口
 // 参数: process_name - 进程名称
@@ -4127,7 +3797,6 @@ func (dm *DmSoft) FindWindowByProcess(process_name string, class_name string, ti
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(process_namePtr)), uintptr(unsafe.Pointer(class_namePtr)), uintptr(unsafe.Pointer(title_namePtr)), 0, 0)
 	return int32(ret)
 }
-
 
 // GetColorNum 获取区域中指定颜色的数量
 // 参数: x1 - 左上角X坐标
@@ -4144,7 +3813,6 @@ func (dm *DmSoft) GetColorNum(x1 int32, y1 int32, x2 int32, y2 int32, color stri
 	return int32(ret)
 }
 
-
 // SetWindowState 设置窗口状态
 // 参数: hwnd - 窗口句柄
 // 参数: flag - 查找标志
@@ -4155,7 +3823,6 @@ func (dm *DmSoft) SetWindowState(hwnd int32, flag int32) int32 {
 	return int32(ret)
 }
 
-
 // CheckFontSmooth 检查字体平滑
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) CheckFontSmooth() int32 {
@@ -4163,7 +3830,6 @@ func (dm *DmSoft) CheckFontSmooth() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // IsFolderExist 判断文件夹是否存在
 // 参数: folder - folder
@@ -4175,7 +3841,6 @@ func (dm *DmSoft) IsFolderExist(folder string) int32 {
 	return int32(ret)
 }
 
-
 // FaqCancel 取消FAQ请求
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FaqCancel() int32 {
@@ -4183,7 +3848,6 @@ func (dm *DmSoft) FaqCancel() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // SetWindowTransparent 设置窗口透明度
 // 参数: hwnd - 窗口句柄
@@ -4195,7 +3859,6 @@ func (dm *DmSoft) SetWindowTransparent(hwnd int32, v int32) int32 {
 	return int32(ret)
 }
 
-
 // SwitchBindWindow 切换绑定窗口
 // 参数: hwnd - 窗口句柄
 // 返回: 成功返回1,失败返回0
@@ -4205,7 +3868,6 @@ func (dm *DmSoft) SwitchBindWindow(hwnd int32) int32 {
 	return int32(ret)
 }
 
-
 // EnableFontSmooth 启用字体平滑
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) EnableFontSmooth() int32 {
@@ -4213,7 +3875,6 @@ func (dm *DmSoft) EnableFontSmooth() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // StringToData 字符串转数据
 // 参数: string_value - 字符串值
@@ -4225,7 +3886,6 @@ func (dm *DmSoft) StringToData(string_value string, type_ int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(string_valuePtr)), uintptr(type_))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // GetWindowRect 获取窗口矩形
 // 参数: hwnd - 窗口句柄
@@ -4239,7 +3899,6 @@ func (dm *DmSoft) GetWindowRect(hwnd int32, x1 *int32, y1 *int32, x2 *int32, y2 
 	ret, _, _ := syscall.Syscall6(funAddr, 6, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(x1)), uintptr(unsafe.Pointer(y1)), uintptr(unsafe.Pointer(x2)), uintptr(unsafe.Pointer(y2)))
 	return int32(ret)
 }
-
 
 // FindPicEx 高级查找图片,返回所有匹配位置
 // 参数: x1 - 左上角X坐标
@@ -4259,7 +3918,6 @@ func (dm *DmSoft) FindPicEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_name str
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetWords 获取区域内的所有文字
 // 参数: x1 - 左上角X坐标
 // 参数: y1 - 左上角Y坐标
@@ -4275,7 +3933,6 @@ func (dm *DmSoft) GetWords(x1 int32, y1 int32, x2 int32, y2 int32, color string,
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // SetExactOcr 设置精确OCR模式
 // 参数: exact_ocr - 精确OCR标志
 // 返回: 成功返回1,失败返回0
@@ -4284,7 +3941,6 @@ func (dm *DmSoft) SetExactOcr(exact_ocr int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(exact_ocr), 0)
 	return int32(ret)
 }
-
 
 // EnableMouseSync EnableMouseSync
 // 参数: enable - 启用标志(1:启用,0:禁用)
@@ -4296,7 +3952,6 @@ func (dm *DmSoft) EnableMouseSync(enable int32, time_out int32) int32 {
 	return int32(ret)
 }
 
-
 // CapturePre CapturePre
 // 参数: file - 文件路径
 // 返回: 成功返回1,失败返回0
@@ -4306,7 +3961,6 @@ func (dm *DmSoft) CapturePre(file string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return int32(ret)
 }
-
 
 // BindWindowEx 扩展绑定窗口
 // 参数: hwnd - 窗口句柄
@@ -4326,7 +3980,6 @@ func (dm *DmSoft) BindWindowEx(hwnd int32, display string, mouse string, keypad 
 	return int32(ret)
 }
 
-
 // FaqCaptureString 将字符串添加到FAQ缓存
 // 参数: str - 要查找的字符串
 // 返回: 成功返回1,失败返回0
@@ -4337,7 +3990,6 @@ func (dm *DmSoft) FaqCaptureString(str string) int32 {
 	return int32(ret)
 }
 
-
 // FoobarTextLineGap 设置Foobar文字行间距
 // 参数: hwnd - 窗口句柄
 // 参数: gap - gap
@@ -4347,7 +3999,6 @@ func (dm *DmSoft) FoobarTextLineGap(hwnd int32, gap int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(gap))
 	return int32(ret)
 }
-
 
 // FoobarDrawLine Foobar绘制线条
 // 参数: hwnd - 窗口句柄
@@ -4366,7 +4017,6 @@ func (dm *DmSoft) FoobarDrawLine(hwnd int32, x1 int32, y1 int32, x2 int32, y2 in
 	return int32(ret)
 }
 
-
 // FindInputMethod 查找输入法
 // 参数: id - 标识ID
 // 返回: 成功返回1,失败返回0
@@ -4376,7 +4026,6 @@ func (dm *DmSoft) FindInputMethod(id string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(idPtr)), 0)
 	return int32(ret)
 }
-
 
 // SetPicPwd SetPicPwd
 // 参数: pwd - 密码
@@ -4388,7 +4037,6 @@ func (dm *DmSoft) SetPicPwd(pwd string) int32 {
 	return int32(ret)
 }
 
-
 // GetCursorSpot 获取鼠标光点位置
 // 返回: 结果字符串
 func (dm *DmSoft) GetCursorSpot() string {
@@ -4397,7 +4045,6 @@ func (dm *DmSoft) GetCursorSpot() string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // InitCri 初始化临界区
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) InitCri() int32 {
@@ -4405,7 +4052,6 @@ func (dm *DmSoft) InitCri() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // FindPicMemE 在内存中查找图片,返回坐标字符串
 // 参数: x1 - 左上角X坐标
@@ -4424,7 +4070,6 @@ func (dm *DmSoft) FindPicMemE(x1 int32, y1 int32, x2 int32, y2 int32, pic_info s
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // FindStrFastS 快速查找文字,返回字符串
 // 参数: x1 - 左上角X坐标
@@ -4445,7 +4090,6 @@ func (dm *DmSoft) FindStrFastS(x1 int32, y1 int32, x2 int32, y2 int32, str strin
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // DeleteIniPwd 删除INI配置项(带密码)
 // 参数: section - INI节名
 // 参数: key - 键名
@@ -4461,7 +4105,6 @@ func (dm *DmSoft) DeleteIniPwd(section string, key string, file string, pwd stri
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(sectionPtr)), uintptr(unsafe.Pointer(keyPtr)), uintptr(unsafe.Pointer(filePtr)), uintptr(unsafe.Pointer(pwdPtr)), 0)
 	return int32(ret)
 }
-
 
 // AiYoloDetectObjectsToDataBmp YOLO目标检测到BMP数据
 // 参数: x1 - 左上角X坐标
@@ -4480,7 +4123,6 @@ func (dm *DmSoft) AiYoloDetectObjectsToDataBmp(x1 int32, y1 int32, x2 int32, y2 
 	return int32(ret)
 }
 
-
 // AiYoloFreeModel 释放YOLO模型
 // 参数: index - 索引(从0开始)
 // 返回: 成功返回1,失败返回0
@@ -4490,7 +4132,6 @@ func (dm *DmSoft) AiYoloFreeModel(index int32) int32 {
 	return int32(ret)
 }
 
-
 // DisableFontSmooth 禁用字体平滑
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DisableFontSmooth() int32 {
@@ -4498,7 +4139,6 @@ func (dm *DmSoft) DisableFontSmooth() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // SetExitThread 设置退出线程
 // 参数: mode - 模式
@@ -4508,7 +4148,6 @@ func (dm *DmSoft) SetExitThread(mode int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(mode), 0)
 	return int32(ret)
 }
-
 
 // FindPicMemEx 高级在内存中查找图片
 // 参数: x1 - 左上角X坐标
@@ -4528,7 +4167,6 @@ func (dm *DmSoft) FindPicMemEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_info 
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // GetDmCount 获取大漠对象计数
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetDmCount() int32 {
@@ -4536,7 +4174,6 @@ func (dm *DmSoft) GetDmCount() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // FindMulColor FindMulColor
 // 参数: x1 - 左上角X坐标
@@ -4553,7 +4190,6 @@ func (dm *DmSoft) FindMulColor(x1 int32, y1 int32, x2 int32, y2 int32, color str
 	return int32(ret)
 }
 
-
 // FaqFetch 获取FAQ返回结果
 // 返回: 结果字符串
 func (dm *DmSoft) FaqFetch() string {
@@ -4561,7 +4197,6 @@ func (dm *DmSoft) FaqFetch() string {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // RegExNoMac 扩展注册大漠插件(不含MAC)
 // 参数: code - 注册码
@@ -4577,7 +4212,6 @@ func (dm *DmSoft) RegExNoMac(code string, ver string, ip string) int32 {
 	return int32(ret)
 }
 
-
 // FoobarUpdate 更新Foobar窗口
 // 参数: hwnd - 窗口句柄
 // 返回: 成功返回1,失败返回0
@@ -4586,7 +4220,6 @@ func (dm *DmSoft) FoobarUpdate(hwnd int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(hwnd), 0)
 	return int32(ret)
 }
-
 
 // ReadDouble 读取双精度浮点数
 // 参数: hwnd - 窗口句柄
@@ -4599,7 +4232,6 @@ func (dm *DmSoft) ReadDouble(hwnd int32, addr string) float64 {
 	return float64(ret)
 }
 
-
 // GetCursorShapeEx 获取鼠标形状(扩展)
 // 参数: type_ - 类型
 // 返回: 结果字符串
@@ -4608,7 +4240,6 @@ func (dm *DmSoft) GetCursorShapeEx(type_ int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(type_), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // DoubleToData 双精度转数据
 // 参数: double_value - 双精度浮点数值
@@ -4619,7 +4250,6 @@ func (dm *DmSoft) DoubleToData(double_value float64) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // SetWordGapNoDict 设置字间距(无字典模式)
 // 参数: word_gap - 字间距(像素)
 // 返回: 成功返回1,失败返回0
@@ -4628,7 +4258,6 @@ func (dm *DmSoft) SetWordGapNoDict(word_gap int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(word_gap), 0)
 	return int32(ret)
 }
-
 
 // ReadDoubleAddr 读取双精度浮点数(指定地址)
 // 参数: hwnd - 窗口句柄
@@ -4640,7 +4269,6 @@ func (dm *DmSoft) ReadDoubleAddr(hwnd int32, addr int64) float64 {
 	return float64(ret)
 }
 
-
 // FoobarLock 锁定Foobar窗口
 // 参数: hwnd - 窗口句柄
 // 返回: 成功返回1,失败返回0
@@ -4649,7 +4277,6 @@ func (dm *DmSoft) FoobarLock(hwnd int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(hwnd), 0)
 	return int32(ret)
 }
-
 
 // FindStrFastExS 高级快速查找文字,返回详细字符串
 // 参数: x1 - 左上角X坐标
@@ -4667,7 +4294,6 @@ func (dm *DmSoft) FindStrFastExS(x1 int32, y1 int32, x2 int32, y2 int32, str str
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // FindStrWithFont 指定字体查找文字
 // 参数: x1 - 左上角X坐标
@@ -4692,7 +4318,6 @@ func (dm *DmSoft) FindStrWithFont(x1 int32, y1 int32, x2 int32, y2 int32, str st
 	return int32(ret)
 }
 
-
 // VirtualProtectEx 修改目标进程内存保护属性
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -4706,7 +4331,6 @@ func (dm *DmSoft) VirtualProtectEx(hwnd int32, addr int64, size int32, type_ int
 	return int32(ret)
 }
 
-
 // GetWindowClass 获取窗口类名
 // 参数: hwnd - 窗口句柄
 // 返回: 结果字符串
@@ -4715,7 +4339,6 @@ func (dm *DmSoft) GetWindowClass(hwnd int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(hwnd), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // SetMouseDelay 设置鼠标操作延迟
 // 参数: type_ - 类型
@@ -4727,7 +4350,6 @@ func (dm *DmSoft) SetMouseDelay(type_ string, delay int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(type_Ptr)), uintptr(delay))
 	return int32(ret)
 }
-
 
 // ReadInt 读取整数
 // 参数: hwnd - 窗口句柄
@@ -4741,7 +4363,6 @@ func (dm *DmSoft) ReadInt(hwnd int32, addr string, type_ int32) int64 {
 	return int64(ret)
 }
 
-
 // GetAveRGB GetAveRGB
 // 参数: x1 - 左上角X坐标
 // 参数: y1 - 左上角Y坐标
@@ -4753,7 +4374,6 @@ func (dm *DmSoft) GetAveRGB(x1 int32, y1 int32, x2 int32, y2 int32) string {
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // GetScreenData 获取屏幕数据
 // 参数: x1 - 左上角X坐标
@@ -4767,7 +4387,6 @@ func (dm *DmSoft) GetScreenData(x1 int32, y1 int32, x2 int32, y2 int32) int32 {
 	return int32(ret)
 }
 
-
 // GetMouseSpeed 获取鼠标移动速度
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetMouseSpeed() int32 {
@@ -4775,7 +4394,6 @@ func (dm *DmSoft) GetMouseSpeed() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // Int64ToInt32 int64转int32
 // 参数: v - 值
@@ -4785,7 +4403,6 @@ func (dm *DmSoft) Int64ToInt32(v int64) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(v), 0)
 	return int32(ret)
 }
-
 
 // FindFloatEx 高级查找浮点数
 // 参数: hwnd - 窗口句柄
@@ -4803,7 +4420,6 @@ func (dm *DmSoft) FindFloatEx(hwnd int32, addr_range string, float_value_min flo
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // FoobarPrintText Foobar打印文字
 // 参数: hwnd - 窗口句柄
 // 参数: text - 文本内容
@@ -4816,7 +4432,6 @@ func (dm *DmSoft) FoobarPrintText(hwnd int32, text string, color string) int32 {
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(textPtr)), uintptr(unsafe.Pointer(colorPtr)), 0, 0)
 	return int32(ret)
 }
-
 
 // OcrEx 高级OCR识别
 // 参数: x1 - 左上角X坐标
@@ -4833,7 +4448,6 @@ func (dm *DmSoft) OcrEx(x1 int32, y1 int32, x2 int32, y2 int32, color string, si
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // FreePic FreePic
 // 参数: pic_name - 图片名称(多个用|分隔)
 // 返回: 成功返回1,失败返回0
@@ -4843,7 +4457,6 @@ func (dm *DmSoft) FreePic(pic_name string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(pic_namePtr)), 0)
 	return int32(ret)
 }
-
 
 // WriteData 写入数据
 // 参数: hwnd - 窗口句柄
@@ -4858,7 +4471,6 @@ func (dm *DmSoft) WriteData(hwnd int32, addr string, data string) int32 {
 	return int32(ret)
 }
 
-
 // MoveDD DD驱动移动鼠标
 // 参数: dx - dx
 // 参数: dy - dy
@@ -4869,7 +4481,6 @@ func (dm *DmSoft) MoveDD(dx int32, dy int32) int32 {
 	return int32(ret)
 }
 
-
 // SetShowErrorMsg 设置是否显示错误信息
 // 参数: show - 显示标志(1:显示,0:隐藏)
 // 返回: 成功返回1,失败返回0
@@ -4878,7 +4489,6 @@ func (dm *DmSoft) SetShowErrorMsg(show int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(show), 0)
 	return int32(ret)
 }
-
 
 // SetDictMem 从内存设置字库
 // 参数: index - 索引(从0开始)
@@ -4891,7 +4501,6 @@ func (dm *DmSoft) SetDictMem(index int32, addr int32, size int32) int32 {
 	return int32(ret)
 }
 
-
 // SetClipboard 设置剪贴板内容
 // 参数: data - 数据
 // 返回: 成功返回1,失败返回0
@@ -4901,7 +4510,6 @@ func (dm *DmSoft) SetClipboard(data string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(dataPtr)), 0)
 	return int32(ret)
 }
-
 
 // FindPicMem 在内存中查找图片
 // 参数: x1 - 左上角X坐标
@@ -4923,7 +4531,6 @@ func (dm *DmSoft) FindPicMem(x1 int32, y1 int32, x2 int32, y2 int32, pic_info st
 	return int32(ret)
 }
 
-
 // CreateFoobarRoundRect 创建圆角矩形Foobar窗口
 // 参数: hwnd - 窗口句柄
 // 参数: x - X坐标
@@ -4939,7 +4546,6 @@ func (dm *DmSoft) CreateFoobarRoundRect(hwnd int32, x int32, y int32, w int32, h
 	return int32(ret)
 }
 
-
 // WriteFloat 写入浮点数
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -4952,7 +4558,6 @@ func (dm *DmSoft) WriteFloat(hwnd int32, addr string, float_value float32) int32
 	return int32(ret)
 }
 
-
 // VirtualFreeEx VirtualFreeEx
 // 参数: hwnd - 窗口句柄
 // 参数: addr - 内存地址
@@ -4962,7 +4567,6 @@ func (dm *DmSoft) VirtualFreeEx(hwnd int32, addr int64) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(addr))
 	return int32(ret)
 }
-
 
 // GetDictInfo 获取字库信息
 // 参数: str - 要查找的字符串
@@ -4978,7 +4582,6 @@ func (dm *DmSoft) GetDictInfo(str string, font_name string, font_size int32, fla
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // KeyPress 按键(虚拟键码)
 // 参数: vk - 虚拟键码
 // 返回: 成功返回1,失败返回0
@@ -4987,7 +4590,6 @@ func (dm *DmSoft) KeyPress(vk int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(vk), 0)
 	return int32(ret)
 }
-
 
 // SetClientSize SetClientSize
 // 参数: hwnd - 窗口句柄
@@ -4999,7 +4601,6 @@ func (dm *DmSoft) SetClientSize(hwnd int32, width int32, height int32) int32 {
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(width), uintptr(height), 0, 0)
 	return int32(ret)
 }
-
 
 // ExcludePos 排除位置
 // 参数: all_pos - 所有位置字符串
@@ -5016,7 +4617,6 @@ func (dm *DmSoft) ExcludePos(all_pos string, type_ int32, x1 int32, y1 int32, x2
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // MoveToEx 扩展移动鼠标,支持随机偏移
 // 参数: x - X坐标
 // 参数: y - Y坐标
@@ -5029,7 +4629,6 @@ func (dm *DmSoft) MoveToEx(x int32, y int32, w int32, h int32) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // SetDictPwd 设置字库密码
 // 参数: pwd - 密码
 // 返回: 成功返回1,失败返回0
@@ -5039,7 +4638,6 @@ func (dm *DmSoft) SetDictPwd(pwd string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(pwdPtr)), 0)
 	return int32(ret)
 }
-
 
 // FoobarSetFont 设置Foobar字体
 // 参数: hwnd - 窗口句柄
@@ -5054,7 +4652,6 @@ func (dm *DmSoft) FoobarSetFont(hwnd int32, font_name string, size int32, flag i
 	return int32(ret)
 }
 
-
 // GetNetTimeByIp GetNetTimeByIp
 // 参数: ip - IP地址
 // 返回: 结果字符串
@@ -5065,7 +4662,6 @@ func (dm *DmSoft) GetNetTimeByIp(ip string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // EnableKeypadPatch 启用键盘补丁
 // 参数: enable - 启用标志(1:启用,0:禁用)
 // 返回: 成功返回1,失败返回0
@@ -5074,7 +4670,6 @@ func (dm *DmSoft) EnableKeypadPatch(enable int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(enable), 0)
 	return int32(ret)
 }
-
 
 // FoobarStartGif Foobar开始播放GIF
 // 参数: hwnd - 窗口句柄
@@ -5090,7 +4685,6 @@ func (dm *DmSoft) FoobarStartGif(hwnd int32, x int32, y int32, pic_name string, 
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(hwnd), uintptr(x), uintptr(y), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(repeat_limit), uintptr(delay), 0, 0)
 	return int32(ret)
 }
-
 
 // FindMultiColorE FindMultiColorE
 // 参数: x1 - 左上角X坐标
@@ -5110,7 +4704,6 @@ func (dm *DmSoft) FindMultiColorE(x1 int32, y1 int32, x2 int32, y2 int32, first_
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // SetWordGap 设置字间距
 // 参数: word_gap - 字间距(像素)
 // 返回: 成功返回1,失败返回0
@@ -5120,7 +4713,6 @@ func (dm *DmSoft) SetWordGap(word_gap int32) int32 {
 	return int32(ret)
 }
 
-
 // GetLocale 获取区域
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetLocale() int32 {
@@ -5128,7 +4720,6 @@ func (dm *DmSoft) GetLocale() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // GetModuleSize 获取模块大小
 // 参数: hwnd - 窗口句柄
@@ -5140,7 +4731,6 @@ func (dm *DmSoft) GetModuleSize(hwnd int32, module_name string) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(module_namePtr)))
 	return int32(ret)
 }
-
 
 // FindStrE 查找文字,返回坐标字符串
 // 参数: x1 - 左上角X坐标
@@ -5159,7 +4749,6 @@ func (dm *DmSoft) FindStrE(x1 int32, y1 int32, x2 int32, y2 int32, str string, c
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // KeyUp 弹起按键(虚拟键码)
 // 参数: vk - 虚拟键码
 // 返回: 成功返回1,失败返回0
@@ -5168,7 +4757,6 @@ func (dm *DmSoft) KeyUp(vk int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(vk), 0)
 	return int32(ret)
 }
-
 
 // SortPosDistance 按距离排序位置
 // 参数: all_pos - 所有位置字符串
@@ -5183,7 +4771,6 @@ func (dm *DmSoft) SortPosDistance(all_pos string, type_ int32, x int32, y int32)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // EnableDisplayDebug 启用显示调试
 // 参数: enable_debug - enable_debug
 // 返回: 成功返回1,失败返回0
@@ -5192,7 +4779,6 @@ func (dm *DmSoft) EnableDisplayDebug(enable_debug int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(enable_debug), 0)
 	return int32(ret)
 }
-
 
 // DeleteIni 删除INI配置项
 // 参数: section - INI节名
@@ -5207,7 +4793,6 @@ func (dm *DmSoft) DeleteIni(section string, key string, file string) int32 {
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(sectionPtr)), uintptr(unsafe.Pointer(keyPtr)), uintptr(unsafe.Pointer(filePtr)), 0, 0)
 	return int32(ret)
 }
-
 
 // FindIntEx 高级查找整数
 // 参数: hwnd - 窗口句柄
@@ -5226,7 +4811,6 @@ func (dm *DmSoft) FindIntEx(hwnd int32, addr_range string, int_value_min int64, 
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // BindWindow 绑定窗口
 // 参数: hwnd - 窗口句柄
 // 参数: display - 显示模式
@@ -5243,7 +4827,6 @@ func (dm *DmSoft) BindWindow(hwnd int32, display string, mouse string, keypad st
 	return int32(ret)
 }
 
-
 // GetPicSize GetPicSize
 // 参数: pic_name - 图片名称(多个用|分隔)
 // 返回: 结果字符串
@@ -5254,7 +4837,6 @@ func (dm *DmSoft) GetPicSize(pic_name string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // AsmSetTimeout 设置汇编执行超时
 // 参数: time_out - 超时时间(毫秒)
 // 参数: param - 参数
@@ -5264,7 +4846,6 @@ func (dm *DmSoft) AsmSetTimeout(time_out int32, param int32) int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(time_out), uintptr(param))
 	return int32(ret)
 }
-
 
 // LockMouseRect 锁定鼠标移动区域
 // 参数: x1 - 左上角X坐标
@@ -5277,7 +4858,6 @@ func (dm *DmSoft) LockMouseRect(x1 int32, y1 int32, x2 int32, y2 int32) int32 {
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), 0)
 	return int32(ret)
 }
-
 
 // FindPicSimE FindPicSimE
 // 参数: x1 - 左上角X坐标
@@ -5297,7 +4877,6 @@ func (dm *DmSoft) FindPicSimE(x1 int32, y1 int32, x2 int32, y2 int32, pic_name s
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // EnumIniSectionPwd 枚举INI节(带密码)
 // 参数: file - 文件路径
 // 参数: pwd - 密码
@@ -5310,7 +4889,6 @@ func (dm *DmSoft) EnumIniSectionPwd(file string, pwd string) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // RightUp 鼠标右键弹起
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) RightUp() int32 {
@@ -5318,7 +4896,6 @@ func (dm *DmSoft) RightUp() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // FoobarTextPrintDir 设置Foobar文字打印方向
 // 参数: hwnd - 窗口句柄
@@ -5330,7 +4907,6 @@ func (dm *DmSoft) FoobarTextPrintDir(hwnd int32, dir int32) int32 {
 	return int32(ret)
 }
 
-
 // GetDir 获取特殊目录路径
 // 参数: type_ - 类型
 // 返回: 结果字符串
@@ -5339,7 +4915,6 @@ func (dm *DmSoft) GetDir(type_ int32) string {
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(type_), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
-
 
 // Hex32 32位整数转十六进制字符串
 // 参数: v - 值
@@ -5350,7 +4925,6 @@ func (dm *DmSoft) Hex32(v int32) string {
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
-
 // LeaveCri 离开临界区
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) LeaveCri() int32 {
@@ -5359,7 +4933,6 @@ func (dm *DmSoft) LeaveCri() int32 {
 	return int32(ret)
 }
 
-
 // GetTime 获取系统时间
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetTime() int32 {
@@ -5367,7 +4940,6 @@ func (dm *DmSoft) GetTime() int32 {
 	ret, _, _ := syscall.Syscall(funAddr, 1, dm.obj, 0, 0)
 	return int32(ret)
 }
-
 
 // FoobarFillRect Foobar填充矩形
 // 参数: hwnd - 窗口句柄
