@@ -1,91 +1,65 @@
-<div align="center">
-
 # 🚀 大漠插件 Go 语言封装库
 
-[![Go Version](https://img.shields.io/badge/Go-1.16+-00ADD8?style=flat&logo=go)](https://golang.org/)
+[![Go Version](https://img.shields.io/badge/Go-1.16%2B-00ADD8?style=flat&logo=go)](https://golang.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=flat&logo=windows)](https://www.microsoft.com/windows)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
-[![DM Version](https://img.shields.io/badge/大漠版本-7.2424-orange?style=flat)](http://www.dmwebsite.cn/)
+[![Go Report Card](https://goreportcard.com/badge/gitee.com/yuan71058/dm72424-go)](https://goreportcard.com/report/gitee.com/yuan71058/dm72424-go)
 
-**将大漠插件完整封装为 Go 语言模块，支持 428+ 函数接口**
-
-[快速开始](#-快速开始) • [安装使用](#-安装使用) • [API文档](#-api文档) • [示例代码](#-示例代码)
-
-</div>
+> 大漠插件 7.2424 版本的 Go 语言封装库，支持 428 个函数接口，开箱即用！
 
 ---
 
-## 📖 项目简介
+## 📖 目录
 
-本项目是大漠插件（dm.dll）的 Go 语言封装库，将原 C++ 版本的大漠插件接口完整翻译为 Go 语言，支持大漠插件 7.2424 版本的所有函数接口。
+- [项目简介](#-项目简介)
+- [快速开始](#-快速开始)
+- [安装使用](#-安装使用)
+- [API 文档](#-api-文档)
+- [函数分类](#-函数分类)
+- [注意事项](#-注意事项)
+- [常见问题](#-常见问题)
+- [更新日志](#-更新日志)
+
+---
+
+## 🎯 项目简介
+
+本项目是大漠插件（dm.dll）的 Go 语言封装库，将原 C++ 版本的大漠插件接口完整翻译为 Go 语言。
 
 ### ✨ 特性
 
-- 🎯 **完整封装** - 支持 428+ 个大漠函数接口
-- 📦 **开箱即用** - 可作为 Go 模块直接导入使用
-- 📝 **详细注释** - 所有函数都有中文注释说明
-- 🔧 **简单易用** - 提供完整的使用示例
-- 🖥️ **跨平台编译** - 支持 Windows 32位/64位系统
+- 📦 **完整封装** - 支持大漠插件 7.2424 版本全部 428 个函数
+- 🎯 **开箱即用** - 简单导入即可使用，无需复杂配置
+- 📝 **详细注释** - 所有函数都有完整的中文注释
+- 🔧 **类型安全** - 完整的类型定义，编译时检查
+- 📚 **示例丰富** - 提供完整的使用示例
 
----
-
-## 📁 目录结构
+### 📁 目录结构
 
 ```
 dm72424-go/
-├── dmsoft/                 # 大漠插件封装包
-│   ├── dmsoft.go          # 接口定义
-│   └── dmsoft_impl.go     # 接口实现
-├── example/               # 使用示例
-│   └── main.go           # 示例代码
-├── Go.dll                # 破解补丁（可选）
-├── xd47243.dll           # 大漠插件主文件
-├── go.mod                # Go 模块定义
-└── README.md             # 本文档
-```
-
----
-
-## 🔧 环境要求
-
-| 项目 | 要求 |
-|------|------|
-| 操作系统 | Windows（32位或64位系统均可） |
-| Go 版本 | Go 1.16 或更高版本 |
-| 必需文件 | `xd47243.dll`（大漠插件） |
-
----
-
-## 📦 安装使用
-
-### 方法一：Go Modules（推荐）
-
-```bash
-# 在项目中引入
-go get gitee.com/yuan71058/dm72424-go
-```
-
-### 方法二：手动下载
-
-```bash
-# 克隆仓库
-git clone https://gitee.com/yuan71058/dm72424-go.git
-
-# 复制 dmsoft 目录到你的项目中
-cp -r dm72424-go/dmsoft your-project/
+├── dmsoft.go           # 接口定义文件
+├── dmsoft_impl.go      # 接口实现文件（428个函数）
+├── go.mod              # Go 模块定义
+├── Go.dll              # 破解补丁
+├── xd47243.dll         # 大漠插件主文件
+├── example/            # 使用示例
+│   ├── main.go         # 示例代码
+│   └── go.mod          # 示例模块
+└── README.md           # 本文档
 ```
 
 ---
 
 ## 🚀 快速开始
 
-### 1. 导入包
+### 环境要求
 
-```go
-import dmsoft "gitee.com/yuan71058/dm72424-go/dmsoft"
-```
+- **操作系统**: Windows（32位或64位均可）
+- **Go 版本**: Go 1.16 或更高版本
+- **编译要求**: 必须编译为 32 位程序
 
-### 2. 基本使用
+### 30秒上手
 
 ```go
 package main
@@ -94,105 +68,144 @@ import (
     "fmt"
     "log"
     "syscall"
-
-    dmsoft "gitee.com/yuan71058/dm72424-go/dmsoft"
+    
+    dmsoft "gitee.com/yuan71058/dm72424-go"
 )
 
 func main() {
-    // 1. 加载大漠插件DLL
-    dmHModule, err := dmsoft.LoadDm("xd47243.dll")
+    // 1. 加载大漠插件
+    dmHModule, err := dmsoft.Load("xd47243.dll")
     if err != nil {
-        log.Fatalf("加载大漠插件失败: %v", err)
+        log.Fatal(err)
     }
-    fmt.Printf("大漠插件加载成功，模块句柄: %v\n", dmHModule)
-
-    // 2. 加载破解补丁（可选）
+    
+    // 2. 执行破解（可选）
     goHModule, _ := syscall.LoadLibrary("Go.dll")
-    defer syscall.FreeLibrary(goHModule)
     goFunAddr, _ := syscall.GetProcAddress(goHModule, "Go")
-    syscall.Syscall(uintptr(goFunAddr), 1, dmHModule, 0, 0)
-
-    // 3. 创建大漠对象
-    dm := dmsoft.NewDmSoftImpl()
-    dm.Init()           // 重要：必须初始化！
-    defer dm.Release()  // 确保释放资源
-
-    // 4. 注册插件
+    syscall.SyscallN(uintptr(goFunAddr), dmHModule)
+    defer syscall.FreeLibrary(goHModule)
+    
+    // 3. 创建对象并初始化
+    dm := dmsoft.New()
+    dm.Init()
+    defer dm.Release()
+    
+    // 4. 注册
     if dm.Reg("", "") == 1 {
-        fmt.Println("大漠注册成功")
+        fmt.Println("注册成功！")
     }
-
-    // 5. 获取版本信息
+    
+    // 5. 开始使用
     fmt.Printf("版本: %s\n", dm.Ver())
-
-    // 6. 绑定窗口
-    hwnd := dm.GetForegroundWindow()
-    dm.BindWindow(hwnd, "gdi", "normal", "normal", 0)
-
-    // 7. 使用各种功能
-    color := dm.GetColor(100, 100)
-    fmt.Printf("屏幕颜色: %s\n", color)
-
-    // 8. 解绑窗口
-    dm.UnBindWindow()
+    fmt.Printf("分辨率: %d x %d\n", dm.GetScreenWidth(), dm.GetScreenHeight())
 }
 ```
 
 ---
 
-## ⚙️ 编译说明
+## 📥 安装使用
 
-### ⚠️ 重要：必须编译为 32 位程序
+### 方法一：Go Modules（推荐）
 
-大漠插件是 32 位 DLL，因此 Go 程序必须编译为 32 位才能正常调用。
+```bash
+# 在项目目录下执行
+go get gitee.com/yuan71058/dm72424-go
+```
+
+### 方法二：本地引用
+
+```bash
+# 克隆项目
+git clone https://gitee.com/yuan71058/dm72424-go.git
+
+# 在你的 go.mod 中添加 replace
+replace gitee.com/yuan71058/dm72424-go => ./dm72424-go
+```
+
+### 编译说明
+
+⚠️ **重要**：大漠插件是 32 位 DLL，必须编译为 32 位程序！
 
 ```powershell
-# 方法1：设置环境变量后编译
+# 设置环境变量
 go env -w GOARCH=386
-go build -o dmsoft_test.exe
 
-# 方法2：临时设置编译
-$env:GOARCH="386"; go build -o dmsoft_test.exe
-
-# 方法3：命令行直接指定（Linux/Mac）
-GOARCH=386 go build -o dmsoft_test.exe
+# 编译
+go build -o myapp.exe
 ```
 
 ---
 
-## 📚 API文档
+## 📚 API 文档
 
 ### 核心函数
 
 | 函数 | 说明 |
 |------|------|
-| `LoadDm(path)` | 加载大漠插件DLL |
-| `NewDmSoftImpl()` | 创建大漠对象 |
-| `Init()` | 初始化对象（必须调用） |
-| `Release()` | 释放对象资源 |
-| `Reg(code, ver)` | 注册插件 |
-| `Ver()` | 获取版本号 |
+| `Load(path string) (uintptr, error)` | 加载大漠插件 DLL |
+| `Free() bool` | 释放大漠插件 |
+| `New() *DmSoft` | 创建大漠对象 |
+| `Init()` | 初始化对象 |
+| `Release()` | 释放对象 |
 
-### 窗口操作
+### 常用功能示例
+
+#### 🖼️ 截图功能
 
 ```go
-// 查找窗口
-hwnd := dm.FindWindow("notepad", "无标题 - 记事本")
+// 设置保存路径
+dm.SetPath("C:\\screenshots")
 
-// 绑定窗口（绑定后才能截图、取色）
-dm.BindWindow(hwnd, "gdi", "normal", "normal", 0)
+// 截取全屏
+dm.Capture(0, 0, 1920, 1080, "screen.bmp")
 
-// 解绑窗口
-dm.UnBindWindow()
+// 截取指定区域
+dm.Capture(100, 100, 500, 500, "region.bmp")
 
-// 获取窗口标题
-title := dm.GetWindowTitle(hwnd)
-
-// 移动窗口
-dm.MoveWindow(hwnd, 100, 100, 800, 600, 1)
+// JPG格式截图
+dm.CaptureJpg(0, 0, 1920, 1080, "screen.jpg", 80)
 ```
 
-### 鼠标操作
+#### 🔍 找图功能
+
+```go
+// 预加载图片
+dm.LoadPic("target.bmp")
+
+// 查找图片
+var x, y int32
+ret := dm.FindPic(0, 0, 1920, 1080, "target.bmp", "000000", 0.9, 0, &x, &y)
+if ret != -1 {
+    fmt.Printf("找到图片: (%d, %d)\n", x, y)
+}
+```
+
+#### 🎨 找色功能
+
+```go
+// 查找颜色
+var x, y int32
+ret := dm.FindColor(0, 0, 1920, 1080, "FF0000", "000000", 1.0, 0, &x, &y)
+
+// 多点找色
+ret = dm.FindMultiColor(0, 0, 1920, 1080, "FF0000", "5|0|00FF00", "000000", 1.0, 0, &x, &y)
+```
+
+#### 📝 文字识别（OCR）
+
+```go
+// 设置字库
+dm.SetDict(0, "dict.txt")
+
+// OCR识别
+text := dm.Ocr(0, 0, 500, 100, "FFFFFF-000000", 1.0)
+
+// 查找文字
+var x, y int32
+ret := dm.FindStr(0, 0, 1920, 1080, "登录", "FFFFFF-000000", 1.0, &x, &y)
+```
+
+#### 🖱️ 鼠标操作
 
 ```go
 // 移动鼠标
@@ -203,17 +216,17 @@ dm.LeftClick()
 dm.RightClick()
 dm.LeftDoubleClick()
 
-// 获取鼠标位置
+// 获取位置
 var x, y int32
 dm.GetCursorPos(&x, &y)
 ```
 
-### 键盘操作
+#### ⌨️ 键盘操作
 
 ```go
 // 按键
 dm.KeyPressChar("a")
-dm.KeyPressChar("enter")
+dm.KeyPress(65)  // A键
 
 // 组合键
 dm.KeyDownChar("ctrl")
@@ -224,46 +237,13 @@ dm.KeyUpChar("ctrl")
 dm.SendString(hwnd, "Hello World")
 ```
 
-### 图像处理
+#### 💾 内存操作
 
 ```go
-// 截图
-dm.Capture(0, 0, 1920, 1080, "screen.bmp")
-
-// 找图
-var x, y int32
-ret := dm.FindPic(0, 0, 1920, 1080, "target.bmp", "000000", 0.9, 0, &x, &y)
-if ret != -1 {
-    fmt.Printf("找到图片: (%d, %d)\n", x, y)
-}
-
-// 找色
-ret := dm.FindColor(0, 0, 1920, 1080, "FF0000", "000000", 1.0, 0, &x, &y)
-```
-
-### 文字识别（OCR）
-
-```go
-// 设置字库
-dm.SetDict(0, "dict.txt")
-
-// OCR识别
-text := dm.Ocr(0, 0, 500, 100, "FFFFFF-000000", 1.0)
-fmt.Printf("识别结果: %s\n", text)
-
-// 查找文字
-ret := dm.FindStr(0, 0, 1920, 1080, "登录", "FFFFFF-000000", 1.0, &x, &y)
-```
-
-### 内存操作
-
-```go
-// 注意：需要管理员权限
-
-// 读取整数
+// 读取内存
 value := dm.ReadInt(hwnd, 0x12345678, 0)
 
-// 写入整数
+// 写入内存
 dm.WriteInt(hwnd, 0x12345678, 0, 12345)
 
 // 查找特征码
@@ -272,13 +252,32 @@ addr := dm.FindData(hwnd, 0x400000, 0x500000, "FF ?? 00 ??")
 
 ---
 
+## 📋 函数分类
+
+| 分类 | 函数数量 | 主要函数 |
+|------|----------|----------|
+| 🪟 窗口操作 | ~50 | `BindWindow`, `FindWindow`, `GetWindowRect` |
+| 🖱️ 鼠标操作 | ~20 | `MoveTo`, `LeftClick`, `GetCursorPos` |
+| ⌨️ 键盘操作 | ~15 | `KeyPress`, `KeyDown`, `SendString` |
+| 🖼️ 图像处理 | ~30 | `Capture`, `FindPic`, `LoadPic` |
+| 🎨 颜色操作 | ~15 | `GetColor`, `FindColor`, `CmpColor` |
+| 📝 OCR识别 | ~20 | `Ocr`, `FindStr`, `SetDict` |
+| 💾 内存操作 | ~40 | `ReadInt`, `WriteInt`, `FindData` |
+| 💻 系统信息 | ~20 | `Ver`, `GetOsType`, `GetTime` |
+| 📁 文件操作 | ~15 | `ReadFile`, `WriteFile`, `IsFileExist` |
+| 🤖 AI功能 | ~10 | `LoadAi`, `FindPicAi` |
+
+---
+
 ## ⚠️ 注意事项
 
-### 1. 初始化顺序（重要！）
+### 1. 初始化顺序
+
+必须按照以下顺序初始化：
 
 ```go
-dm := dmsoft.NewDmSoftImpl()
-dm.Init()  // ← 必须调用！否则所有函数调用都会失败
+dm := dmsoft.New()
+dm.Init()  // 必须调用！
 defer dm.Release()
 ```
 
@@ -289,28 +288,18 @@ defer dm.Release()
 ```go
 hwnd := dm.GetForegroundWindow()
 dm.BindWindow(hwnd, "gdi", "normal", "normal", 0)
-// 现在可以进行截图、取色等操作
+// ... 操作 ...
 dm.UnBindWindow()
 ```
 
-### 3. 资源释放
-
-使用完毕后必须释放资源：
-
-```go
-dm := dmsoft.NewDmSoftImpl()
-dm.Init()
-defer dm.Release()  // 确保程序退出时释放
-```
-
-### 4. 管理员权限
+### 3. 管理员权限
 
 以下功能需要管理员权限：
 - 内存读写操作
 - 某些窗口绑定模式（dx模式）
 - 进程操作
 
-### 5. 编码问题
+### 4. 编码问题
 
 大漠插件返回的字符串可能是 GBK 编码：
 
@@ -322,23 +311,6 @@ func gbkToUtf8(s string) string {
     return string(data)
 }
 ```
-
----
-
-## 📋 函数分类
-
-| 分类 | 数量 | 主要函数 |
-|------|------|----------|
-| 窗口操作 | ~50 | BindWindow, FindWindow, EnumWindow |
-| 鼠标操作 | ~20 | MoveTo, LeftClick, GetCursorPos |
-| 键盘操作 | ~15 | KeyPress, KeyDown, SendString |
-| 图像处理 | ~30 | Capture, FindPic, LoadPic |
-| 颜色操作 | ~15 | GetColor, FindColor, FindMultiColor |
-| OCR识别 | ~20 | Ocr, FindStr, SetDict |
-| 内存操作 | ~40 | ReadInt, WriteInt, FindData |
-| 系统信息 | ~20 | Ver, GetOsType, GetTime |
-| 文件操作 | ~15 | ReadFile, WriteFile, CopyFile |
-| AI/YOLO | ~15 | LoadAi, AiYoloDetectObjects |
 
 ---
 
@@ -378,6 +350,18 @@ func gbkToUtf8(s string) string {
 
 ---
 
+## 📝 更新日志
+
+### v1.0.0 (2024-03-18)
+
+- ✨ 初始版本发布
+- 📦 完成428个函数的翻译
+- 📝 添加详细中文注释
+- 🐛 修复偏移地址错误
+- 📚 添加完整使用示例
+
+---
+
 ## 📄 许可证
 
 本项目仅供学习交流使用，请勿用于商业用途。
@@ -392,10 +376,12 @@ func gbkToUtf8(s string) string {
 
 ---
 
-<div align="center">
+## 📮 联系方式
 
-**如果这个项目对你有帮助，请给一个 ⭐ Star 支持一下！**
+- Gitee: [https://gitee.com/yuan71058/dm72424-go](https://gitee.com/yuan71058/dm72424-go)
 
-Made with ❤️ by [yuan71058](https://gitee.com/yuan71058)
+---
 
-</div>
+<p align="center">
+  如果这个项目对你有帮助，请给一个 ⭐️ Star 支持一下！
+</p>

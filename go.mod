@@ -1,3 +1,3 @@
-module gitee.com/yuan71058/dm72424-go
+module dmsoft
 
 go 1.21
