@@ -70,23 +70,22 @@ package main
 import (
     "fmt"
     "log"
-    "syscall"
     
     dmsoft "github.com/yuan71058/dm72424-go"
 )
 
 func main() {
     // 1. 加载大漠插件
-    dmHModule, err := dmsoft.Load("xd47243.dll")
+    _, err := dmsoft.LoadDm("xd47243.dll")
     if err != nil {
         log.Fatal(err)
     }
     
-    // 2. 执行破解（可选）
-    goHModule, _ := syscall.LoadLibrary("Go.dll")
-    goFunAddr, _ := syscall.GetProcAddress(goHModule, "Go")
-    syscall.SyscallN(uintptr(goFunAddr), dmHModule)
-    defer syscall.FreeLibrary(goHModule)
+    // 2. 破解大漠插件
+    err = dmsoft.CrackDm("Go.dll")
+    if err != nil {
+        log.Fatal(err)
+    }
     
     // 3. 创建对象并初始化
     dm := dmsoft.New()
@@ -145,7 +144,10 @@ go build -o myapp.exe
 
 | 函数 | 说明 |
 |------|------|
-| `Load(path string) (uintptr, error)` | 加载大漠插件 DLL |
+| `LoadDm(dmPath string) (uintptr, error)` | 加载大漠插件 DLL |
+| `CrackDm(crackDllPath string) error` | 破解大漠插件 |
+| `FreeCrackDll() bool` | 释放破解 DLL |
+| `Load(path string) (uintptr, error)` | 加载大漠插件 DLL（旧版） |
 | `Free() bool` | 释放大漠插件 |
 | `New() *DmSoft` | 创建大漠对象 |
 | `Init()` | 初始化对象 |
@@ -394,6 +396,14 @@ func gbkToUtf8(s string) string {
 ---
 
 ## 📝 更新日志
+
+### v1.2.0 (2026-03-19)
+
+- ✨ 新增 `LoadDm()` 函数 - 加载大漠插件DLL
+- ✨ 新增 `CrackDm()` 函数 - 破解大漠插件
+- ✨ 新增 `FreeCrackDll()` 函数 - 释放破解DLL
+- 📝 更新示例代码，使用新的封装函数
+- 📝 更新README文档
 
 ### v1.1.0 (2026-03-18)
 

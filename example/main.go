@@ -16,7 +16,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"syscall"
 	"time"
 
 	dmsoft "github.com/yuan71058/dm72424-go"
@@ -29,25 +28,17 @@ const (
 
 func main() {
 	// ========== 第一步：加载大漠插件DLL ==========
-	dmHModule, err := dmsoft.Load(DmPluginPath)
+	dmHModule, err := dmsoft.LoadDm(DmPluginPath)
 	if err != nil {
 		log.Fatalf("加载大漠插件失败: %v", err)
 	}
 	fmt.Printf("大漠插件加载成功，模块句柄: %v\n", dmHModule)
 
-	// ========== 第二步：加载并执行破解DLL ==========
-	goHModule, err := syscall.LoadLibrary(CrackDllPath)
+	// ========== 第二步：破解大漠插件 ==========
+	err = dmsoft.CrackDm(CrackDllPath)
 	if err != nil {
-		log.Fatalf("加载破解DLL失败: %v", err)
+		log.Fatalf("破解大漠插件失败: %v", err)
 	}
-	defer syscall.FreeLibrary(goHModule)
-
-	goFunAddr, err := syscall.GetProcAddress(goHModule, "Go")
-	if err != nil {
-		log.Fatalf("获取Go函数地址失败: %v", err)
-	}
-
-	syscall.SyscallN(uintptr(goFunAddr), dmHModule)
 	fmt.Println("破解函数执行完成")
 
 	// ========== 第三步：创建大漠插件对象 ==========

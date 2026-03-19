@@ -8,6 +8,64 @@ import (
 
 var DmHModule uintptr
 
+var GoHModule uintptr
+
+func LoadDm(dmPath string) (uintptr, error) {
+	if DmHModule != 0 {
+		return DmHModule, nil
+	}
+
+	module, err := syscall.LoadLibrary(dmPath)
+	if err != nil {
+		return 0, fmt.Errorf("加载大漠DLL失败: %v", err)
+	}
+
+	DmHModule = uintptr(module)
+	return DmHModule, nil
+}
+
+func CrackDm(crackDllPath string) error {
+	if DmHModule == 0 {
+		return fmt.Errorf("大漠DLL未加载,请先调用 LoadDm 加载大漠插件")
+	}
+
+	if GoHModule != 0 {
+		return nil
+	}
+
+	crackModule, err := syscall.LoadLibrary(crackDllPath)
+	if err != nil {
+		return fmt.Errorf("加载破解DLL失败: %v", err)
+	}
+
+	GoHModule = uintptr(crackModule)
+
+	goFunAddr, err := syscall.GetProcAddress(syscall.Handle(GoHModule), "Go")
+	if err != nil {
+		syscall.FreeLibrary(syscall.Handle(GoHModule))
+		GoHModule = 0
+		return fmt.Errorf("获取破解函数地址失败: %v", err)
+	}
+
+	syscall.Syscall(uintptr(goFunAddr), 1, DmHModule, 0, 0)
+
+	return nil
+}
+
+func FreeCrackDll() bool {
+	if GoHModule == 0 {
+		return true
+	}
+
+	err := syscall.FreeLibrary(syscall.Handle(GoHModule))
+	if err != nil {
+		return false
+	}
+
+	GoHModule = 0
+	return true
+}
+
 func Load(path string) (uintptr, error) {
 	if DmHModule != 0 {
 		return DmHModule, nil
