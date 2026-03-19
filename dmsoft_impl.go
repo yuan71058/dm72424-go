@@ -98,6 +98,8 @@ type DmSoft struct {
 	obj uintptr
 }
 
+// New 创建大漠插件实例(非线程安全,仅创建结构体指针,不分配COM对象)
+// 注意: 单线程场景下全局创建一次即可;多线程场景下每个线程需独立创建并调用Init()
 func New() *DmSoft {
 	if DmHModule == 0 {
 		return nil
@@ -108,13 +110,24 @@ func New() *DmSoft {
 	return dm
 }
 
-// Init 初始化大漠对象,创建内部对象实例
+// Init 初始化大漠对象,创建内部COM对象实例
+// 调用场景说明:
+//   - 单线程/全局使用: 全局只需调用一次(创建唯一实例后调用一次即可)
+//   - 多线程场景: 每个线程需独立创建DmSoft实例并各自调用Init()(大漠COM对象线程相关,不可跨线程共享)
+//   - 每次调用Init()会创建一个独立的COM对象实例,不同实例间状态互不影响
+//
+// 使用示例:
+//
+//	dm := dmsoft.New()    // 创建实例
+//	dm.Init()             // 初始化(必须调用)
+//	defer dm.Release()    // 程序结束时释放
 func (dm *DmSoft) Init() {
 	createObjAddr := DmHModule + 98304
 	dm.obj, _, _ = syscall.Syscall(createObjAddr, 0, 0, 0, 0)
 }
 
-// Release 释放大漠对象,销毁内部对象实例
+// Release 释放大漠对象,销毁内部COM对象实例
+// 释放后该DmSoft实例不可再用,需重新New()和Init()创建新实例
 func (dm *DmSoft) Release() {
 	if dm.obj == 0 {
 		return
