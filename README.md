@@ -357,6 +357,56 @@ func gbkToUtf8(s string) string {
 }
 ```
 
+### 5. Init/Release 对象生命周期
+
+`Init()` 和 `Release()` 管理大漠 COM 对象实例的生命周期：
+
+```go
+dm := dmsoft.New()    // 创建实例(仅分配结构体指针,不分配COM对象)
+dm.Init()             // 初始化(必须调用,创建COM对象)
+defer dm.Release()    // 程序结束时释放(COM对象销毁后不可再用)
+```
+
+**调用场景**：
+
+| 场景 | Init() 调用次数 | 说明 |
+|------|----------------|------|
+| 单线程/全局使用 | **1次** | 全局仅创建一个 DmSoft 实例，初始化一次即可 |
+| 多线程场景 | **每线程1次** | 大漠 COM 对象线程相关，每个线程需独立创建 DmSoft 实例并调用 Init() |
+
+**多线程示例**：
+
+```go
+// 主线程：创建主对象并注册
+mainDm := dmsoft.New()
+mainDm.Init()
+mainDm.Reg("", "")  // 只需在主对象中注册一次
+
+// 子线程：每个线程创建独立对象(无需再次注册)
+for i := 0; i < 3; i++ {
+    go func(threadID int) {
+        subDm := dmsoft.New()
+        subDm.Init()  // 各自独立初始化
+        subDm.BindWindow(hwnd, "gdi", "windows", "windows", 0)
+        // ... 操作 ...
+        subDm.UnBindWindow()
+        subDm.Release()  // 各自释放
+    }(i)
+}
+
+defer mainDm.Release()  // 最后释放主对象
+```
+
+### 6. DLL 偏移地址说明
+
+本库直接调用大漠 DLL 内部函数，地址偏移量固定：
+
+| 功能 | 偏移地址 | 说明 |
+|------|----------|------|
+| 创建对象 | `DmHModule + 98304` | Init() 调用，偏移 0x18000 |
+| 释放对象 | `DmHModule + 98400` | Release() 调用，偏移 0x18090 |
+| 其他函数 | 各不相同 |详见 dmsoft_impl.go 中的函数定义 |
+
 ---
 
 ## ❓ 常见问题
