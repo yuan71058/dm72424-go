@@ -261,39 +261,99 @@ addr := dm.FindData(hwnd, 0x400000, 0x500000, "FF ?? 00 ??")
 // 多线程示例：同时向多个窗口写入文本
 // 完整示例请参考 example/multithread/main.go
 
-// 1. 创建主对象并注册
-mainDm := dmsoft.New()
-mainDm.Init()
-mainDm.Reg("", "")
-
-// 2. 为每个线程创建独立的子对象
-for i := 0; i < 3; i++ {
-    go func(threadID int) {
-        // 每个线程创建独立对象
-        subDm := dmsoft.New()
-        subDm.Init()
-        
-        // 绑定窗口
-        subDm.BindWindow(hwnd, "gdi", "windows", "windows", 0)
-        
-        // 执行操作
-        subDm.SendString(hwnd, text)
-        
-        // 解绑并释放
-        subDm.UnBindWindow()
-        subDm.Release()
-    }(i)
+// ========== 1. 定义工作线程结构体 ==========
+type TextWorker struct {
+    ID       int
+    Dm       *dmsoft.DmSoft
+    EditHwnd int32
+    Content  string
+    Result   chan string
 }
 
-// 3. 主对象最后释放
-defer mainDm.Release()
+// Init 初始化大漠子对象
+func (w *TextWorker) Init() bool {
+    w.Dm = dmsoft.New()
+    if w.Dm == nil {
+        return false
+    }
+    w.Dm.Init()  // 每个线程独立初始化
+    return true
+}
+
+// Run 运行工作线程
+func (w *TextWorker) Run(wg *sync.WaitGroup) {
+    defer wg.Done()
+    
+    // 绑定窗口
+    ret := w.Dm.BindWindow(w.EditHwnd, "gdi", "windows", "windows", 0)
+    if ret != 1 {
+        w.Result <- fmt.Sprintf("[线程%d] 绑定失败", w.ID)
+        return
+    }
+    
+    // 写入文字
+    w.Dm.SendString2(w.EditHwnd, w.Content)
+    
+    // 解绑并释放
+    w.Dm.UnBindWindow()
+    w.Dm.Release()
+    
+    w.Result <- fmt.Sprintf("[线程%d] 完成", w.ID)
+}
+
+// ========== 2. 主函数 ==========
+func main() {
+    // 加载并破解大漠
+    dmsoft.LoadDm("xd47243.dll")
+    dmsoft.CrackDm("Go.dll")
+    
+    // 创建主对象并注册（只需一次）
+    mainDm := dmsoft.New()
+    mainDm.Init()
+    mainDm.Reg("", "")
+    
+    // 枚举窗口、查找Edit控件...
+    hwndList := mainDm.EnumWindow(0, "", "Notepad", 2)
+    // ... 省略窗口枚举和控件查找代码
+    
+    // 创建工作线程
+    var wg sync.WaitGroup
+    resultChan := make(chan string, 100)
+    workers := make([]*TextWorker, 3)
+    
+    for i := 0; i < 3; i++ {
+        workers[i] = &TextWorker{
+            ID:       i + 1,
+            EditHwnd: editHwnds[i],
+            Content:  fmt.Sprintf("线程%d的内容...", i+1),
+            Result:   resultChan,
+        }
+        workers[i].Init()
+    }
+    
+    // 并发执行
+    for i := 0; i < 3; i++ {
+        wg.Add(1)
+        go workers[i].Run(&wg)
+    }
+    
+    wg.Wait()
+    close(resultChan)
+    
+    // 最后释放主对象
+    mainDm.Release()
+}
 ```
 
-**注意事项**：
-- 每个线程必须创建独立的 DmSoft 对象
-- 只需在主对象中注册一次
-- 子对象不需要再次注册
-- 释放顺序：先释放所有子对象，最后释放主对象
+**多线程要点**：
+
+| 要点 | 说明 |
+|------|------|
+| 主对象 | 全局唯一，负责注册，最后释放 |
+| 子对象 | 每线程独立创建，各自 Init/Release |
+| 注册 | 只需在主对象中注册一次，子对象无需注册 |
+| 绑定 | 每个子对象独立绑定自己的目标窗口 |
+| 释放顺序 | 先释放所有子对象，最后释放主对象 |
 
 ---
 
