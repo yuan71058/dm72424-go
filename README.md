@@ -46,10 +46,13 @@ dm72424-go/
 ├── xd47243.dll         # 大漠插件主文件
 ├── example/            # 使用示例
 │   ├── main.go         # 基础示例
-│   ├── multithread/     # 多线程示例
+│   ├── go.mod          # 示例模块
+│   ├── go.sum          # 示例依赖
+│   ├── multithread/    # 多线程示例
 │   │   ├── main.go     # 多线程写入文本示例
 │   │   └── go.mod      # 多线程示例模块
-│   └── go.mod          # 示例模块
+│   └── find_window/    # 查找窗口示例
+│       └── main.go     # 查找中文窗口、绑定、截图示例
 └── README.md           # 本文档
 ```
 
@@ -155,6 +158,32 @@ go build -o myapp.exe
 | `Release()` | 释放对象 |
 
 ### 常用功能示例
+
+#### 🪟 窗口操作
+
+```go
+// 查找窗口（支持中文标题）
+hwnd := dm.FindWindow("Qt51514QWindowIcon", "朋友圈")
+if hwnd > 0 {
+    fmt.Printf("找到窗口，句柄: %d\n", hwnd)
+    
+    // 获取窗口信息
+    var x1, y1, x2, y2 int32
+    dm.GetWindowRect(hwnd, &x1, &y1, &x2, &y2)
+    fmt.Printf("窗口位置: (%d,%d) - (%d,%d)\n", x1, y1, x2, y2)
+    
+    // 绑定窗口（gdi图像模式 + windows3鼠标模式 + windows键盘模式）
+    ret := dm.BindWindow(hwnd, "gdi", "windows3", "windows", 0)
+    if ret == 1 {
+        fmt.Println("绑定成功")
+        // ... 执行操作 ...
+        dm.UnBindWindow()
+    }
+}
+
+// 枚举窗口
+hwndList := dm.EnumWindow(0, "", "Notepad", 2)
+```
 
 #### 🖼️ 截图功能
 
@@ -525,6 +554,8 @@ defer mainDm.Release()  // 最后释放主对象
 - 📦 添加 `golang.org/x/text` 依赖用于编码转换
 - 📝 更新 README 文档，说明编码自动转换特性
 - 🔧 优化 309 处字符串参数调用，统一使用 GBK 编码
+- 📚 新增 `example/find_window` 示例 - 演示查找中文窗口、绑定窗口、截图功能
+- 🏷️ 添加版本标签 v1.3.0，支持 Go Modules 版本管理
 
 ### v1.2.0 (2026-03-19)
 
