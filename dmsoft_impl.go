@@ -165,7 +165,7 @@ func (dm *DmSoft) LoadAiMemory(addr int32, size int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FaqSend(server string, handle int32, request_type int32, time_out int32) string {
 	funAddr := DmHModule + 114016
-	serverPtr, _ := syscall.BytePtrFromString(server)
+	serverPtr := stringToBytePtr(server)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(serverPtr)), uintptr(handle), uintptr(request_type), uintptr(time_out), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -184,8 +184,8 @@ func (dm *DmSoft) FaqSend(server string, handle int32, request_type int32, time_
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindPicSimMem(x1 int32, y1 int32, x2 int32, y2 int32, pic_info string, delta_color string, sim int32, dir int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 121744
-	pic_infoPtr, _ := syscall.BytePtrFromString(pic_info)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_infoPtr := stringToBytePtr(pic_info)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall12(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0)
 	return int32(ret)
 }
@@ -203,7 +203,7 @@ func (dm *DmSoft) Ver() string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetPath(path string) int32 {
 	funAddr := DmHModule + 123808
-	pathPtr, _ := syscall.BytePtrFromString(path)
+	pathPtr := stringToBytePtr(path)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(pathPtr)), 0)
 	return int32(ret)
 }
@@ -230,8 +230,8 @@ func (dm *DmSoft) SetShowAsmErrorMsg(show int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindStrS(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64, x *int32, y *int32) string {
 	funAddr := DmHModule + 116832
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -245,7 +245,7 @@ func (dm *DmSoft) FindStrS(x1 int32, y1 int32, x2 int32, y2 int32, str string, c
 // 返回: 结果字符串
 func (dm *DmSoft) GetWordsNoDict(x1 int32, y1 int32, x2 int32, y2 int32, color string) string {
 	funAddr := DmHModule + 99024
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall6(funAddr, 6, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -282,8 +282,8 @@ func (dm *DmSoft) SetMouseSpeed(speed int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindData(hwnd int32, addr_range string, data string) string {
 	funAddr := DmHModule + 109760
-	addr_rangePtr, _ := syscall.BytePtrFromString(addr_range)
-	dataPtr, _ := syscall.BytePtrFromString(data)
+	addr_rangePtr := stringToBytePtr(addr_range)
+	dataPtr := stringToBytePtr(data)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addr_rangePtr)), uintptr(unsafe.Pointer(dataPtr)), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -314,7 +314,7 @@ func (dm *DmSoft) GetColor(x int32, y int32) string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) LoadPicByte(addr int32, size int32, name string) int32 {
 	funAddr := DmHModule + 121408
-	namePtr, _ := syscall.BytePtrFromString(name)
+	namePtr := stringToBytePtr(name)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(addr), uintptr(size), uintptr(unsafe.Pointer(namePtr)), 0, 0)
 	return int32(ret)
 }
@@ -364,7 +364,7 @@ func (dm *DmSoft) AsmCall(hwnd int32, mode int32) int64 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindColorBlock(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64, count int32, width int32, height int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 113568
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall12(funAddr, 12, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(count), uintptr(width), uintptr(height), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)))
 	return int32(ret)
 }
@@ -376,7 +376,7 @@ func (dm *DmSoft) FindColorBlock(x1 int32, y1 int32, x2 int32, y2 int32, color s
 // 返回: 结果字符串
 func (dm *DmSoft) DisAssemble(asm_code string, base_addr int64, is_64bit int32) string {
 	funAddr := DmHModule + 112656
-	asm_codePtr, _ := syscall.BytePtrFromString(asm_code)
+	asm_codePtr := stringToBytePtr(asm_code)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(asm_codePtr)), uintptr(base_addr), uintptr(is_64bit), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -388,9 +388,9 @@ func (dm *DmSoft) DisAssemble(asm_code string, base_addr int64, is_64bit int32) 
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) RegEx(code string, ver string, ip string) int32 {
 	funAddr := DmHModule + 98864
-	codePtr, _ := syscall.BytePtrFromString(code)
-	verPtr, _ := syscall.BytePtrFromString(ver)
-	ipPtr, _ := syscall.BytePtrFromString(ip)
+	codePtr := stringToBytePtr(code)
+	verPtr := stringToBytePtr(ver)
+	ipPtr := stringToBytePtr(ip)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(codePtr)), uintptr(unsafe.Pointer(verPtr)), uintptr(unsafe.Pointer(ipPtr)), 0, 0)
 	return int32(ret)
 }
@@ -401,8 +401,8 @@ func (dm *DmSoft) RegEx(code string, ver string, ip string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) EncodeFile(file string, pwd string) int32 {
 	funAddr := DmHModule + 106528
-	filePtr, _ := syscall.BytePtrFromString(file)
-	pwdPtr, _ := syscall.BytePtrFromString(pwd)
+	filePtr := stringToBytePtr(file)
+	pwdPtr := stringToBytePtr(pwd)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(filePtr)), uintptr(unsafe.Pointer(pwdPtr)))
 	return int32(ret)
 }
@@ -415,8 +415,8 @@ func (dm *DmSoft) EncodeFile(file string, pwd string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WriteString(hwnd int32, addr string, type_ int32, v string) int32 {
 	funAddr := DmHModule + 115936
-	addrPtr, _ := syscall.BytePtrFromString(addr)
-	vPtr, _ := syscall.BytePtrFromString(v)
+	addrPtr := stringToBytePtr(addr)
+	vPtr := stringToBytePtr(v)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)), uintptr(type_), uintptr(unsafe.Pointer(vPtr)), 0)
 	return int32(ret)
 }
@@ -432,8 +432,8 @@ func (dm *DmSoft) WriteString(hwnd int32, addr string, type_ int32, v string) in
 // 返回: 结果字符串
 func (dm *DmSoft) FindStrFastEx(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64) string {
 	funAddr := DmHModule + 122000
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -445,7 +445,7 @@ func (dm *DmSoft) FindStrFastEx(x1 int32, y1 int32, x2 int32, y2 int32, str stri
 // 返回: 64位整数值
 func (dm *DmSoft) AsmCallEx(hwnd int32, mode int32, base_addr string) int64 {
 	funAddr := DmHModule + 99632
-	base_addrPtr, _ := syscall.BytePtrFromString(base_addr)
+	base_addrPtr := stringToBytePtr(base_addr)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(mode), uintptr(unsafe.Pointer(base_addrPtr)), 0, 0)
 	return int64(ret)
 }
@@ -461,7 +461,7 @@ func (dm *DmSoft) AsmCallEx(hwnd int32, mode int32, base_addr string) int64 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindDoubleEx(hwnd int32, addr_range string, double_value_min float64, double_value_max float64, step int32, multi_thread int32, mode int32) string {
 	funAddr := DmHModule + 110416
-	addr_rangePtr, _ := syscall.BytePtrFromString(addr_range)
+	addr_rangePtr := stringToBytePtr(addr_range)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addr_rangePtr)), uintptr(double_value_min), uintptr(double_value_max), uintptr(step), uintptr(multi_thread), uintptr(mode), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -481,7 +481,7 @@ func (dm *DmSoft) SetFindPicMultithreadLimit(limit int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SendString2(hwnd int32, str string) int32 {
 	funAddr := DmHModule + 99888
-	strPtr, _ := syscall.BytePtrFromString(str)
+	strPtr := stringToBytePtr(str)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(strPtr)))
 	return int32(ret)
 }
@@ -502,7 +502,7 @@ func (dm *DmSoft) DownCpu(type_ int32, rate int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DmGuard(enable int32, type_ string) int32 {
 	funAddr := DmHModule + 103552
-	type_Ptr, _ := syscall.BytePtrFromString(type_)
+	type_Ptr := stringToBytePtr(type_)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(enable), uintptr(unsafe.Pointer(type_Ptr)))
 	return int32(ret)
 }
@@ -530,8 +530,8 @@ func (dm *DmSoft) SpeedNormalGraphic(en int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindPicSim(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, delta_color string, sim int32, dir int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 98768
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_namePtr := stringToBytePtr(pic_name)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall12(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0)
 	return int32(ret)
 }
@@ -544,7 +544,7 @@ func (dm *DmSoft) FindPicSim(x1 int32, y1 int32, x2 int32, y2 int32, pic_name st
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WriteInt(hwnd int32, addr string, type_ int32, v int64) int32 {
 	funAddr := DmHModule + 112416
-	addrPtr, _ := syscall.BytePtrFromString(addr)
+	addrPtr := stringToBytePtr(addr)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)), uintptr(type_), uintptr(v), 0)
 	return int32(ret)
 }
@@ -566,7 +566,7 @@ func (dm *DmSoft) SetMemoryHwndAsProcessId(en int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WriteDataFromBin(hwnd int32, addr string, data int32, len int32) int32 {
 	funAddr := DmHModule + 118304
-	addrPtr, _ := syscall.BytePtrFromString(addr)
+	addrPtr := stringToBytePtr(addr)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)), uintptr(data), uintptr(len), 0)
 	return int32(ret)
 }
@@ -586,7 +586,7 @@ func (dm *DmSoft) SetMinColGap(col_gap int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) KeyPressStr(key_str string, delay int32) int32 {
 	funAddr := DmHModule + 102528
-	key_strPtr, _ := syscall.BytePtrFromString(key_str)
+	key_strPtr := stringToBytePtr(key_str)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(key_strPtr)), uintptr(delay))
 	return int32(ret)
 }
@@ -614,9 +614,9 @@ func (dm *DmSoft) LockDisplay(lock int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindStrWithFontE(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64, font_name string, font_size int32, flag int32) string {
 	funAddr := DmHModule + 112544
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
-	font_namePtr, _ := syscall.BytePtrFromString(font_name)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
+	font_namePtr := stringToBytePtr(font_name)
 	ret, _, _ := syscall.Syscall12(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(unsafe.Pointer(font_namePtr)), uintptr(font_size), uintptr(flag), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -627,8 +627,8 @@ func (dm *DmSoft) FindStrWithFontE(x1 int32, y1 int32, x2 int32, y2 int32, str s
 // 返回: 结果字符串
 func (dm *DmSoft) EnumIniKey(section string, file string) string {
 	funAddr := DmHModule + 108032
-	sectionPtr, _ := syscall.BytePtrFromString(section)
-	filePtr, _ := syscall.BytePtrFromString(file)
+	sectionPtr := stringToBytePtr(section)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(sectionPtr)), uintptr(unsafe.Pointer(filePtr)))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -638,7 +638,7 @@ func (dm *DmSoft) EnumIniKey(section string, file string) string {
 // 返回: 结果字符串
 func (dm *DmSoft) MatchPicName(pic_name string) string {
 	funAddr := DmHModule + 117984
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
+	pic_namePtr := stringToBytePtr(pic_name)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(pic_namePtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -668,8 +668,8 @@ func (dm *DmSoft) FaqGetSize(handle int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) ExecuteCmd(cmd string, current_dir string, time_out int32) string {
 	funAddr := DmHModule + 116928
-	cmdPtr, _ := syscall.BytePtrFromString(cmd)
-	current_dirPtr, _ := syscall.BytePtrFromString(current_dir)
+	cmdPtr := stringToBytePtr(cmd)
+	current_dirPtr := stringToBytePtr(current_dir)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(cmdPtr)), uintptr(unsafe.Pointer(current_dirPtr)), uintptr(time_out), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -706,7 +706,7 @@ func (dm *DmSoft) MiddleClick() int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) AiYoloSortsObjects(objects string, height int32) string {
 	funAddr := DmHModule + 120480
-	objectsPtr, _ := syscall.BytePtrFromString(objects)
+	objectsPtr := stringToBytePtr(objects)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(objectsPtr)), uintptr(height))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -718,7 +718,7 @@ func (dm *DmSoft) AiYoloSortsObjects(objects string, height int32) string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WriteDataAddr(hwnd int32, addr int64, data string) int32 {
 	funAddr := DmHModule + 105744
-	dataPtr, _ := syscall.BytePtrFromString(data)
+	dataPtr := stringToBytePtr(data)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(addr), uintptr(unsafe.Pointer(dataPtr)), 0, 0)
 	return int32(ret)
 }
@@ -728,7 +728,7 @@ func (dm *DmSoft) WriteDataAddr(hwnd int32, addr int64, data string) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) RGB2BGR(rgb_color string) string {
 	funAddr := DmHModule + 115744
-	rgb_colorPtr, _ := syscall.BytePtrFromString(rgb_color)
+	rgb_colorPtr := stringToBytePtr(rgb_color)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(rgb_colorPtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -775,7 +775,7 @@ func (dm *DmSoft) EnableKeypadMsg(en int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetFileLength(file string) int32 {
 	funAddr := DmHModule + 111296
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return int32(ret)
 }
@@ -787,7 +787,7 @@ func (dm *DmSoft) GetFileLength(file string) int32 {
 // 返回: 64位整数值
 func (dm *DmSoft) GetRemoteApiAddress(hwnd int32, base_addr int64, fun_name string) int64 {
 	funAddr := DmHModule + 122192
-	fun_namePtr, _ := syscall.BytePtrFromString(fun_name)
+	fun_namePtr := stringToBytePtr(fun_name)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(base_addr), uintptr(unsafe.Pointer(fun_namePtr)), 0, 0)
 	return int64(ret)
 }
@@ -799,9 +799,9 @@ func (dm *DmSoft) GetRemoteApiAddress(hwnd int32, base_addr int64, fun_name stri
 // 返回: 结果字符串
 func (dm *DmSoft) DmGuardParams(cmd string, sub_cmd string, param string) string {
 	funAddr := DmHModule + 105472
-	cmdPtr, _ := syscall.BytePtrFromString(cmd)
-	sub_cmdPtr, _ := syscall.BytePtrFromString(sub_cmd)
-	paramPtr, _ := syscall.BytePtrFromString(param)
+	cmdPtr := stringToBytePtr(cmd)
+	sub_cmdPtr := stringToBytePtr(sub_cmd)
+	paramPtr := stringToBytePtr(param)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(cmdPtr)), uintptr(unsafe.Pointer(sub_cmdPtr)), uintptr(unsafe.Pointer(paramPtr)), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -813,8 +813,8 @@ func (dm *DmSoft) DmGuardParams(cmd string, sub_cmd string, param string) string
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DownloadFile(url string, save_file string, timeout int32) int32 {
 	funAddr := DmHModule + 123648
-	urlPtr, _ := syscall.BytePtrFromString(url)
-	save_filePtr, _ := syscall.BytePtrFromString(save_file)
+	urlPtr := stringToBytePtr(url)
+	save_filePtr := stringToBytePtr(save_file)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(urlPtr)), uintptr(unsafe.Pointer(save_filePtr)), uintptr(timeout), 0, 0)
 	return int32(ret)
 }
@@ -865,7 +865,7 @@ func (dm *DmSoft) FoobarClose(hwnd int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindNearestPos(all_pos string, type_ int32, x int32, y int32) string {
 	funAddr := DmHModule + 112480
-	all_posPtr, _ := syscall.BytePtrFromString(all_pos)
+	all_posPtr := stringToBytePtr(all_pos)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(all_posPtr)), uintptr(type_), uintptr(x), uintptr(y), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -906,7 +906,7 @@ func (dm *DmSoft) GetCursorPos(x *int32, y *int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindColorBlockEx(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64, count int32, width int32, height int32) string {
 	funAddr := DmHModule + 103840
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(count), uintptr(width), uintptr(height), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -919,7 +919,7 @@ func (dm *DmSoft) FindColorBlockEx(x1 int32, y1 int32, x2 int32, y2 int32, color
 // 返回: 结果字符串
 func (dm *DmSoft) FindFloat(hwnd int32, addr_range string, float_value_min float32, float_value_max float32) string {
 	funAddr := DmHModule + 103216
-	addr_rangePtr, _ := syscall.BytePtrFromString(addr_range)
+	addr_rangePtr := stringToBytePtr(addr_range)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addr_rangePtr)), uintptr(float_value_min), uintptr(float_value_max), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -938,7 +938,7 @@ func (dm *DmSoft) GetProcessInfo(pid int32) string {
 // 返回: 结果字符串
 func (dm *DmSoft) ReadFile(file string) string {
 	funAddr := DmHModule + 114464
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -954,7 +954,7 @@ func (dm *DmSoft) ReadFile(file string) string {
 // 返回: 结果字符串
 func (dm *DmSoft) FindShapeEx(x1 int32, y1 int32, x2 int32, y2 int32, offset_color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 99792
-	offset_colorPtr, _ := syscall.BytePtrFromString(offset_color)
+	offset_colorPtr := stringToBytePtr(offset_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(offset_colorPtr)), uintptr(sim), uintptr(dir), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -965,7 +965,7 @@ func (dm *DmSoft) FindShapeEx(x1 int32, y1 int32, x2 int32, y2 int32, offset_col
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetWindowText(hwnd int32, text string) int32 {
 	funAddr := DmHModule + 113008
-	textPtr, _ := syscall.BytePtrFromString(text)
+	textPtr := stringToBytePtr(text)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(textPtr)))
 	return int32(ret)
 }
@@ -1003,7 +1003,7 @@ func (dm *DmSoft) ReadIntAddr(hwnd int32, addr int64, type_ int32) int64 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindShape(x1 int32, y1 int32, x2 int32, y2 int32, offset_color string, sim float64, dir int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 123856
-	offset_colorPtr, _ := syscall.BytePtrFromString(offset_color)
+	offset_colorPtr := stringToBytePtr(offset_color)
 	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(offset_colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
 	return int32(ret)
 }
@@ -1013,7 +1013,7 @@ func (dm *DmSoft) FindShape(x1 int32, y1 int32, x2 int32, y2 int32, offset_color
 // 返回: 结果字符串
 func (dm *DmSoft) GetRealPath(path string) string {
 	funAddr := DmHModule + 105008
-	pathPtr, _ := syscall.BytePtrFromString(path)
+	pathPtr := stringToBytePtr(path)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(pathPtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -1056,7 +1056,7 @@ func (dm *DmSoft) MiddleDown() int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) EnumIniSection(file string) string {
 	funAddr := DmHModule + 117184
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -1100,11 +1100,11 @@ func (dm *DmSoft) IsDisplayDead(x1 int32, y1 int32, x2 int32, y2 int32, t int32)
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WriteIniPwd(section string, key string, v string, file string, pwd string) int32 {
 	funAddr := DmHModule + 115872
-	sectionPtr, _ := syscall.BytePtrFromString(section)
-	keyPtr, _ := syscall.BytePtrFromString(key)
-	vPtr, _ := syscall.BytePtrFromString(v)
-	filePtr, _ := syscall.BytePtrFromString(file)
-	pwdPtr, _ := syscall.BytePtrFromString(pwd)
+	sectionPtr := stringToBytePtr(section)
+	keyPtr := stringToBytePtr(key)
+	vPtr := stringToBytePtr(v)
+	filePtr := stringToBytePtr(file)
+	pwdPtr := stringToBytePtr(pwd)
 	ret, _, _ := syscall.Syscall6(funAddr, 6, dm.obj, uintptr(unsafe.Pointer(sectionPtr)), uintptr(unsafe.Pointer(keyPtr)), uintptr(unsafe.Pointer(vPtr)), uintptr(unsafe.Pointer(filePtr)), uintptr(unsafe.Pointer(pwdPtr)))
 	return int32(ret)
 }
@@ -1123,7 +1123,7 @@ func (dm *DmSoft) GetNetTime() string {
 // 返回: 32位浮点数
 func (dm *DmSoft) ReadFloat(hwnd int32, addr string) float32 {
 	funAddr := DmHModule + 100976
-	addrPtr, _ := syscall.BytePtrFromString(addr)
+	addrPtr := stringToBytePtr(addr)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)))
 	return float32(ret)
 }
@@ -1169,7 +1169,7 @@ func (dm *DmSoft) GetMousePointWindow() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetExportDict(index int32, dict_name string) int32 {
 	funAddr := DmHModule + 119392
-	dict_namePtr, _ := syscall.BytePtrFromString(dict_name)
+	dict_namePtr := stringToBytePtr(dict_name)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(index), uintptr(unsafe.Pointer(dict_namePtr)))
 	return int32(ret)
 }
@@ -1189,8 +1189,8 @@ func (dm *DmSoft) Delay(mis int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) Reg(code string, ver string) int32 {
 	funAddr := DmHModule + 121344
-	codePtr, _ := syscall.BytePtrFromString(code)
-	verPtr, _ := syscall.BytePtrFromString(ver)
+	codePtr := stringToBytePtr(code)
+	verPtr := stringToBytePtr(ver)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(codePtr)), uintptr(unsafe.Pointer(verPtr)))
 	return int32(ret)
 }
@@ -1203,7 +1203,7 @@ func (dm *DmSoft) Reg(code string, ver string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FoobarStopGif(hwnd int32, x int32, y int32, pic_name string) int32 {
 	funAddr := DmHModule + 108096
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
+	pic_namePtr := stringToBytePtr(pic_name)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(x), uintptr(y), uintptr(unsafe.Pointer(pic_namePtr)), 0)
 	return int32(ret)
 }
@@ -1215,7 +1215,7 @@ func (dm *DmSoft) FoobarStopGif(hwnd int32, x int32, y int32, pic_name string) i
 // 返回: 结果字符串
 func (dm *DmSoft) ReadFileData(file string, start_pos int32, end_pos int32) string {
 	funAddr := DmHModule + 115808
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(filePtr)), uintptr(start_pos), uintptr(end_pos), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -1232,8 +1232,8 @@ func (dm *DmSoft) ReadFileData(file string, start_pos int32, end_pos int32) stri
 // 返回: 结果字符串
 func (dm *DmSoft) FindPicSimEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, delta_color string, sim int32, dir int32) string {
 	funAddr := DmHModule + 113728
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_namePtr := stringToBytePtr(pic_name)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -1247,7 +1247,7 @@ func (dm *DmSoft) FindPicSimEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_name 
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) Capture(x1 int32, y1 int32, x2 int32, y2 int32, file string) int32 {
 	funAddr := DmHModule + 119456
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall6(funAddr, 6, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(filePtr)))
 	return int32(ret)
 }
@@ -1274,9 +1274,9 @@ func (dm *DmSoft) GetScreenWidth() int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindStrWithFontEx(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64, font_name string, font_size int32, flag int32) string {
 	funAddr := DmHModule + 118848
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
-	font_namePtr, _ := syscall.BytePtrFromString(font_name)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
+	font_namePtr := stringToBytePtr(font_name)
 	ret, _, _ := syscall.Syscall12(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(unsafe.Pointer(font_namePtr)), uintptr(font_size), uintptr(flag), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -1294,7 +1294,7 @@ func (dm *DmSoft) SetLocale() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) AsmAdd(asm_ins string) int32 {
 	funAddr := DmHModule + 121232
-	asm_insPtr, _ := syscall.BytePtrFromString(asm_ins)
+	asm_insPtr := stringToBytePtr(asm_ins)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(asm_insPtr)), 0)
 	return int32(ret)
 }
@@ -1318,7 +1318,7 @@ func (dm *DmSoft) GetScreenHeight() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) CaptureGif(x1 int32, y1 int32, x2 int32, y2 int32, file string, delay int32, time int32) int32 {
 	funAddr := DmHModule + 120912
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(filePtr)), uintptr(delay), uintptr(time), 0)
 	return int32(ret)
 }
@@ -1341,7 +1341,7 @@ func (dm *DmSoft) ReadDataAddrToBin(hwnd int32, addr int64, len int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) ReadDataToBin(hwnd int32, addr string, len int32) int32 {
 	funAddr := DmHModule + 104480
-	addrPtr, _ := syscall.BytePtrFromString(addr)
+	addrPtr := stringToBytePtr(addr)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)), uintptr(len), 0, 0)
 	return int32(ret)
 }
@@ -1360,8 +1360,8 @@ func (dm *DmSoft) ReadDataToBin(hwnd int32, addr string, len int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindPicS(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, delta_color string, sim float64, dir int32, x *int32, y *int32) string {
 	funAddr := DmHModule + 101952
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_namePtr := stringToBytePtr(pic_name)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall12(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -1380,8 +1380,8 @@ func (dm *DmSoft) FindPicS(x1 int32, y1 int32, x2 int32, y2 int32, pic_name stri
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindPic(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, delta_color string, sim float64, dir int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 104032
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_namePtr := stringToBytePtr(pic_name)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall12(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0)
 	return int32(ret)
 }
@@ -1400,8 +1400,8 @@ func (dm *DmSoft) FindPic(x1 int32, y1 int32, x2 int32, y2 int32, pic_name strin
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindMultiColor(x1 int32, y1 int32, x2 int32, y2 int32, first_color string, offset_color string, sim float64, dir int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 109360
-	first_colorPtr, _ := syscall.BytePtrFromString(first_color)
-	offset_colorPtr, _ := syscall.BytePtrFromString(offset_color)
+	first_colorPtr := stringToBytePtr(first_color)
+	offset_colorPtr := stringToBytePtr(offset_color)
 	ret, _, _ := syscall.Syscall12(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(first_colorPtr)), uintptr(unsafe.Pointer(offset_colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0)
 	return int32(ret)
 }
@@ -1427,8 +1427,8 @@ func (dm *DmSoft) HackSpeed(rate float64) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindPicE(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, delta_color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 114144
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_namePtr := stringToBytePtr(pic_name)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -1468,8 +1468,8 @@ func (dm *DmSoft) SetUAC(uac int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FoobarSetSave(hwnd int32, file string, en int32, header string) int32 {
 	funAddr := DmHModule + 124736
-	filePtr, _ := syscall.BytePtrFromString(file)
-	headerPtr, _ := syscall.BytePtrFromString(header)
+	filePtr := stringToBytePtr(file)
+	headerPtr := stringToBytePtr(header)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(filePtr)), uintptr(en), uintptr(unsafe.Pointer(headerPtr)), 0)
 	return int32(ret)
 }
@@ -1519,7 +1519,7 @@ func (dm *DmSoft) DisableScreenSave() int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) AiFindPicEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, sim float64, dir int32) string {
 	funAddr := DmHModule + 119136
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
+	pic_namePtr := stringToBytePtr(pic_name)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(sim), uintptr(dir), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -1530,7 +1530,7 @@ func (dm *DmSoft) AiFindPicEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_name s
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SendString(hwnd int32, str string) int32 {
 	funAddr := DmHModule + 114832
-	strPtr, _ := syscall.BytePtrFromString(str)
+	strPtr := stringToBytePtr(str)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(strPtr)))
 	return int32(ret)
 }
@@ -1555,8 +1555,8 @@ func (dm *DmSoft) EnterCri() int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindPicSimMemE(x1 int32, y1 int32, x2 int32, y2 int32, pic_info string, delta_color string, sim int32, dir int32) string {
 	funAddr := DmHModule + 113296
-	pic_infoPtr, _ := syscall.BytePtrFromString(pic_info)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_infoPtr := stringToBytePtr(pic_info)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -1581,8 +1581,8 @@ func (dm *DmSoft) Delays(min_s int32, max_s int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) CreateFoobarCustom(hwnd int32, x int32, y int32, pic string, trans_color string, sim float64) int32 {
 	funAddr := DmHModule + 105872
-	picPtr, _ := syscall.BytePtrFromString(pic)
-	trans_colorPtr, _ := syscall.BytePtrFromString(trans_color)
+	picPtr := stringToBytePtr(pic)
+	trans_colorPtr := stringToBytePtr(trans_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(hwnd), uintptr(x), uintptr(y), uintptr(unsafe.Pointer(picPtr)), uintptr(unsafe.Pointer(trans_colorPtr)), uintptr(sim), 0, 0)
 	return int32(ret)
 }
@@ -1598,8 +1598,8 @@ func (dm *DmSoft) CreateFoobarCustom(hwnd int32, x int32, y int32, pic string, t
 // 返回: 结果字符串
 func (dm *DmSoft) FindStringEx(hwnd int32, addr_range string, string_value string, type_ int32, step int32, multi_thread int32, mode int32) string {
 	funAddr := DmHModule + 124384
-	addr_rangePtr, _ := syscall.BytePtrFromString(addr_range)
-	string_valuePtr, _ := syscall.BytePtrFromString(string_value)
+	addr_rangePtr := stringToBytePtr(addr_range)
+	string_valuePtr := stringToBytePtr(string_value)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addr_rangePtr)), uintptr(unsafe.Pointer(string_valuePtr)), uintptr(type_), uintptr(step), uintptr(multi_thread), uintptr(mode), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -1624,8 +1624,8 @@ func (dm *DmSoft) GetClientRect(hwnd int32, x1 *int32, y1 *int32, x2 *int32, y2 
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) AiYoloSetModel(index int32, file string, pwd string) int32 {
 	funAddr := DmHModule + 104416
-	filePtr, _ := syscall.BytePtrFromString(file)
-	pwdPtr, _ := syscall.BytePtrFromString(pwd)
+	filePtr := stringToBytePtr(file)
+	pwdPtr := stringToBytePtr(pwd)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(index), uintptr(unsafe.Pointer(filePtr)), uintptr(unsafe.Pointer(pwdPtr)), 0, 0)
 	return int32(ret)
 }
@@ -1638,7 +1638,7 @@ func (dm *DmSoft) AiYoloSetModel(index int32, file string, pwd string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FoobarSetTrans(hwnd int32, trans int32, color string, sim float64) int32 {
 	funAddr := DmHModule + 117248
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(trans), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0)
 	return int32(ret)
 }
@@ -1665,7 +1665,7 @@ func (dm *DmSoft) GetForegroundWindow() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetExcludeRegion(type_ int32, info string) int32 {
 	funAddr := DmHModule + 104832
-	infoPtr, _ := syscall.BytePtrFromString(info)
+	infoPtr := stringToBytePtr(info)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(type_), uintptr(unsafe.Pointer(infoPtr)))
 	return int32(ret)
 }
@@ -1677,7 +1677,7 @@ func (dm *DmSoft) SetExcludeRegion(type_ int32, info string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SendStringIme2(hwnd int32, str string, mode int32) int32 {
 	funAddr := DmHModule + 119520
-	strPtr, _ := syscall.BytePtrFromString(str)
+	strPtr := stringToBytePtr(str)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(strPtr)), uintptr(mode), 0, 0)
 	return int32(ret)
 }
@@ -1688,7 +1688,7 @@ func (dm *DmSoft) SendStringIme2(hwnd int32, str string, mode int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) ActiveInputMethod(hwnd int32, id string) int32 {
 	funAddr := DmHModule + 124320
-	idPtr, _ := syscall.BytePtrFromString(id)
+	idPtr := stringToBytePtr(id)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(idPtr)))
 	return int32(ret)
 }
@@ -1702,8 +1702,8 @@ func (dm *DmSoft) ActiveInputMethod(hwnd int32, id string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FoobarDrawPic(hwnd int32, x int32, y int32, pic string, trans_color string) int32 {
 	funAddr := DmHModule + 114288
-	picPtr, _ := syscall.BytePtrFromString(pic)
-	trans_colorPtr, _ := syscall.BytePtrFromString(trans_color)
+	picPtr := stringToBytePtr(pic)
+	trans_colorPtr := stringToBytePtr(trans_color)
 	ret, _, _ := syscall.Syscall6(funAddr, 6, dm.obj, uintptr(hwnd), uintptr(x), uintptr(y), uintptr(unsafe.Pointer(picPtr)), uintptr(unsafe.Pointer(trans_colorPtr)))
 	return int32(ret)
 }
@@ -1713,7 +1713,7 @@ func (dm *DmSoft) FoobarDrawPic(hwnd int32, x int32, y int32, pic string, trans_
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) AiYoloSetVersion(ver string) int32 {
 	funAddr := DmHModule + 118496
-	verPtr, _ := syscall.BytePtrFromString(ver)
+	verPtr := stringToBytePtr(ver)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(verPtr)), 0)
 	return int32(ret)
 }
@@ -1729,7 +1729,7 @@ func (dm *DmSoft) AiYoloSetVersion(ver string) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindColorE(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 120384
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(dir), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -1747,7 +1747,7 @@ func (dm *DmSoft) LeftClick() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) IsFileExist(file string) int32 {
 	funAddr := DmHModule + 113824
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return int32(ret)
 }
@@ -1771,7 +1771,7 @@ func (dm *DmSoft) Is64Bit() int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindShapeE(x1 int32, y1 int32, x2 int32, y2 int32, offset_color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 120592
-	offset_colorPtr, _ := syscall.BytePtrFromString(offset_color)
+	offset_colorPtr := stringToBytePtr(offset_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(offset_colorPtr)), uintptr(sim), uintptr(dir), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -1799,8 +1799,8 @@ func (dm *DmSoft) SetEnumWindowDelay(delay int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) RegNoMac(code string, ver string) int32 {
 	funAddr := DmHModule + 118960
-	codePtr, _ := syscall.BytePtrFromString(code)
-	verPtr, _ := syscall.BytePtrFromString(ver)
+	codePtr := stringToBytePtr(code)
+	verPtr := stringToBytePtr(ver)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(codePtr)), uintptr(unsafe.Pointer(verPtr)))
 	return int32(ret)
 }
@@ -1810,7 +1810,7 @@ func (dm *DmSoft) RegNoMac(code string, ver string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) KeyUpChar(key_str string) int32 {
 	funAddr := DmHModule + 121904
-	key_strPtr, _ := syscall.BytePtrFromString(key_str)
+	key_strPtr := stringToBytePtr(key_str)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(key_strPtr)), 0)
 	return int32(ret)
 }
@@ -1857,7 +1857,7 @@ func (dm *DmSoft) MoveTo(x int32, y int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) KeyPressChar(key_str string) int32 {
 	funAddr := DmHModule + 116464
-	key_strPtr, _ := syscall.BytePtrFromString(key_str)
+	key_strPtr := stringToBytePtr(key_str)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(key_strPtr)), 0)
 	return int32(ret)
 }
@@ -1878,7 +1878,7 @@ func (dm *DmSoft) RightDown() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) AiYoloSetModelMemory(index int32, addr int32, size int32, pwd string) int32 {
 	funAddr := DmHModule + 117600
-	pwdPtr, _ := syscall.BytePtrFromString(pwd)
+	pwdPtr := stringToBytePtr(pwd)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(index), uintptr(addr), uintptr(size), uintptr(unsafe.Pointer(pwdPtr)), 0)
 	return int32(ret)
 }
@@ -1891,10 +1891,10 @@ func (dm *DmSoft) AiYoloSetModelMemory(index int32, addr int32, size int32, pwd 
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WriteIni(section string, key string, v string, file string) int32 {
 	funAddr := DmHModule + 101232
-	sectionPtr, _ := syscall.BytePtrFromString(section)
-	keyPtr, _ := syscall.BytePtrFromString(key)
-	vPtr, _ := syscall.BytePtrFromString(v)
-	filePtr, _ := syscall.BytePtrFromString(file)
+	sectionPtr := stringToBytePtr(section)
+	keyPtr := stringToBytePtr(key)
+	vPtr := stringToBytePtr(v)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(sectionPtr)), uintptr(unsafe.Pointer(keyPtr)), uintptr(unsafe.Pointer(vPtr)), uintptr(unsafe.Pointer(filePtr)), 0)
 	return int32(ret)
 }
@@ -1905,8 +1905,8 @@ func (dm *DmSoft) WriteIni(section string, key string, v string, file string) in
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DmGuardLoadCustom(type_ string, path string) int32 {
 	funAddr := DmHModule + 106896
-	type_Ptr, _ := syscall.BytePtrFromString(type_)
-	pathPtr, _ := syscall.BytePtrFromString(path)
+	type_Ptr := stringToBytePtr(type_)
+	pathPtr := stringToBytePtr(path)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(type_Ptr)), uintptr(unsafe.Pointer(pathPtr)))
 	return int32(ret)
 }
@@ -1916,7 +1916,7 @@ func (dm *DmSoft) DmGuardLoadCustom(type_ string, path string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) CreateFolder(folder_name string) int32 {
 	funAddr := DmHModule + 113120
-	folder_namePtr, _ := syscall.BytePtrFromString(folder_name)
+	folder_namePtr := stringToBytePtr(folder_name)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(folder_namePtr)), 0)
 	return int32(ret)
 }
@@ -1962,7 +1962,7 @@ func (dm *DmSoft) EnableGetColorByCapture(enable int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetDisplayInput(mode string) int32 {
 	funAddr := DmHModule + 110944
-	modePtr, _ := syscall.BytePtrFromString(mode)
+	modePtr := stringToBytePtr(mode)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(modePtr)), 0)
 	return int32(ret)
 }
@@ -2003,9 +2003,9 @@ func (dm *DmSoft) AiEnableFindPicWindow(enable int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) ReadIni(section string, key string, file string) string {
 	funAddr := DmHModule + 102912
-	sectionPtr, _ := syscall.BytePtrFromString(section)
-	keyPtr, _ := syscall.BytePtrFromString(key)
-	filePtr, _ := syscall.BytePtrFromString(file)
+	sectionPtr := stringToBytePtr(section)
+	keyPtr := stringToBytePtr(key)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(sectionPtr)), uintptr(unsafe.Pointer(keyPtr)), uintptr(unsafe.Pointer(filePtr)), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2016,8 +2016,8 @@ func (dm *DmSoft) ReadIni(section string, key string, file string) string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) ImageToBmp(pic_name string, bmp_name string) int32 {
 	funAddr := DmHModule + 109152
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
-	bmp_namePtr, _ := syscall.BytePtrFromString(bmp_name)
+	pic_namePtr := stringToBytePtr(pic_name)
+	bmp_namePtr := stringToBytePtr(bmp_name)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(bmp_namePtr)))
 	return int32(ret)
 }
@@ -2047,8 +2047,8 @@ func (dm *DmSoft) WheelUp() int32 {
 func (dm *DmSoft) CopyFile(src_file string, dst_file string, over int32) int32 {
 
 	funAddr := DmHModule + 100688
-	src_filePtr, _ := syscall.BytePtrFromString(src_file)
-	dst_filePtr, _ := syscall.BytePtrFromString(dst_file)
+	src_filePtr := stringToBytePtr(src_file)
+	dst_filePtr := stringToBytePtr(dst_file)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(src_filePtr)), uintptr(unsafe.Pointer(dst_filePtr)), uintptr(over), 0, 0)
 	return int32(ret)
 }
@@ -2060,8 +2060,8 @@ func (dm *DmSoft) CopyFile(src_file string, dst_file string, over int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindWindowEx(parent int32, class_name string, title_name string) int32 {
 	funAddr := DmHModule + 115408
-	class_namePtr, _ := syscall.BytePtrFromString(class_name)
-	title_namePtr, _ := syscall.BytePtrFromString(title_name)
+	class_namePtr := stringToBytePtr(class_name)
+	title_namePtr := stringToBytePtr(title_name)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(parent), uintptr(unsafe.Pointer(class_namePtr)), uintptr(unsafe.Pointer(title_namePtr)), 0, 0)
 	return int32(ret)
 }
@@ -2097,7 +2097,7 @@ func (dm *DmSoft) GetScreenDataBmp(x1 int32, y1 int32, x2 int32, y2 int32, data 
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetWordResultPos(str string, index int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 114352
-	strPtr, _ := syscall.BytePtrFromString(str)
+	strPtr := stringToBytePtr(str)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(strPtr)), uintptr(index), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0)
 	return int32(ret)
 }
@@ -2130,7 +2130,7 @@ func (dm *DmSoft) ReadStringAddr(hwnd int32, addr int64, type_ int32, len int32)
 // 返回: 结果字符串
 func (dm *DmSoft) ReadData(hwnd int32, addr string, len int32) string {
 	funAddr := DmHModule + 111232
-	addrPtr, _ := syscall.BytePtrFromString(addr)
+	addrPtr := stringToBytePtr(addr)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)), uintptr(len), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2141,7 +2141,7 @@ func (dm *DmSoft) ReadData(hwnd int32, addr string, len int32) string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) AddDict(index int32, dict_info string) int32 {
 	funAddr := DmHModule + 106336
-	dict_infoPtr, _ := syscall.BytePtrFromString(dict_info)
+	dict_infoPtr := stringToBytePtr(dict_info)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(index), uintptr(unsafe.Pointer(dict_infoPtr)))
 	return int32(ret)
 }
@@ -2189,7 +2189,7 @@ func (dm *DmSoft) WriteDataAddrFromBin(hwnd int32, addr int64, data int32, len i
 // 返回: 结果字符串
 func (dm *DmSoft) AiFindPicMemEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_info string, sim float64, dir int32) string {
 	funAddr := DmHModule + 102976
-	pic_infoPtr, _ := syscall.BytePtrFromString(pic_info)
+	pic_infoPtr := stringToBytePtr(pic_info)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(sim), uintptr(dir), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2238,7 +2238,7 @@ func (dm *DmSoft) AiYoloUseModel(index int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DeleteFile(file string) int32 {
 	funAddr := DmHModule + 99408
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return int32(ret)
 }
@@ -2264,7 +2264,7 @@ func (dm *DmSoft) GetScreenDepth() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindColor(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64, dir int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 106112
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
 	return int32(ret)
 }
@@ -2306,7 +2306,7 @@ func (dm *DmSoft) IntToData(int_value int64, type_ int32) string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FaqPost(server string, handle int32, request_type int32, time_out int32) int32 {
 	funAddr := DmHModule + 107440
-	serverPtr, _ := syscall.BytePtrFromString(server)
+	serverPtr := stringToBytePtr(server)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(serverPtr)), uintptr(handle), uintptr(request_type), uintptr(time_out), 0)
 	return int32(ret)
 }
@@ -2331,8 +2331,8 @@ func (dm *DmSoft) GetColorHSV(x int32, y int32) string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindWindowSuper(spec1 string, flag1 int32, type1 int32, spec2 string, flag2 int32, type2 int32) int32 {
 	funAddr := DmHModule + 108432
-	spec1Ptr, _ := syscall.BytePtrFromString(spec1)
-	spec2Ptr, _ := syscall.BytePtrFromString(spec2)
+	spec1Ptr := stringToBytePtr(spec1)
+	spec2Ptr := stringToBytePtr(spec2)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(unsafe.Pointer(spec1Ptr)), uintptr(flag1), uintptr(type1), uintptr(unsafe.Pointer(spec2Ptr)), uintptr(flag2), uintptr(type2), 0, 0)
 	return int32(ret)
 }
@@ -2361,8 +2361,8 @@ func (dm *DmSoft) SetAero(enable int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DecodeFile(file string, pwd string) int32 {
 	funAddr := DmHModule + 122496
-	filePtr, _ := syscall.BytePtrFromString(file)
-	pwdPtr, _ := syscall.BytePtrFromString(pwd)
+	filePtr := stringToBytePtr(file)
+	pwdPtr := stringToBytePtr(pwd)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(filePtr)), uintptr(unsafe.Pointer(pwdPtr)))
 	return int32(ret)
 }
@@ -2379,8 +2379,8 @@ func (dm *DmSoft) DecodeFile(file string, pwd string) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindPicExS(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, delta_color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 100368
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_namePtr := stringToBytePtr(pic_name)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2393,7 +2393,7 @@ func (dm *DmSoft) FindPicExS(x1 int32, y1 int32, x2 int32, y2 int32, pic_name st
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WriteStringAddr(hwnd int32, addr int64, type_ int32, v string) int32 {
 	funAddr := DmHModule + 122720
-	vPtr, _ := syscall.BytePtrFromString(v)
+	vPtr := stringToBytePtr(v)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(addr), uintptr(type_), uintptr(unsafe.Pointer(vPtr)), 0)
 	return int32(ret)
 }
@@ -2427,8 +2427,8 @@ func (dm *DmSoft) SelectFile() string {
 // 返回: 结果字符串
 func (dm *DmSoft) FindPicSimMemEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_info string, delta_color string, sim int32, dir int32) string {
 	funAddr := DmHModule + 124912
-	pic_infoPtr, _ := syscall.BytePtrFromString(pic_info)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_infoPtr := stringToBytePtr(pic_info)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2439,7 +2439,7 @@ func (dm *DmSoft) FindPicSimMemEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_in
 // 返回: 结果字符串
 func (dm *DmSoft) GetWordResultStr(str string, index int32) string {
 	funAddr := DmHModule + 104768
-	strPtr, _ := syscall.BytePtrFromString(str)
+	strPtr := stringToBytePtr(str)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(strPtr)), uintptr(index))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2464,8 +2464,8 @@ func (dm *DmSoft) EnablePicCache(en int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindStrExS(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64) string {
 	funAddr := DmHModule + 100528
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2475,7 +2475,7 @@ func (dm *DmSoft) FindStrExS(x1 int32, y1 int32, x2 int32, y2 int32, str string,
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) LoadPic(pic_name string) int32 {
 	funAddr := DmHModule + 124128
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
+	pic_namePtr := stringToBytePtr(pic_name)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(pic_namePtr)), 0)
 	return int32(ret)
 }
@@ -2493,8 +2493,8 @@ func (dm *DmSoft) LoadPic(pic_name string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindStrFast(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 115584
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
 	return int32(ret)
 }
@@ -2507,7 +2507,7 @@ func (dm *DmSoft) FindStrFast(x1 int32, y1 int32, x2 int32, y2 int32, str string
 // 返回: 结果字符串
 func (dm *DmSoft) FindDouble(hwnd int32, addr_range string, double_value_min float64, double_value_max float64) string {
 	funAddr := DmHModule + 102192
-	addr_rangePtr, _ := syscall.BytePtrFromString(addr_range)
+	addr_rangePtr := stringToBytePtr(addr_range)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addr_rangePtr)), uintptr(double_value_min), uintptr(double_value_max), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2525,7 +2525,7 @@ func (dm *DmSoft) SetParam64ToPointer() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetMemoryFindResultToFile(file string) int32 {
 	funAddr := DmHModule + 110704
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return int32(ret)
 }
@@ -2559,8 +2559,8 @@ func (dm *DmSoft) CreateFoobarEllipse(hwnd int32, x int32, y int32, w int32, h i
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) MoveFile(src_file string, dst_file string) int32 {
 	funAddr := DmHModule + 102272
-	src_filePtr, _ := syscall.BytePtrFromString(src_file)
-	dst_filePtr, _ := syscall.BytePtrFromString(dst_file)
+	src_filePtr := stringToBytePtr(src_file)
+	dst_filePtr := stringToBytePtr(dst_file)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(src_filePtr)), uintptr(unsafe.Pointer(dst_filePtr)))
 	return int32(ret)
 }
@@ -2599,9 +2599,9 @@ func (dm *DmSoft) GetColorBGR(x int32, y int32) string {
 // 返回: 结果字符串
 func (dm *DmSoft) EnumIniKeyPwd(section string, file string, pwd string) string {
 	funAddr := DmHModule + 116768
-	sectionPtr, _ := syscall.BytePtrFromString(section)
-	filePtr, _ := syscall.BytePtrFromString(file)
-	pwdPtr, _ := syscall.BytePtrFromString(pwd)
+	sectionPtr := stringToBytePtr(section)
+	filePtr := stringToBytePtr(file)
+	pwdPtr := stringToBytePtr(pwd)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(sectionPtr)), uintptr(unsafe.Pointer(filePtr)), uintptr(unsafe.Pointer(pwdPtr)), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2633,8 +2633,8 @@ func (dm *DmSoft) UseDict(index int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindDataEx(hwnd int32, addr_range string, data string, step int32, multi_thread int32, mode int32) string {
 	funAddr := DmHModule + 123200
-	addr_rangePtr, _ := syscall.BytePtrFromString(addr_range)
-	dataPtr, _ := syscall.BytePtrFromString(data)
+	addr_rangePtr := stringToBytePtr(addr_range)
+	dataPtr := stringToBytePtr(data)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addr_rangePtr)), uintptr(unsafe.Pointer(dataPtr)), uintptr(step), uintptr(multi_thread), uintptr(mode), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2644,7 +2644,7 @@ func (dm *DmSoft) FindDataEx(hwnd int32, addr_range string, data string, step in
 // 返回: 结果字符串
 func (dm *DmSoft) Md5(str string) string {
 	funAddr := DmHModule + 117376
-	strPtr, _ := syscall.BytePtrFromString(str)
+	strPtr := stringToBytePtr(str)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(strPtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2654,7 +2654,7 @@ func (dm *DmSoft) Md5(str string) string {
 // 返回: 结果字符串
 func (dm *DmSoft) BGR2RGB(bgr_color string) string {
 	funAddr := DmHModule + 118736
-	bgr_colorPtr, _ := syscall.BytePtrFromString(bgr_color)
+	bgr_colorPtr := stringToBytePtr(bgr_color)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(bgr_colorPtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2670,7 +2670,7 @@ func (dm *DmSoft) BGR2RGB(bgr_color string) string {
 // 返回: 结果字符串
 func (dm *DmSoft) FindColorEx(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 103600
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(dir), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2685,7 +2685,7 @@ func (dm *DmSoft) FindColorEx(x1 int32, y1 int32, x2 int32, y2 int32, color stri
 // 返回: 结果字符串
 func (dm *DmSoft) OcrExOne(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64) string {
 	funAddr := DmHModule + 112080
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2698,7 +2698,7 @@ func (dm *DmSoft) OcrExOne(x1 int32, y1 int32, x2 int32, y2 int32, color string,
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) CmpColor(x int32, y int32, color string, sim float64) int32 {
 	funAddr := DmHModule + 109648
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(x), uintptr(y), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0)
 	return int32(ret)
 }
@@ -2714,8 +2714,8 @@ func (dm *DmSoft) CmpColor(x int32, y int32, color string, sim float64) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) OcrInFile(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, color string, sim float64) string {
 	funAddr := DmHModule + 110608
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	pic_namePtr := stringToBytePtr(pic_name)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2726,7 +2726,7 @@ func (dm *DmSoft) OcrInFile(x1 int32, y1 int32, x2 int32, y2 int32, pic_name str
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) CheckInputMethod(hwnd int32, id string) int32 {
 	funAddr := DmHModule + 101792
-	idPtr, _ := syscall.BytePtrFromString(id)
+	idPtr := stringToBytePtr(id)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(idPtr)))
 	return int32(ret)
 }
@@ -2763,8 +2763,8 @@ func (dm *DmSoft) GetClipboard() string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindStr(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 110320
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
 	return int32(ret)
 }
@@ -2802,7 +2802,7 @@ func (dm *DmSoft) GetCursorShape() string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetWordResultCount(str string) int32 {
 	funAddr := DmHModule + 103984
-	strPtr, _ := syscall.BytePtrFromString(str)
+	strPtr := stringToBytePtr(str)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(strPtr)), 0)
 	return int32(ret)
 }
@@ -2824,7 +2824,7 @@ func (dm *DmSoft) SelectDirectory() string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) CapturePng(x1 int32, y1 int32, x2 int32, y2 int32, file string) int32 {
 	funAddr := DmHModule + 114080
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall6(funAddr, 6, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(filePtr)))
 	return int32(ret)
 }
@@ -2834,7 +2834,7 @@ func (dm *DmSoft) CapturePng(x1 int32, y1 int32, x2 int32, y2 int32, file string
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) KeyDownChar(key_str string) int32 {
 	funAddr := DmHModule + 105600
-	key_strPtr, _ := syscall.BytePtrFromString(key_str)
+	key_strPtr := stringToBytePtr(key_str)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(key_strPtr)), 0)
 	return int32(ret)
 }
@@ -2849,7 +2849,7 @@ func (dm *DmSoft) KeyDownChar(key_str string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) CaptureJpg(x1 int32, y1 int32, x2 int32, y2 int32, file string, quality int32) int32 {
 	funAddr := DmHModule + 106400
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(filePtr)), uintptr(quality), 0, 0)
 	return int32(ret)
 }
@@ -2865,8 +2865,8 @@ func (dm *DmSoft) CaptureJpg(x1 int32, y1 int32, x2 int32, y2 int32, file string
 // 返回: 结果字符串
 func (dm *DmSoft) FindStrEx(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64) string {
 	funAddr := DmHModule + 106640
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -2896,8 +2896,8 @@ func (dm *DmSoft) FaqCapture(x1 int32, y1 int32, x2 int32, y2 int32, quality int
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) ShowScrMsg(x1 int32, y1 int32, x2 int32, y2 int32, msg string, color string) int32 {
 	funAddr := DmHModule + 112208
-	msgPtr, _ := syscall.BytePtrFromString(msg)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	msgPtr := stringToBytePtr(msg)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(msgPtr)), uintptr(unsafe.Pointer(colorPtr)), 0, 0)
 	return int32(ret)
 }
@@ -2908,7 +2908,7 @@ func (dm *DmSoft) ShowScrMsg(x1 int32, y1 int32, x2 int32, y2 int32, msg string,
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetKeypadDelay(type_ string, delay int32) int32 {
 	funAddr := DmHModule + 110256
-	type_Ptr, _ := syscall.BytePtrFromString(type_)
+	type_Ptr := stringToBytePtr(type_)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(type_Ptr)), uintptr(delay))
 	return int32(ret)
 }
@@ -2929,7 +2929,7 @@ func (dm *DmSoft) SetScreen(width int32, height int32, depth int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) Play(file string) int32 {
 	funAddr := DmHModule + 105072
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return int32(ret)
 }
@@ -2941,8 +2941,8 @@ func (dm *DmSoft) Play(file string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindWindowByProcessId(process_id int32, class_name string, title_name string) int32 {
 	funAddr := DmHModule + 104176
-	class_namePtr, _ := syscall.BytePtrFromString(class_name)
-	title_namePtr, _ := syscall.BytePtrFromString(title_name)
+	class_namePtr := stringToBytePtr(class_name)
+	title_namePtr := stringToBytePtr(title_name)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(process_id), uintptr(unsafe.Pointer(class_namePtr)), uintptr(unsafe.Pointer(title_namePtr)), 0, 0)
 	return int32(ret)
 }
@@ -2954,7 +2954,7 @@ func (dm *DmSoft) FindWindowByProcessId(process_id int32, class_name string, tit
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WriteDouble(hwnd int32, addr string, double_value float64) int32 {
 	funAddr := DmHModule + 116048
-	addrPtr, _ := syscall.BytePtrFromString(addr)
+	addrPtr := stringToBytePtr(addr)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)), uintptr(double_value), 0, 0)
 	return int32(ret)
 }
@@ -2982,8 +2982,8 @@ func (dm *DmSoft) GetBindWindow() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindWindow(class_name string, title_name string) int32 {
 	funAddr := DmHModule + 104288
-	class_namePtr, _ := syscall.BytePtrFromString(class_name)
-	title_namePtr, _ := syscall.BytePtrFromString(title_name)
+	class_namePtr := stringToBytePtr(class_name)
+	title_namePtr := stringToBytePtr(title_name)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(class_namePtr)), uintptr(unsafe.Pointer(title_namePtr)))
 	return int32(ret)
 }
@@ -3001,7 +3001,7 @@ func (dm *DmSoft) FindWindow(class_name string, title_name string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) AiFindPic(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, sim float64, dir int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 121536
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
+	pic_namePtr := stringToBytePtr(pic_name)
 	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
 	return int32(ret)
 }
@@ -3015,7 +3015,7 @@ func (dm *DmSoft) AiFindPic(x1 int32, y1 int32, x2 int32, y2 int32, pic_name str
 // 返回: 结果字符串
 func (dm *DmSoft) FindInt(hwnd int32, addr_range string, int_value_min int64, int_value_max int64, type_ int32) string {
 	funAddr := DmHModule + 106256
-	addr_rangePtr, _ := syscall.BytePtrFromString(addr_range)
+	addr_rangePtr := stringToBytePtr(addr_range)
 	ret, _, _ := syscall.Syscall6(funAddr, 6, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addr_rangePtr)), uintptr(int_value_min), uintptr(int_value_max), uintptr(type_))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3093,8 +3093,8 @@ func (dm *DmSoft) GetPath() string {
 // 返回: 结果字符串
 func (dm *DmSoft) EnumWindowSuper(spec1 string, flag1 int32, type1 int32, spec2 string, flag2 int32, type2 int32, sort int32) string {
 	funAddr := DmHModule + 107360
-	spec1Ptr, _ := syscall.BytePtrFromString(spec1)
-	spec2Ptr, _ := syscall.BytePtrFromString(spec2)
+	spec1Ptr := stringToBytePtr(spec1)
+	spec2Ptr := stringToBytePtr(spec2)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(unsafe.Pointer(spec1Ptr)), uintptr(flag1), uintptr(type1), uintptr(unsafe.Pointer(spec2Ptr)), uintptr(flag2), uintptr(type2), uintptr(sort), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3105,7 +3105,7 @@ func (dm *DmSoft) EnumWindowSuper(spec1 string, flag1 int32, type1 int32, spec2 
 // 返回: 64位整数值
 func (dm *DmSoft) GetModuleBaseAddr(hwnd int32, module_name string) int64 {
 	funAddr := DmHModule + 108848
-	module_namePtr, _ := syscall.BytePtrFromString(module_name)
+	module_namePtr := stringToBytePtr(module_name)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(module_namePtr)))
 	return int64(ret)
 }
@@ -3118,8 +3118,8 @@ func (dm *DmSoft) GetModuleBaseAddr(hwnd int32, module_name string) int64 {
 // 返回: 结果字符串
 func (dm *DmSoft) EnumWindowByProcessId(pid int32, title string, class_name string, filter int32) string {
 	funAddr := DmHModule + 124672
-	titlePtr, _ := syscall.BytePtrFromString(title)
-	class_namePtr, _ := syscall.BytePtrFromString(class_name)
+	titlePtr := stringToBytePtr(title)
+	class_namePtr := stringToBytePtr(class_name)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(pid), uintptr(unsafe.Pointer(titlePtr)), uintptr(unsafe.Pointer(class_namePtr)), uintptr(filter), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3152,8 +3152,8 @@ func (dm *DmSoft) GetLastError() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FoobarDrawText(hwnd int32, x int32, y int32, w int32, h int32, text string, color string, align int32) int32 {
 	funAddr := DmHModule + 119712
-	textPtr, _ := syscall.BytePtrFromString(text)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	textPtr := stringToBytePtr(text)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(hwnd), uintptr(x), uintptr(y), uintptr(w), uintptr(h), uintptr(unsafe.Pointer(textPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(align))
 	return int32(ret)
 }
@@ -3181,8 +3181,8 @@ func (dm *DmSoft) LeftUp() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WriteFile(file string, content string) int32 {
 	funAddr := DmHModule + 105536
-	filePtr, _ := syscall.BytePtrFromString(file)
-	contentPtr, _ := syscall.BytePtrFromString(content)
+	filePtr := stringToBytePtr(file)
+	contentPtr := stringToBytePtr(content)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(filePtr)), uintptr(unsafe.Pointer(contentPtr)))
 	return int32(ret)
 }
@@ -3208,7 +3208,7 @@ func (dm *DmSoft) SetWindowSize(hwnd int32, width int32, height int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FaqCaptureFromFile(x1 int32, y1 int32, x2 int32, y2 int32, file string, quality int32) int32 {
 	funAddr := DmHModule + 116256
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(filePtr)), uintptr(quality), 0, 0)
 	return int32(ret)
 }
@@ -3256,7 +3256,7 @@ func (dm *DmSoft) ClearDict(index int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SaveDict(index int32, file string) int32 {
 	funAddr := DmHModule + 115520
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(index), uintptr(unsafe.Pointer(filePtr)))
 	return int32(ret)
 }
@@ -3291,10 +3291,10 @@ func (dm *DmSoft) GetAveHSV(x1 int32, y1 int32, x2 int32, y2 int32) string {
 // 返回: 结果字符串
 func (dm *DmSoft) ReadIniPwd(section string, key string, file string, pwd string) string {
 	funAddr := DmHModule + 102064
-	sectionPtr, _ := syscall.BytePtrFromString(section)
-	keyPtr, _ := syscall.BytePtrFromString(key)
-	filePtr, _ := syscall.BytePtrFromString(file)
-	pwdPtr, _ := syscall.BytePtrFromString(pwd)
+	sectionPtr := stringToBytePtr(section)
+	keyPtr := stringToBytePtr(key)
+	filePtr := stringToBytePtr(file)
+	pwdPtr := stringToBytePtr(pwd)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(sectionPtr)), uintptr(unsafe.Pointer(keyPtr)), uintptr(unsafe.Pointer(filePtr)), uintptr(unsafe.Pointer(pwdPtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3321,8 +3321,8 @@ func (dm *DmSoft) LeftDown() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DmGuardExtract(type_ string, path string) int32 {
 	funAddr := DmHModule + 112160
-	type_Ptr, _ := syscall.BytePtrFromString(type_)
-	pathPtr, _ := syscall.BytePtrFromString(path)
+	type_Ptr := stringToBytePtr(type_)
+	pathPtr := stringToBytePtr(path)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(type_Ptr)), uintptr(unsafe.Pointer(pathPtr)))
 	return int32(ret)
 }
@@ -3346,8 +3346,8 @@ func (dm *DmSoft) ExitOs(type_ int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FetchWord(x1 int32, y1 int32, x2 int32, y2 int32, color string, word string) string {
 	funAddr := DmHModule + 117840
-	colorPtr, _ := syscall.BytePtrFromString(color)
-	wordPtr, _ := syscall.BytePtrFromString(word)
+	colorPtr := stringToBytePtr(color)
+	wordPtr := stringToBytePtr(word)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(unsafe.Pointer(wordPtr)), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3386,7 +3386,7 @@ func (dm *DmSoft) GetDict(index int32, font_index int32) string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetDict(index int32, dict_name string) int32 {
 	funAddr := DmHModule + 121280
-	dict_namePtr, _ := syscall.BytePtrFromString(dict_name)
+	dict_namePtr := stringToBytePtr(dict_name)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(index), uintptr(unsafe.Pointer(dict_namePtr)))
 	return int32(ret)
 }
@@ -3396,7 +3396,7 @@ func (dm *DmSoft) SetDict(index int32, dict_name string) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) AiYoloObjectsToString(objects string) string {
 	funAddr := DmHModule + 111456
-	objectsPtr, _ := syscall.BytePtrFromString(objects)
+	objectsPtr := stringToBytePtr(objects)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(objectsPtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3426,9 +3426,9 @@ func (dm *DmSoft) RightClick() int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) EnumWindowByProcess(process_name string, title string, class_name string, filter int32) string {
 	funAddr := DmHModule + 110192
-	process_namePtr, _ := syscall.BytePtrFromString(process_name)
-	titlePtr, _ := syscall.BytePtrFromString(title)
-	class_namePtr, _ := syscall.BytePtrFromString(class_name)
+	process_namePtr := stringToBytePtr(process_name)
+	titlePtr := stringToBytePtr(title)
+	class_namePtr := stringToBytePtr(class_name)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(process_namePtr)), uintptr(unsafe.Pointer(titlePtr)), uintptr(unsafe.Pointer(class_namePtr)), uintptr(filter), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3447,7 +3447,7 @@ func (dm *DmSoft) GetDiskModel(index int32) string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SendStringIme(str string) int32 {
 	funAddr := DmHModule + 124000
-	strPtr, _ := syscall.BytePtrFromString(str)
+	strPtr := stringToBytePtr(str)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(strPtr)), 0)
 	return int32(ret)
 }
@@ -3459,7 +3459,7 @@ func (dm *DmSoft) SendStringIme(str string) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) AppendPicAddr(pic_info string, addr int32, size int32) string {
 	funAddr := DmHModule + 106832
-	pic_infoPtr, _ := syscall.BytePtrFromString(pic_info)
+	pic_infoPtr := stringToBytePtr(pic_info)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(addr), uintptr(size), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3469,7 +3469,7 @@ func (dm *DmSoft) AppendPicAddr(pic_info string, addr int32, size int32) string 
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DeleteFolder(folder_name string) int32 {
 	funAddr := DmHModule + 118800
-	folder_namePtr, _ := syscall.BytePtrFromString(folder_name)
+	folder_namePtr := stringToBytePtr(folder_name)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(folder_namePtr)), 0)
 	return int32(ret)
 }
@@ -3516,7 +3516,7 @@ func (dm *DmSoft) GetSpecialWindow(flag int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) EnumProcess(name string) string {
 	funAddr := DmHModule + 112288
-	namePtr, _ := syscall.BytePtrFromString(name)
+	namePtr := stringToBytePtr(name)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(namePtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3550,8 +3550,8 @@ func (dm *DmSoft) GetWindowState(hwnd int32, flag int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindStrFastE(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64) string {
 	funAddr := DmHModule + 120288
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3585,7 +3585,7 @@ func (dm *DmSoft) AiYoloDetectObjects(x1 int32, y1 int32, x2 int32, y2 int32, pr
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) RunApp(path string, mode int32) int32 {
 	funAddr := DmHModule + 122832
-	pathPtr, _ := syscall.BytePtrFromString(path)
+	pathPtr := stringToBytePtr(path)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(pathPtr)), uintptr(mode))
 	return int32(ret)
 }
@@ -3598,8 +3598,8 @@ func (dm *DmSoft) RunApp(path string, mode int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindString(hwnd int32, addr_range string, string_value string, type_ int32) string {
 	funAddr := DmHModule + 110752
-	addr_rangePtr, _ := syscall.BytePtrFromString(addr_range)
-	string_valuePtr, _ := syscall.BytePtrFromString(string_value)
+	addr_rangePtr := stringToBytePtr(addr_range)
+	string_valuePtr := stringToBytePtr(string_value)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addr_rangePtr)), uintptr(unsafe.Pointer(string_valuePtr)), uintptr(type_), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3622,7 +3622,7 @@ func (dm *DmSoft) GetOsType() int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) Ocr(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64) string {
 	funAddr := DmHModule + 110992
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3635,7 +3635,7 @@ func (dm *DmSoft) Ocr(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim 
 // 返回: 结果字符串
 func (dm *DmSoft) ReadString(hwnd int32, addr string, type_ int32, length int32) string {
 	funAddr := DmHModule + 121472
-	addrPtr, _ := syscall.BytePtrFromString(addr)
+	addrPtr := stringToBytePtr(addr)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)), uintptr(type_), uintptr(length), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3665,7 +3665,7 @@ func (dm *DmSoft) Beep(fre int32, delay int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) LoadAi(file string) int32 {
 	funAddr := DmHModule + 106944
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return int32(ret)
 }
@@ -3699,7 +3699,7 @@ func (dm *DmSoft) EnableShareDict(en int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) AiYoloDetectObjectsToFile(x1 int32, y1 int32, x2 int32, y2 int32, prob float32, iou float32, file string, mode int32) int32 {
 	funAddr := DmHModule + 109504
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(prob), uintptr(iou), uintptr(unsafe.Pointer(filePtr)), uintptr(mode))
 	return int32(ret)
 }
@@ -3719,7 +3719,7 @@ func (dm *DmSoft) FoobarUnlock(hwnd int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) GetSystemInfo(type_ string, method int32) string {
 	funAddr := DmHModule + 115680
-	type_Ptr, _ := syscall.BytePtrFromString(type_)
+	type_Ptr := stringToBytePtr(type_)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(type_Ptr)), uintptr(method))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3729,7 +3729,7 @@ func (dm *DmSoft) GetSystemInfo(type_ string, method int32) string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetResultCount(str string) int32 {
 	funAddr := DmHModule + 116720
-	strPtr, _ := syscall.BytePtrFromString(str)
+	strPtr := stringToBytePtr(str)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(strPtr)), 0)
 	return int32(ret)
 }
@@ -3742,8 +3742,8 @@ func (dm *DmSoft) GetResultCount(str string) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) EnumWindow(parent int32, title string, class_name string, filter int32) string {
 	funAddr := DmHModule + 115296
-	titlePtr, _ := syscall.BytePtrFromString(title)
-	class_namePtr, _ := syscall.BytePtrFromString(class_name)
+	titlePtr := stringToBytePtr(title)
+	class_namePtr := stringToBytePtr(class_name)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(parent), uintptr(unsafe.Pointer(titlePtr)), uintptr(unsafe.Pointer(class_namePtr)), uintptr(filter), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3756,7 +3756,7 @@ func (dm *DmSoft) EnumWindow(parent int32, title string, class_name string, filt
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetResultPos(str string, index int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 102800
-	strPtr, _ := syscall.BytePtrFromString(str)
+	strPtr := stringToBytePtr(str)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(strPtr)), uintptr(index), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0)
 	return int32(ret)
 }
@@ -3792,7 +3792,7 @@ func (dm *DmSoft) SetWordLineHeightNoDict(line_height int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) AiFindPicMem(x1 int32, y1 int32, x2 int32, y2 int32, pic_info string, sim float64, dir int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 111696
-	pic_infoPtr, _ := syscall.BytePtrFromString(pic_info)
+	pic_infoPtr := stringToBytePtr(pic_info)
 	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
 	return int32(ret)
 }
@@ -3832,8 +3832,8 @@ func (dm *DmSoft) GetPointWindow(x int32, y int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindMultiColorEx(x1 int32, y1 int32, x2 int32, y2 int32, first_color string, offset_color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 122560
-	first_colorPtr, _ := syscall.BytePtrFromString(first_color)
-	offset_colorPtr, _ := syscall.BytePtrFromString(offset_color)
+	first_colorPtr := stringToBytePtr(first_color)
+	offset_colorPtr := stringToBytePtr(offset_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(first_colorPtr)), uintptr(unsafe.Pointer(offset_colorPtr)), uintptr(sim), uintptr(dir))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3862,9 +3862,9 @@ func (dm *DmSoft) GetMachineCodeNoMac() string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindWindowByProcess(process_name string, class_name string, title_name string) int32 {
 	funAddr := DmHModule + 122336
-	process_namePtr, _ := syscall.BytePtrFromString(process_name)
-	class_namePtr, _ := syscall.BytePtrFromString(class_name)
-	title_namePtr, _ := syscall.BytePtrFromString(title_name)
+	process_namePtr := stringToBytePtr(process_name)
+	class_namePtr := stringToBytePtr(class_name)
+	title_namePtr := stringToBytePtr(title_name)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(process_namePtr)), uintptr(unsafe.Pointer(class_namePtr)), uintptr(unsafe.Pointer(title_namePtr)), 0, 0)
 	return int32(ret)
 }
@@ -3879,7 +3879,7 @@ func (dm *DmSoft) FindWindowByProcess(process_name string, class_name string, ti
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetColorNum(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64) int32 {
 	funAddr := DmHModule + 124048
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0, 0)
 	return int32(ret)
 }
@@ -3907,7 +3907,7 @@ func (dm *DmSoft) CheckFontSmooth() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) IsFolderExist(folder string) int32 {
 	funAddr := DmHModule + 121184
-	folderPtr, _ := syscall.BytePtrFromString(folder)
+	folderPtr := stringToBytePtr(folder)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(folderPtr)), 0)
 	return int32(ret)
 }
@@ -3953,7 +3953,7 @@ func (dm *DmSoft) EnableFontSmooth() int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) StringToData(string_value string, type_ int32) string {
 	funAddr := DmHModule + 114768
-	string_valuePtr, _ := syscall.BytePtrFromString(string_value)
+	string_valuePtr := stringToBytePtr(string_value)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(string_valuePtr)), uintptr(type_))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3983,8 +3983,8 @@ func (dm *DmSoft) GetWindowRect(hwnd int32, x1 *int32, y1 *int32, x2 *int32, y2 
 // 返回: 结果字符串
 func (dm *DmSoft) FindPicEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, delta_color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 108160
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_namePtr := stringToBytePtr(pic_name)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -3999,7 +3999,7 @@ func (dm *DmSoft) FindPicEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_name str
 // 返回: 结果字符串
 func (dm *DmSoft) GetWords(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64) string {
 	funAddr := DmHModule + 107808
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4028,7 +4028,7 @@ func (dm *DmSoft) EnableMouseSync(enable int32, time_out int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) CapturePre(file string) int32 {
 	funAddr := DmHModule + 109456
-	filePtr, _ := syscall.BytePtrFromString(file)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(filePtr)), 0)
 	return int32(ret)
 }
@@ -4043,10 +4043,10 @@ func (dm *DmSoft) CapturePre(file string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) BindWindowEx(hwnd int32, display string, mouse string, keypad string, public_desc string, mode int32) int32 {
 	funAddr := DmHModule + 99456
-	displayPtr, _ := syscall.BytePtrFromString(display)
-	mousePtr, _ := syscall.BytePtrFromString(mouse)
-	keypadPtr, _ := syscall.BytePtrFromString(keypad)
-	public_descPtr, _ := syscall.BytePtrFromString(public_desc)
+	displayPtr := stringToBytePtr(display)
+	mousePtr := stringToBytePtr(mouse)
+	keypadPtr := stringToBytePtr(keypad)
+	public_descPtr := stringToBytePtr(public_desc)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(displayPtr)), uintptr(unsafe.Pointer(mousePtr)), uintptr(unsafe.Pointer(keypadPtr)), uintptr(unsafe.Pointer(public_descPtr)), uintptr(mode), 0, 0)
 	return int32(ret)
 }
@@ -4056,7 +4056,7 @@ func (dm *DmSoft) BindWindowEx(hwnd int32, display string, mouse string, keypad 
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FaqCaptureString(str string) int32 {
 	funAddr := DmHModule + 106208
-	strPtr, _ := syscall.BytePtrFromString(str)
+	strPtr := stringToBytePtr(str)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(strPtr)), 0)
 	return int32(ret)
 }
@@ -4083,7 +4083,7 @@ func (dm *DmSoft) FoobarTextLineGap(hwnd int32, gap int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FoobarDrawLine(hwnd int32, x1 int32, y1 int32, x2 int32, y2 int32, color string, style int32, width int32) int32 {
 	funAddr := DmHModule + 116384
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(hwnd), uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(style), uintptr(width))
 	return int32(ret)
 }
@@ -4093,7 +4093,7 @@ func (dm *DmSoft) FoobarDrawLine(hwnd int32, x1 int32, y1 int32, x2 int32, y2 in
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindInputMethod(id string) int32 {
 	funAddr := DmHModule + 113872
-	idPtr, _ := syscall.BytePtrFromString(id)
+	idPtr := stringToBytePtr(id)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(idPtr)), 0)
 	return int32(ret)
 }
@@ -4103,7 +4103,7 @@ func (dm *DmSoft) FindInputMethod(id string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetPicPwd(pwd string) int32 {
 	funAddr := DmHModule + 123712
-	pwdPtr, _ := syscall.BytePtrFromString(pwd)
+	pwdPtr := stringToBytePtr(pwd)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(pwdPtr)), 0)
 	return int32(ret)
 }
@@ -4136,8 +4136,8 @@ func (dm *DmSoft) InitCri() int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindPicMemE(x1 int32, y1 int32, x2 int32, y2 int32, pic_info string, delta_color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 109264
-	pic_infoPtr, _ := syscall.BytePtrFromString(pic_info)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_infoPtr := stringToBytePtr(pic_info)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4155,8 +4155,8 @@ func (dm *DmSoft) FindPicMemE(x1 int32, y1 int32, x2 int32, y2 int32, pic_info s
 // 返回: 结果字符串
 func (dm *DmSoft) FindStrFastS(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64, x *int32, y *int32) string {
 	funAddr := DmHModule + 98672
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4169,10 +4169,10 @@ func (dm *DmSoft) FindStrFastS(x1 int32, y1 int32, x2 int32, y2 int32, str strin
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DeleteIniPwd(section string, key string, file string, pwd string) int32 {
 	funAddr := DmHModule + 99344
-	sectionPtr, _ := syscall.BytePtrFromString(section)
-	keyPtr, _ := syscall.BytePtrFromString(key)
-	filePtr, _ := syscall.BytePtrFromString(file)
-	pwdPtr, _ := syscall.BytePtrFromString(pwd)
+	sectionPtr := stringToBytePtr(section)
+	keyPtr := stringToBytePtr(key)
+	filePtr := stringToBytePtr(file)
+	pwdPtr := stringToBytePtr(pwd)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(sectionPtr)), uintptr(unsafe.Pointer(keyPtr)), uintptr(unsafe.Pointer(filePtr)), uintptr(unsafe.Pointer(pwdPtr)), 0)
 	return int32(ret)
 }
@@ -4232,8 +4232,8 @@ func (dm *DmSoft) SetExitThread(mode int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindPicMemEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_info string, delta_color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 101440
-	pic_infoPtr, _ := syscall.BytePtrFromString(pic_info)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_infoPtr := stringToBytePtr(pic_info)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4256,7 +4256,7 @@ func (dm *DmSoft) GetDmCount() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindMulColor(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64) int32 {
 	funAddr := DmHModule + 111552
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0, 0)
 	return int32(ret)
 }
@@ -4276,9 +4276,9 @@ func (dm *DmSoft) FaqFetch() string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) RegExNoMac(code string, ver string, ip string) int32 {
 	funAddr := DmHModule + 107552
-	codePtr, _ := syscall.BytePtrFromString(code)
-	verPtr, _ := syscall.BytePtrFromString(ver)
-	ipPtr, _ := syscall.BytePtrFromString(ip)
+	codePtr := stringToBytePtr(code)
+	verPtr := stringToBytePtr(ver)
+	ipPtr := stringToBytePtr(ip)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(codePtr)), uintptr(unsafe.Pointer(verPtr)), uintptr(unsafe.Pointer(ipPtr)), 0, 0)
 	return int32(ret)
 }
@@ -4298,7 +4298,7 @@ func (dm *DmSoft) FoobarUpdate(hwnd int32) int32 {
 // 返回: 64位浮点数
 func (dm *DmSoft) ReadDouble(hwnd int32, addr string) float64 {
 	funAddr := DmHModule + 110128
-	addrPtr, _ := syscall.BytePtrFromString(addr)
+	addrPtr := stringToBytePtr(addr)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)))
 	return float64(ret)
 }
@@ -4360,8 +4360,8 @@ func (dm *DmSoft) FoobarLock(hwnd int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindStrFastExS(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64) string {
 	funAddr := DmHModule + 124176
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4382,9 +4382,9 @@ func (dm *DmSoft) FindStrFastExS(x1 int32, y1 int32, x2 int32, y2 int32, str str
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindStrWithFont(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64, font_name string, font_size int32, flag int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 119856
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
-	font_namePtr, _ := syscall.BytePtrFromString(font_name)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
+	font_namePtr := stringToBytePtr(font_name)
 	ret, _, _ := syscall.Syscall15(funAddr, 13, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(unsafe.Pointer(font_namePtr)), uintptr(font_size), uintptr(flag), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
 	return int32(ret)
 }
@@ -4417,7 +4417,7 @@ func (dm *DmSoft) GetWindowClass(hwnd int32) string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetMouseDelay(type_ string, delay int32) int32 {
 	funAddr := DmHModule + 104592
-	type_Ptr, _ := syscall.BytePtrFromString(type_)
+	type_Ptr := stringToBytePtr(type_)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(type_Ptr)), uintptr(delay))
 	return int32(ret)
 }
@@ -4429,7 +4429,7 @@ func (dm *DmSoft) SetMouseDelay(type_ string, delay int32) int32 {
 // 返回: 64位整数值
 func (dm *DmSoft) ReadInt(hwnd int32, addr string, type_ int32) int64 {
 	funAddr := DmHModule + 112720
-	addrPtr, _ := syscall.BytePtrFromString(addr)
+	addrPtr := stringToBytePtr(addr)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)), uintptr(type_), 0, 0)
 	return int64(ret)
 }
@@ -4486,7 +4486,7 @@ func (dm *DmSoft) Int64ToInt32(v int64) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindFloatEx(hwnd int32, addr_range string, float_value_min float32, float_value_max float32, step int32, multi_thread int32, mode int32) string {
 	funAddr := DmHModule + 107040
-	addr_rangePtr, _ := syscall.BytePtrFromString(addr_range)
+	addr_rangePtr := stringToBytePtr(addr_range)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addr_rangePtr)), uintptr(float_value_min), uintptr(float_value_max), uintptr(step), uintptr(multi_thread), uintptr(mode), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4498,8 +4498,8 @@ func (dm *DmSoft) FindFloatEx(hwnd int32, addr_range string, float_value_min flo
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FoobarPrintText(hwnd int32, text string, color string) int32 {
 	funAddr := DmHModule + 108720
-	textPtr, _ := syscall.BytePtrFromString(text)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	textPtr := stringToBytePtr(text)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(textPtr)), uintptr(unsafe.Pointer(colorPtr)), 0, 0)
 	return int32(ret)
 }
@@ -4514,7 +4514,7 @@ func (dm *DmSoft) FoobarPrintText(hwnd int32, text string, color string) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) OcrEx(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64) string {
 	funAddr := DmHModule + 113168
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4524,7 +4524,7 @@ func (dm *DmSoft) OcrEx(x1 int32, y1 int32, x2 int32, y2 int32, color string, si
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FreePic(pic_name string) int32 {
 	funAddr := DmHModule + 103408
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
+	pic_namePtr := stringToBytePtr(pic_name)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(pic_namePtr)), 0)
 	return int32(ret)
 }
@@ -4536,8 +4536,8 @@ func (dm *DmSoft) FreePic(pic_name string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WriteData(hwnd int32, addr string, data string) int32 {
 	funAddr := DmHModule + 123040
-	addrPtr, _ := syscall.BytePtrFromString(addr)
-	dataPtr, _ := syscall.BytePtrFromString(data)
+	addrPtr := stringToBytePtr(addr)
+	dataPtr := stringToBytePtr(data)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)), uintptr(unsafe.Pointer(dataPtr)), 0, 0)
 	return int32(ret)
 }
@@ -4577,7 +4577,7 @@ func (dm *DmSoft) SetDictMem(index int32, addr int32, size int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetClipboard(data string) int32 {
 	funAddr := DmHModule + 104960
-	dataPtr, _ := syscall.BytePtrFromString(data)
+	dataPtr := stringToBytePtr(data)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(dataPtr)), 0)
 	return int32(ret)
 }
@@ -4596,8 +4596,8 @@ func (dm *DmSoft) SetClipboard(data string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FindPicMem(x1 int32, y1 int32, x2 int32, y2 int32, pic_info string, delta_color string, sim float64, dir int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 103696
-	pic_infoPtr, _ := syscall.BytePtrFromString(pic_info)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_infoPtr := stringToBytePtr(pic_info)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall12(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0)
 	return int32(ret)
 }
@@ -4624,7 +4624,7 @@ func (dm *DmSoft) CreateFoobarRoundRect(hwnd int32, x int32, y int32, w int32, h
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) WriteFloat(hwnd int32, addr string, float_value float32) int32 {
 	funAddr := DmHModule + 111920
-	addrPtr, _ := syscall.BytePtrFromString(addr)
+	addrPtr := stringToBytePtr(addr)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addrPtr)), uintptr(float_value), 0, 0)
 	return int32(ret)
 }
@@ -4647,8 +4647,8 @@ func (dm *DmSoft) VirtualFreeEx(hwnd int32, addr int64) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) GetDictInfo(str string, font_name string, font_size int32, flag int32) string {
 	funAddr := DmHModule + 100624
-	strPtr, _ := syscall.BytePtrFromString(str)
-	font_namePtr, _ := syscall.BytePtrFromString(font_name)
+	strPtr := stringToBytePtr(str)
+	font_namePtr := stringToBytePtr(font_name)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(font_namePtr)), uintptr(font_size), uintptr(flag), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4683,7 +4683,7 @@ func (dm *DmSoft) SetClientSize(hwnd int32, width int32, height int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) ExcludePos(all_pos string, type_ int32, x1 int32, y1 int32, x2 int32, y2 int32) string {
 	funAddr := DmHModule + 120992
-	all_posPtr, _ := syscall.BytePtrFromString(all_pos)
+	all_posPtr := stringToBytePtr(all_pos)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(unsafe.Pointer(all_posPtr)), uintptr(type_), uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4705,7 +4705,7 @@ func (dm *DmSoft) MoveToEx(x int32, y int32, w int32, h int32) string {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) SetDictPwd(pwd string) int32 {
 	funAddr := DmHModule + 104128
-	pwdPtr, _ := syscall.BytePtrFromString(pwd)
+	pwdPtr := stringToBytePtr(pwd)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(pwdPtr)), 0)
 	return int32(ret)
 }
@@ -4718,7 +4718,7 @@ func (dm *DmSoft) SetDictPwd(pwd string) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FoobarSetFont(hwnd int32, font_name string, size int32, flag int32) int32 {
 	funAddr := DmHModule + 111632
-	font_namePtr, _ := syscall.BytePtrFromString(font_name)
+	font_namePtr := stringToBytePtr(font_name)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(font_namePtr)), uintptr(size), uintptr(flag), 0)
 	return int32(ret)
 }
@@ -4728,7 +4728,7 @@ func (dm *DmSoft) FoobarSetFont(hwnd int32, font_name string, size int32, flag i
 // 返回: 结果字符串
 func (dm *DmSoft) GetNetTimeByIp(ip string) string {
 	funAddr := DmHModule + 105360
-	ipPtr, _ := syscall.BytePtrFromString(ip)
+	ipPtr := stringToBytePtr(ip)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(ipPtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4752,7 +4752,7 @@ func (dm *DmSoft) EnableKeypadPatch(enable int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FoobarStartGif(hwnd int32, x int32, y int32, pic_name string, repeat_limit int32, delay int32) int32 {
 	funAddr := DmHModule + 117664
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
+	pic_namePtr := stringToBytePtr(pic_name)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(hwnd), uintptr(x), uintptr(y), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(repeat_limit), uintptr(delay), 0, 0)
 	return int32(ret)
 }
@@ -4769,8 +4769,8 @@ func (dm *DmSoft) FoobarStartGif(hwnd int32, x int32, y int32, pic_name string, 
 // 返回: 结果字符串
 func (dm *DmSoft) FindMultiColorE(x1 int32, y1 int32, x2 int32, y2 int32, first_color string, offset_color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 101696
-	first_colorPtr, _ := syscall.BytePtrFromString(first_color)
-	offset_colorPtr, _ := syscall.BytePtrFromString(offset_color)
+	first_colorPtr := stringToBytePtr(first_color)
+	offset_colorPtr := stringToBytePtr(offset_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(first_colorPtr)), uintptr(unsafe.Pointer(offset_colorPtr)), uintptr(sim), uintptr(dir))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4798,7 +4798,7 @@ func (dm *DmSoft) GetLocale() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) GetModuleSize(hwnd int32, module_name string) int32 {
 	funAddr := DmHModule + 120016
-	module_namePtr, _ := syscall.BytePtrFromString(module_name)
+	module_namePtr := stringToBytePtr(module_name)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(module_namePtr)))
 	return int32(ret)
 }
@@ -4814,8 +4814,8 @@ func (dm *DmSoft) GetModuleSize(hwnd int32, module_name string) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindStrE(x1 int32, y1 int32, x2 int32, y2 int32, str string, color string, sim float64) string {
 	funAddr := DmHModule + 122400
-	strPtr, _ := syscall.BytePtrFromString(str)
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	strPtr := stringToBytePtr(str)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4837,7 +4837,7 @@ func (dm *DmSoft) KeyUp(vk int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) SortPosDistance(all_pos string, type_ int32, x int32, y int32) string {
 	funAddr := DmHModule + 117120
-	all_posPtr, _ := syscall.BytePtrFromString(all_pos)
+	all_posPtr := stringToBytePtr(all_pos)
 	ret, _, _ := syscall.Syscall6(funAddr, 5, dm.obj, uintptr(unsafe.Pointer(all_posPtr)), uintptr(type_), uintptr(x), uintptr(y), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4858,9 +4858,9 @@ func (dm *DmSoft) EnableDisplayDebug(enable_debug int32) int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) DeleteIni(section string, key string, file string) int32 {
 	funAddr := DmHModule + 111168
-	sectionPtr, _ := syscall.BytePtrFromString(section)
-	keyPtr, _ := syscall.BytePtrFromString(key)
-	filePtr, _ := syscall.BytePtrFromString(file)
+	sectionPtr := stringToBytePtr(section)
+	keyPtr := stringToBytePtr(key)
+	filePtr := stringToBytePtr(file)
 	ret, _, _ := syscall.Syscall6(funAddr, 4, dm.obj, uintptr(unsafe.Pointer(sectionPtr)), uintptr(unsafe.Pointer(keyPtr)), uintptr(unsafe.Pointer(filePtr)), 0, 0)
 	return int32(ret)
 }
@@ -4877,7 +4877,7 @@ func (dm *DmSoft) DeleteIni(section string, key string, file string) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindIntEx(hwnd int32, addr_range string, int_value_min int64, int_value_max int64, type_ int32, step int32, multi_thread int32, mode int32) string {
 	funAddr := DmHModule + 107216
-	addr_rangePtr, _ := syscall.BytePtrFromString(addr_range)
+	addr_rangePtr := stringToBytePtr(addr_range)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(addr_rangePtr)), uintptr(int_value_min), uintptr(int_value_max), uintptr(type_), uintptr(step), uintptr(multi_thread), uintptr(mode))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4891,9 +4891,9 @@ func (dm *DmSoft) FindIntEx(hwnd int32, addr_range string, int_value_min int64, 
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) BindWindow(hwnd int32, display string, mouse string, keypad string, mode int32) int32 {
 	funAddr := DmHModule + 120080
-	displayPtr, _ := syscall.BytePtrFromString(display)
-	mousePtr, _ := syscall.BytePtrFromString(mouse)
-	keypadPtr, _ := syscall.BytePtrFromString(keypad)
+	displayPtr := stringToBytePtr(display)
+	mousePtr := stringToBytePtr(mouse)
+	keypadPtr := stringToBytePtr(keypad)
 	ret, _, _ := syscall.Syscall6(funAddr, 6, dm.obj, uintptr(hwnd), uintptr(unsafe.Pointer(displayPtr)), uintptr(unsafe.Pointer(mousePtr)), uintptr(unsafe.Pointer(keypadPtr)), uintptr(mode))
 	return int32(ret)
 }
@@ -4903,7 +4903,7 @@ func (dm *DmSoft) BindWindow(hwnd int32, display string, mouse string, keypad st
 // 返回: 结果字符串
 func (dm *DmSoft) GetPicSize(pic_name string) string {
 	funAddr := DmHModule + 114960
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
+	pic_namePtr := stringToBytePtr(pic_name)
 	ret, _, _ := syscall.Syscall(funAddr, 2, dm.obj, uintptr(unsafe.Pointer(pic_namePtr)), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4942,8 +4942,8 @@ func (dm *DmSoft) LockMouseRect(x1 int32, y1 int32, x2 int32, y2 int32) int32 {
 // 返回: 结果字符串
 func (dm *DmSoft) FindPicSimE(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, delta_color string, sim int32, dir int32) string {
 	funAddr := DmHModule + 123440
-	pic_namePtr, _ := syscall.BytePtrFromString(pic_name)
-	delta_colorPtr, _ := syscall.BytePtrFromString(delta_color)
+	pic_namePtr := stringToBytePtr(pic_name)
+	delta_colorPtr := stringToBytePtr(delta_color)
 	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -4954,8 +4954,8 @@ func (dm *DmSoft) FindPicSimE(x1 int32, y1 int32, x2 int32, y2 int32, pic_name s
 // 返回: 结果字符串
 func (dm *DmSoft) EnumIniSectionPwd(file string, pwd string) string {
 	funAddr := DmHModule + 116992
-	filePtr, _ := syscall.BytePtrFromString(file)
-	pwdPtr, _ := syscall.BytePtrFromString(pwd)
+	filePtr := stringToBytePtr(file)
+	pwdPtr := stringToBytePtr(pwd)
 	ret, _, _ := syscall.Syscall(funAddr, 3, dm.obj, uintptr(unsafe.Pointer(filePtr)), uintptr(unsafe.Pointer(pwdPtr)))
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
@@ -5022,7 +5022,7 @@ func (dm *DmSoft) GetTime() int32 {
 // 返回: 成功返回1,失败返回0
 func (dm *DmSoft) FoobarFillRect(hwnd int32, x1 int32, y1 int32, x2 int32, y2 int32, color string) int32 {
 	funAddr := DmHModule + 103136
-	colorPtr, _ := syscall.BytePtrFromString(color)
+	colorPtr := stringToBytePtr(color)
 	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(hwnd), uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), 0, 0)
 	return int32(ret)
 }

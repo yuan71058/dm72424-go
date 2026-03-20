@@ -30,8 +30,9 @@
 package dmsoft
 
 import (
-	"syscall"
 	"unsafe"
+
+	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
 // DmSoftInterface 定义大漠插件的所有接口方法
@@ -1118,19 +1119,29 @@ type DmSoftBase struct {
 	hModule uintptr // DLL模块句柄
 }
 
-// stringToBytePtr 将Go字符串转换为C风格字符串指针
+// utf8ToGbk 将UTF-8字符串转换为GBK编码的字节切片
+// 参数: s - UTF-8编码的字符串
+// 返回: GBK编码的字节切片
+func utf8ToGbk(s string) []byte {
+	data, _ := simplifiedchinese.GBK.NewEncoder().Bytes([]byte(s))
+	return data
+}
+
+// stringToBytePtr 将Go字符串转换为C风格字符串指针（GBK编码）
 // 参数:
-//   - s: Go字符串
+//   - s: Go字符串（UTF-8编码）
 //
 // 返回:
-//   - C风格字符串指针（以\0结尾）
+//   - C风格字符串指针（以\0结尾，GBK编码）
 //
 // 注意:
-//   - 返回的指针指向的内存由syscall管理，不需要手动释放
+//   - 返回的指针指向的内存由Go垃圾回收器管理
 //   - 仅用于传递给DLL函数，不要在Go代码中长期保存
+//   - 自动将UTF-8编码转换为GBK编码，以兼容大漠插件
 func stringToBytePtr(s string) *byte {
-	b, _ := syscall.BytePtrFromString(s)
-	return b
+	gbkData := utf8ToGbk(s)
+	gbkData = append(gbkData, 0)
+	return &gbkData[0]
 }
 
 // int32Ptr 获取int32指针
