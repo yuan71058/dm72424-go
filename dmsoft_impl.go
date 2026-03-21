@@ -233,7 +233,8 @@ func (dm *DmSoft) FindStrS(x1 int32, y1 int32, x2 int32, y2 int32, str string, c
 	funAddr := DmHModule + 116832
 	strPtr := stringToBytePtr(str)
 	colorPtr := stringToBytePtr(color)
-	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall15(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
@@ -366,7 +367,8 @@ func (dm *DmSoft) AsmCall(hwnd int32, mode int32) int64 {
 func (dm *DmSoft) FindColorBlock(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64, count int32, width int32, height int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 113568
 	colorPtr := stringToBytePtr(color)
-	ret, _, _ := syscall.Syscall12(funAddr, 12, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(count), uintptr(width), uintptr(height), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)))
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall15(funAddr, 13, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(count), uintptr(width), uintptr(height), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
 	return int32(ret)
 }
 
@@ -435,7 +437,8 @@ func (dm *DmSoft) FindStrFastEx(x1 int32, y1 int32, x2 int32, y2 int32, str stri
 	funAddr := DmHModule + 122000
 	strPtr := stringToBytePtr(str)
 	colorPtr := stringToBytePtr(color)
-	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall12(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(simBits), uintptr(simBits>>32), 0, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
@@ -1405,7 +1408,8 @@ func (dm *DmSoft) FindMultiColor(x1 int32, y1 int32, x2 int32, y2 int32, first_c
 	funAddr := DmHModule + 109360
 	first_colorPtr := stringToBytePtr(first_color)
 	offset_colorPtr := stringToBytePtr(offset_color)
-	ret, _, _ := syscall.Syscall12(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(first_colorPtr)), uintptr(unsafe.Pointer(offset_colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall15(funAddr, 12, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(first_colorPtr)), uintptr(unsafe.Pointer(offset_colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0, 0)
 	return int32(ret)
 }
 
@@ -1432,7 +1436,8 @@ func (dm *DmSoft) FindPicE(x1 int32, y1 int32, x2 int32, y2 int32, pic_name stri
 	funAddr := DmHModule + 114144
 	pic_namePtr := stringToBytePtr(pic_name)
 	delta_colorPtr := stringToBytePtr(delta_color)
-	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
@@ -1734,7 +1739,8 @@ func (dm *DmSoft) AiYoloSetVersion(ver string) int32 {
 func (dm *DmSoft) FindColorE(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 120384
 	colorPtr := stringToBytePtr(color)
-	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(dir), 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall12(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), 0, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
@@ -2270,7 +2276,8 @@ func (dm *DmSoft) GetScreenDepth() int32 {
 func (dm *DmSoft) FindColor(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64, dir int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 106112
 	colorPtr := stringToBytePtr(color)
-	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall15(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0, 0, 0)
 	return int32(ret)
 }
 
@@ -2386,7 +2393,8 @@ func (dm *DmSoft) FindPicExS(x1 int32, y1 int32, x2 int32, y2 int32, pic_name st
 	funAddr := DmHModule + 100368
 	pic_namePtr := stringToBytePtr(pic_name)
 	delta_colorPtr := stringToBytePtr(delta_color)
-	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
@@ -2500,7 +2508,8 @@ func (dm *DmSoft) FindStrFast(x1 int32, y1 int32, x2 int32, y2 int32, str string
 	funAddr := DmHModule + 115584
 	strPtr := stringToBytePtr(str)
 	colorPtr := stringToBytePtr(color)
-	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall15(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0, 0, 0)
 	return int32(ret)
 }
 
@@ -2676,7 +2685,8 @@ func (dm *DmSoft) BGR2RGB(bgr_color string) string {
 func (dm *DmSoft) FindColorEx(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64, dir int32) string {
 	funAddr := DmHModule + 103600
 	colorPtr := stringToBytePtr(color)
-	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(dir), 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall12(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), 0, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
@@ -2770,7 +2780,8 @@ func (dm *DmSoft) FindStr(x1 int32, y1 int32, x2 int32, y2 int32, str string, co
 	funAddr := DmHModule + 110320
 	strPtr := stringToBytePtr(str)
 	colorPtr := stringToBytePtr(color)
-	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall15(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(strPtr)), uintptr(unsafe.Pointer(colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0, 0, 0)
 	return int32(ret)
 }
 
@@ -3629,7 +3640,8 @@ func (dm *DmSoft) GetOsType() int32 {
 func (dm *DmSoft) Ocr(x1 int32, y1 int32, x2 int32, y2 int32, color string, sim float64) string {
 	funAddr := DmHModule + 110992
 	colorPtr := stringToBytePtr(color)
-	ret, _, _ := syscall.Syscall9(funAddr, 7, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(sim), 0, 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(colorPtr)), uintptr(simBits), uintptr(simBits>>32), 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
@@ -3992,7 +4004,8 @@ func (dm *DmSoft) FindPicEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_name str
 	funAddr := DmHModule + 108160
 	pic_namePtr := stringToBytePtr(pic_name)
 	delta_colorPtr := stringToBytePtr(delta_color)
-	ret, _, _ := syscall.Syscall9(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir))
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
