@@ -546,6 +546,25 @@ defer mainDm.Release()  // 最后释放主对象
 
 ## 📝 更新日志
 
+### v1.4.0 (2026-03-21)
+
+- 🐛 **修复 32 位 float64/float32 参数传递问题** - 在 32 位程序中，float64 需要 8 字节，必须拆分为两个 uintptr 传递
+- 🐛 修复 10 个函数的浮点参数传递：
+  - `HackSpeed` - float64 参数
+  - `WriteFloatAddr` - float32 + int64 参数
+  - `WriteDoubleAddr` - float64 + int64 参数
+  - `FloatToData` - float32 参数
+  - `WriteDouble` - float64 参数
+  - `AiYoloDetectObjects` - float32 参数
+  - `AiYoloDetectObjectsToFile` - float32 参数
+  - `AiYoloDetectObjectsToDataBmp` - float32 参数
+  - `DoubleToData` - float64 参数
+  - `WriteFloat` - float32 参数
+- 🔧 修复 46+ 函数的 syscall 参数数量问题
+- ✅ 完成所有函数参数类型和数量与原 C++ 代码的对比验证
+- 📝 更新所有示例代码，添加详细注释
+- 🏷️ 添加版本标签 v1.4.0
+
 ### v1.3.0 (2026-03-20)
 
 - 🌐 **新增自动编码转换** - 所有字符串参数函数自动将 UTF-8 转换为 GBK
