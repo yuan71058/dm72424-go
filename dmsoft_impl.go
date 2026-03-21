@@ -2,6 +2,7 @@ package dmsoft
 
 import (
 	"fmt"
+	"math"
 	"syscall"
 	"unsafe"
 )
@@ -1362,7 +1363,8 @@ func (dm *DmSoft) FindPicS(x1 int32, y1 int32, x2 int32, y2 int32, pic_name stri
 	funAddr := DmHModule + 101952
 	pic_namePtr := stringToBytePtr(pic_name)
 	delta_colorPtr := stringToBytePtr(delta_color)
-	ret, _, _ := syscall.Syscall12(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall15(funAddr, 12, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
@@ -1382,7 +1384,8 @@ func (dm *DmSoft) FindPic(x1 int32, y1 int32, x2 int32, y2 int32, pic_name strin
 	funAddr := DmHModule + 104032
 	pic_namePtr := stringToBytePtr(pic_name)
 	delta_colorPtr := stringToBytePtr(delta_color)
-	ret, _, _ := syscall.Syscall12(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall15(funAddr, 12, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(unsafe.Pointer(delta_colorPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0, 0)
 	return int32(ret)
 }
 
@@ -3002,7 +3005,8 @@ func (dm *DmSoft) FindWindow(class_name string, title_name string) int32 {
 func (dm *DmSoft) AiFindPic(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, sim float64, dir int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 121536
 	pic_namePtr := stringToBytePtr(pic_name)
-	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall15(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0, 0, 0)
 	return int32(ret)
 }
 

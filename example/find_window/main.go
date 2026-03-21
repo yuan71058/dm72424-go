@@ -32,8 +32,8 @@ import (
 )
 
 const (
-	DmPluginPath = "xd47243.dll"
-	CrackDllPath = "Go.dll"
+	DmPluginPath = "E:\\SRC\\dm\\72424_C++\\go\\example\\find_window\\xd47243.dll"
+	CrackDllPath = "E:\\SRC\\dm\\72424_C++\\go\\example\\find_window\\Go.dll"
 )
 
 func main() {
@@ -142,7 +142,7 @@ func main() {
 			// 方法1: FindPic - 基本找图
 			fmt.Println("\n--- 方法1: FindPic 基本找图 ---")
 			findX, findY := int32(0), int32(0)
-			findResult := dm.FindPic(x1, y1, x2, y2, "template.bmp", "000000", 0.9, 0, &findX, &findY)
+			findResult := dm.FindPic(x1, y1, x2, y2, "E:\\SRC\\biaoge\\ai-excel-assistant\\build\\bin\\pic\\FABIAO.bmp", "000000", 0.8, 0, &findX, &findY)
 			if findResult >= 0 {
 				fmt.Printf("FindPic 找到图片！\n")
 				fmt.Printf("  图片索引: %d\n", findResult)
@@ -153,7 +153,7 @@ func main() {
 
 			// 方法2: FindPicE - 找图返回坐标字符串
 			fmt.Println("\n--- 方法2: FindPicE 返回坐标字符串 ---")
-			findStr := dm.FindPicE(x1, y1, x2, y2, "template.bmp", "000000", 0.9, 0)
+			findStr := dm.FindPicE(x1, y1, x2, y2, "E:\\SRC\\biaoge\\ai-excel-assistant\\build\\bin\\pic\\FABIAO.bmp", "000000", 0.9, 0)
 			if findStr != "" && findStr != "-1|-1|-1" {
 				fmt.Printf("FindPicE 找到图片！\n")
 				fmt.Printf("  结果: %s (格式: 索引|x|y)\n", findStr)
