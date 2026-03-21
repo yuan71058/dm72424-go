@@ -215,8 +215,9 @@ func main() {
 			// 方法6: FindPicSim - 相似度找图
 			fmt.Println("\n--- 方法6: FindPicSim 相似度找图 ---")
 			findSimResult := dm.FindPicSim(x1, y1, x2, y2, picPath, "000000", 80, 0, &findX, &findY)
-			if findSimResult == 1 {
+			if findSimResult >= 0 {
 				fmt.Printf("FindPicSim 找到图片！\n")
+				fmt.Printf("  图片索引: %d\n", findSimResult)
 				fmt.Printf("  坐标: (%d, %d)\n", findX, findY)
 			} else {
 				fmt.Printf("FindPicSim 未找到图片，返回值: %d\n", findSimResult)
