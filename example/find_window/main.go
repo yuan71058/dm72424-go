@@ -6,14 +6,28 @@
 //   库已内置 UTF-8 到 GBK 自动编码转换，中文参数可直接使用。
 //
 // 找图方法演示:
+//   基本找图系列 (sim参数0.1-1.0):
 //   - FindPic: 基本找图，返回图片索引
 //   - FindPicE: 找图返回坐标字符串
 //   - FindPicEx: 高级找图，返回所有匹配位置
 //   - FindPicS: 找图返回图片索引字符串
-//   - FindPicSim: 相似度找图 (sim参数0-100)
+//   - FindPicExS: 高级找图返回详细字符串
+//
+//   相似度找图系列 (sim参数0-100):
+//   - FindPicSim: 相似度找图
 //   - FindPicSimE: 相似度找图返回坐标字符串
 //   - FindPicSimEx: 相似度高级找图
+//
+//   内存找图系列:
+//   - FindPicSimMem: 内存相似度找图
+//   - FindPicSimMemE: 内存相似度找图返回坐标字符串
+//   - FindPicSimMemEx: 内存相似度高级找图
+//
+//   AI找图系列:
 //   - AiFindPic: AI找图
+//   - AiFindPicEx: AI高级找图
+//   - AiFindPicMem: AI内存找图
+//   - AiFindPicMemEx: AI高级内存找图
 //
 // 编译说明:
 //   必须使用32位编译: GOARCH=386 go build -o find_window.exe
@@ -139,10 +153,15 @@ func main() {
 			// ========== 第九步：找图测试 ==========
 			fmt.Println("\n========== 找图测试 ==========")
 
+			picPath := "E:\\SRC\\biaoge\\ai-excel-assistant\\build\\bin\\pic\\FABIAO.bmp"
+			findX, findY := int32(0), int32(0)
+
+			// ==================== 基本找图系列 (sim参数0.1-1.0) ====================
+			fmt.Println("\n========== 基本找图系列 (sim: 0.1-1.0) ==========")
+
 			// 方法1: FindPic - 基本找图
 			fmt.Println("\n--- 方法1: FindPic 基本找图 ---")
-			findX, findY := int32(0), int32(0)
-			findResult := dm.FindPic(x1, y1, x2, y2, "E:\\SRC\\biaoge\\ai-excel-assistant\\build\\bin\\pic\\FABIAO.bmp", "000000", 0.8, 0, &findX, &findY)
+			findResult := dm.FindPic(x1, y1, x2, y2, picPath, "000000", 0.8, 0, &findX, &findY)
 			if findResult >= 0 {
 				fmt.Printf("FindPic 找到图片！\n")
 				fmt.Printf("  图片索引: %d\n", findResult)
@@ -153,7 +172,7 @@ func main() {
 
 			// 方法2: FindPicE - 找图返回坐标字符串
 			fmt.Println("\n--- 方法2: FindPicE 返回坐标字符串 ---")
-			findStr := dm.FindPicE(x1, y1, x2, y2, "E:\\SRC\\biaoge\\ai-excel-assistant\\build\\bin\\pic\\FABIAO.bmp", "000000", 0.9, 0)
+			findStr := dm.FindPicE(x1, y1, x2, y2, picPath, "000000", 0.8, 0)
 			if findStr != "" && findStr != "-1|-1|-1" {
 				fmt.Printf("FindPicE 找到图片！\n")
 				fmt.Printf("  结果: %s (格式: 索引|x|y)\n", findStr)
@@ -163,7 +182,7 @@ func main() {
 
 			// 方法3: FindPicEx - 高级找图，返回所有匹配位置
 			fmt.Println("\n--- 方法3: FindPicEx 高级找图 ---")
-			findExStr := dm.FindPicEx(x1, y1, x2, y2, "template.bmp", "000000", 0.9, 0)
+			findExStr := dm.FindPicEx(x1, y1, x2, y2, picPath, "000000", 0.8, 0)
 			if findExStr != "" {
 				fmt.Printf("FindPicEx 结果:\n")
 				fmt.Printf("  %s\n", findExStr)
@@ -173,13 +192,26 @@ func main() {
 
 			// 方法4: FindPicS - 找图返回图片索引字符串
 			fmt.Println("\n--- 方法4: FindPicS 返回索引字符串 ---")
-			findSResult := dm.FindPicS(x1, y1, x2, y2, "template.bmp", "000000", 0.9, 0, &findX, &findY)
+			findSResult := dm.FindPicS(x1, y1, x2, y2, picPath, "000000", 0.8, 0, &findX, &findY)
 			fmt.Printf("FindPicS 结果: %s\n", findSResult)
 			fmt.Printf("  坐标: (%d, %d)\n", findX, findY)
 
-			// 方法5: FindPicSim - 相似度找图 (sim参数为0-100)
-			fmt.Println("\n--- 方法5: FindPicSim 相似度找图 ---")
-			findSimResult := dm.FindPicSim(x1, y1, x2, y2, "template.bmp", "000000", 90, 0, &findX, &findY)
+			// 方法5: FindPicExS - 高级找图返回详细字符串
+			fmt.Println("\n--- 方法5: FindPicExS 高级找图详细 ---")
+			findExSStr := dm.FindPicExS(x1, y1, x2, y2, picPath, "000000", 0.8, 0)
+			if findExSStr != "" {
+				fmt.Printf("FindPicExS 结果:\n")
+				fmt.Printf("  %s\n", findExSStr)
+			} else {
+				fmt.Printf("FindPicExS 未找到图片\n")
+			}
+
+			// ==================== 相似度找图系列 (sim参数0-100) ====================
+			fmt.Println("\n========== 相似度找图系列 (sim: 0-100) ==========")
+
+			// 方法6: FindPicSim - 相似度找图
+			fmt.Println("\n--- 方法6: FindPicSim 相似度找图 ---")
+			findSimResult := dm.FindPicSim(x1, y1, x2, y2, picPath, "000000", 80, 0, &findX, &findY)
 			if findSimResult == 1 {
 				fmt.Printf("FindPicSim 找到图片！\n")
 				fmt.Printf("  坐标: (%d, %d)\n", findX, findY)
@@ -187,24 +219,45 @@ func main() {
 				fmt.Printf("FindPicSim 未找到图片，返回值: %d\n", findSimResult)
 			}
 
-			// 方法6: FindPicSimE - 相似度找图返回坐标字符串
-			fmt.Println("\n--- 方法6: FindPicSimE 返回坐标字符串 ---")
-			findSimE := dm.FindPicSimE(x1, y1, x2, y2, "template.bmp", "000000", 90, 0)
+			// 方法7: FindPicSimE - 相似度找图返回坐标字符串
+			fmt.Println("\n--- 方法7: FindPicSimE 返回坐标字符串 ---")
+			findSimE := dm.FindPicSimE(x1, y1, x2, y2, picPath, "000000", 80, 0)
 			fmt.Printf("FindPicSimE 结果: %s\n", findSimE)
 
-			// 方法7: FindPicSimEx - 相似度高级找图
-			fmt.Println("\n--- 方法7: FindPicSimEx 高级找图 ---")
-			findSimEx := dm.FindPicSimEx(x1, y1, x2, y2, "template.bmp", "000000", 90, 0)
+			// 方法8: FindPicSimEx - 相似度高级找图
+			fmt.Println("\n--- 方法8: FindPicSimEx 高级找图 ---")
+			findSimEx := dm.FindPicSimEx(x1, y1, x2, y2, picPath, "000000", 80, 0)
 			fmt.Printf("FindPicSimEx 结果: %s\n", findSimEx)
 
-			// 方法8: 多图片查找 (用|分隔多个图片)
-			fmt.Println("\n--- 方法8: 多图片查找 ---")
-			multiResult := dm.FindPicE(x1, y1, x2, y2, "template.bmp|window_capture.bmp", "000000", 0.8, 0)
-			fmt.Printf("多图片查找结果: %s\n", multiResult)
+			// ==================== 内存找图系列 ====================
+			fmt.Println("\n========== 内存找图系列 ==========")
 
-			// 方法9: AiFindPic - AI找图 (如果支持)
-			fmt.Println("\n--- 方法9: AiFindPic AI找图 ---")
-			aiFindResult := dm.AiFindPic(x1, y1, x2, y2, "template.bmp", 0.9, 0, &findX, &findY)
+			// 方法9: FindPicSimMem - 内存相似度找图
+			fmt.Println("\n--- 方法9: FindPicSimMem 内存相似度找图 ---")
+			findSimMemResult := dm.FindPicSimMem(x1, y1, x2, y2, picPath, "000000", 80, 0, &findX, &findY)
+			if findSimMemResult == 1 {
+				fmt.Printf("FindPicSimMem 找到图片！\n")
+				fmt.Printf("  坐标: (%d, %d)\n", findX, findY)
+			} else {
+				fmt.Printf("FindPicSimMem 未找到图片，返回值: %d\n", findSimMemResult)
+			}
+
+			// 方法10: FindPicSimMemE - 内存相似度找图返回坐标字符串
+			fmt.Println("\n--- 方法10: FindPicSimMemE 返回坐标字符串 ---")
+			findSimMemE := dm.FindPicSimMemE(x1, y1, x2, y2, picPath, "000000", 80, 0)
+			fmt.Printf("FindPicSimMemE 结果: %s\n", findSimMemE)
+
+			// 方法11: FindPicSimMemEx - 内存相似度高级找图
+			fmt.Println("\n--- 方法11: FindPicSimMemEx 高级找图 ---")
+			findSimMemEx := dm.FindPicSimMemEx(x1, y1, x2, y2, picPath, "000000", 80, 0)
+			fmt.Printf("FindPicSimMemEx 结果: %s\n", findSimMemEx)
+
+			// ==================== AI找图系列 ====================
+			fmt.Println("\n========== AI找图系列 ==========")
+
+			// 方法12: AiFindPic - AI找图
+			fmt.Println("\n--- 方法12: AiFindPic AI找图 ---")
+			aiFindResult := dm.AiFindPic(x1, y1, x2, y2, picPath, 0.8, 0, &findX, &findY)
 			if aiFindResult == 1 {
 				fmt.Printf("AiFindPic 找到图片！\n")
 				fmt.Printf("  坐标: (%d, %d)\n", findX, findY)
@@ -212,9 +265,44 @@ func main() {
 				fmt.Printf("AiFindPic 未找到图片或功能不支持，返回值: %d\n", aiFindResult)
 			}
 
+			// 方法13: AiFindPicEx - AI高级找图
+			fmt.Println("\n--- 方法13: AiFindPicEx AI高级找图 ---")
+			aiFindExStr := dm.AiFindPicEx(x1, y1, x2, y2, picPath, 0.8, 0)
+			if aiFindExStr != "" {
+				fmt.Printf("AiFindPicEx 结果:\n")
+				fmt.Printf("  %s\n", aiFindExStr)
+			} else {
+				fmt.Printf("AiFindPicEx 未找到图片或功能不支持\n")
+			}
+
+			// 方法14: AiFindPicMem - AI内存找图
+			fmt.Println("\n--- 方法14: AiFindPicMem AI内存找图 ---")
+			aiFindMemResult := dm.AiFindPicMem(x1, y1, x2, y2, picPath, 0.8, 0, &findX, &findY)
+			if aiFindMemResult == 1 {
+				fmt.Printf("AiFindPicMem 找到图片！\n")
+				fmt.Printf("  坐标: (%d, %d)\n", findX, findY)
+			} else {
+				fmt.Printf("AiFindPicMem 未找到图片或功能不支持，返回值: %d\n", aiFindMemResult)
+			}
+
+			// 方法15: AiFindPicMemEx - AI高级内存找图
+			fmt.Println("\n--- 方法15: AiFindPicMemEx AI高级内存找图 ---")
+			aiFindMemExStr := dm.AiFindPicMemEx(x1, y1, x2, y2, picPath, 0.8, 0)
+			if aiFindMemExStr != "" {
+				fmt.Printf("AiFindPicMemEx 结果:\n")
+				fmt.Printf("  %s\n", aiFindMemExStr)
+			} else {
+				fmt.Printf("AiFindPicMemEx 未找到图片或功能不支持\n")
+			}
+
+			// ==================== 多图片查找 ====================
+			fmt.Println("\n========== 多图片查找 (用|分隔多个图片) ==========")
+			multiResult := dm.FindPicE(x1, y1, x2, y2, picPath+"|template.bmp", "000000", 0.8, 0)
+			fmt.Printf("多图片查找结果: %s\n", multiResult)
+
 			// 释放图片资源
 			fmt.Println("\n--- 释放图片资源 ---")
-			freeResult := dm.FreePic("template.bmp|window_capture.bmp")
+			freeResult := dm.FreePic(picPath + "|template.bmp")
 			fmt.Printf("释放图片资源结果: %d (1=成功)\n", freeResult)
 
 			// ========== 第十步：解绑窗口 ==========

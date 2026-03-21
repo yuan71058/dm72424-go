@@ -141,6 +141,11 @@ type DmSoftInterface interface {
 	// 返回: 1找到, 0未找到
 	FindPicSim(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, delta_color string, sim int32, dir int32, x *int32, y *int32) int32
 
+	// FindPicSimE 查找图片相似度(返回坐标字符串)
+	// 参数: x1,y1,x2,y2 - 区域坐标, pic_name - 图片名, delta_color - 颜色偏差, sim - 相似度(0-100), dir - 方向
+	// 返回: "索引|x|y" 格式字符串
+	FindPicSimE(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, delta_color string, sim int32, dir int32) string
+
 	// FindPicSimEx 高级查找图片相似度
 	// 参数: x1,y1,x2,y2 - 区域坐标, pic_name - 图片名, delta_color - 颜色偏差, sim - 相似度(0-100), dir - 方向
 	// 返回: 所有找到的坐标字符串

@@ -1523,7 +1523,8 @@ func (dm *DmSoft) DisableScreenSave() int32 {
 func (dm *DmSoft) AiFindPicEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_name string, sim float64, dir int32) string {
 	funAddr := DmHModule + 119136
 	pic_namePtr := stringToBytePtr(pic_name)
-	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(sim), uintptr(dir), 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall12(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_namePtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), 0, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
@@ -2193,7 +2194,8 @@ func (dm *DmSoft) WriteDataAddrFromBin(hwnd int32, addr int64, data int32, len i
 func (dm *DmSoft) AiFindPicMemEx(x1 int32, y1 int32, x2 int32, y2 int32, pic_info string, sim float64, dir int32) string {
 	funAddr := DmHModule + 102976
 	pic_infoPtr := stringToBytePtr(pic_info)
-	ret, _, _ := syscall.Syscall9(funAddr, 8, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(sim), uintptr(dir), 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall12(funAddr, 9, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), 0, 0, 0)
 	return bytePtrToString((*byte)(unsafe.Pointer(ret)))
 }
 
@@ -3797,7 +3799,8 @@ func (dm *DmSoft) SetWordLineHeightNoDict(line_height int32) int32 {
 func (dm *DmSoft) AiFindPicMem(x1 int32, y1 int32, x2 int32, y2 int32, pic_info string, sim float64, dir int32, x *int32, y *int32) int32 {
 	funAddr := DmHModule + 111696
 	pic_infoPtr := stringToBytePtr(pic_info)
-	ret, _, _ := syscall.Syscall12(funAddr, 10, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(sim), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0)
+	simBits := math.Float64bits(sim)
+	ret, _, _ := syscall.Syscall15(funAddr, 11, dm.obj, uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(unsafe.Pointer(pic_infoPtr)), uintptr(simBits), uintptr(simBits>>32), uintptr(dir), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)), 0, 0, 0, 0)
 	return int32(ret)
 }
 
