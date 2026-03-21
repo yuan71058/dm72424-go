@@ -1,9 +1,19 @@
 // example/find_window/main.go - 大漠插件查找窗口示例
 //
 // 功能说明:
-//   本文件演示如何使用 dmsoft 库查找指定类名和标题的窗口。
+//   本文件演示如何使用 dmsoft 库查找指定类名和标题的窗口，并进行找图测试。
 //   示例：查找类名为 Qt51514QWindowIcon，标题为 朋友圈 的窗口。
 //   库已内置 UTF-8 到 GBK 自动编码转换，中文参数可直接使用。
+//
+// 找图方法演示:
+//   - FindPic: 基本找图，返回图片索引
+//   - FindPicE: 找图返回坐标字符串
+//   - FindPicEx: 高级找图，返回所有匹配位置
+//   - FindPicS: 找图返回图片索引字符串
+//   - FindPicSim: 相似度找图 (sim参数0-100)
+//   - FindPicSimE: 相似度找图返回坐标字符串
+//   - FindPicSimEx: 相似度高级找图
+//   - AiFindPic: AI找图
 //
 // 编译说明:
 //   必须使用32位编译: GOARCH=386 go build -o find_window.exe
@@ -114,13 +124,100 @@ func main() {
 			captureResult := dm.Capture(x1, y1, x2, y2, "window_capture.bmp")
 			fmt.Printf("截图结果: %d (1=成功)\n", captureResult)
 
+			// 截取窗口左上角区域作为找图模板
+			templateX1, templateY1 := x1, y1
+			templateX2, templateY2 := x1+100, y1+100
+			captureTemplate := dm.Capture(templateX1, templateY1, templateX2, templateY2, "template.bmp")
+			fmt.Printf("截取模板图片结果: %d (1=成功)\n", captureTemplate)
+
 			// 获取窗口中心点颜色
 			centerX := (x1 + x2) / 2
 			centerY := (y1 + y2) / 2
 			color := dm.GetColor(centerX, centerY)
 			fmt.Printf("窗口中心点(%d, %d)颜色: %s\n", centerX, centerY, color)
 
-			// ========== 第九步：解绑窗口 ==========
+			// ========== 第九步：找图测试 ==========
+			fmt.Println("\n========== 找图测试 ==========")
+
+			// 方法1: FindPic - 基本找图
+			fmt.Println("\n--- 方法1: FindPic 基本找图 ---")
+			findX, findY := int32(0), int32(0)
+			findResult := dm.FindPic(x1, y1, x2, y2, "template.bmp", "000000", 0.9, 0, &findX, &findY)
+			if findResult >= 0 {
+				fmt.Printf("FindPic 找到图片！\n")
+				fmt.Printf("  图片索引: %d\n", findResult)
+				fmt.Printf("  找到位置: (%d, %d)\n", findX, findY)
+			} else {
+				fmt.Printf("FindPic 未找到图片，返回值: %d\n", findResult)
+			}
+
+			// 方法2: FindPicE - 找图返回坐标字符串
+			fmt.Println("\n--- 方法2: FindPicE 返回坐标字符串 ---")
+			findStr := dm.FindPicE(x1, y1, x2, y2, "template.bmp", "000000", 0.9, 0)
+			if findStr != "" && findStr != "-1|-1|-1" {
+				fmt.Printf("FindPicE 找到图片！\n")
+				fmt.Printf("  结果: %s (格式: 索引|x|y)\n", findStr)
+			} else {
+				fmt.Printf("FindPicE 未找到图片，结果: %s\n", findStr)
+			}
+
+			// 方法3: FindPicEx - 高级找图，返回所有匹配位置
+			fmt.Println("\n--- 方法3: FindPicEx 高级找图 ---")
+			findExStr := dm.FindPicEx(x1, y1, x2, y2, "template.bmp", "000000", 0.9, 0)
+			if findExStr != "" {
+				fmt.Printf("FindPicEx 结果:\n")
+				fmt.Printf("  %s\n", findExStr)
+			} else {
+				fmt.Printf("FindPicEx 未找到图片\n")
+			}
+
+			// 方法4: FindPicS - 找图返回图片索引字符串
+			fmt.Println("\n--- 方法4: FindPicS 返回索引字符串 ---")
+			findSResult := dm.FindPicS(x1, y1, x2, y2, "template.bmp", "000000", 0.9, 0, &findX, &findY)
+			fmt.Printf("FindPicS 结果: %s\n", findSResult)
+			fmt.Printf("  坐标: (%d, %d)\n", findX, findY)
+
+			// 方法5: FindPicSim - 相似度找图 (sim参数为0-100)
+			fmt.Println("\n--- 方法5: FindPicSim 相似度找图 ---")
+			findSimResult := dm.FindPicSim(x1, y1, x2, y2, "template.bmp", "000000", 90, 0, &findX, &findY)
+			if findSimResult == 1 {
+				fmt.Printf("FindPicSim 找到图片！\n")
+				fmt.Printf("  坐标: (%d, %d)\n", findX, findY)
+			} else {
+				fmt.Printf("FindPicSim 未找到图片，返回值: %d\n", findSimResult)
+			}
+
+			// 方法6: FindPicSimE - 相似度找图返回坐标字符串
+			fmt.Println("\n--- 方法6: FindPicSimE 返回坐标字符串 ---")
+			findSimE := dm.FindPicSimE(x1, y1, x2, y2, "template.bmp", "000000", 90, 0)
+			fmt.Printf("FindPicSimE 结果: %s\n", findSimE)
+
+			// 方法7: FindPicSimEx - 相似度高级找图
+			fmt.Println("\n--- 方法7: FindPicSimEx 高级找图 ---")
+			findSimEx := dm.FindPicSimEx(x1, y1, x2, y2, "template.bmp", "000000", 90, 0)
+			fmt.Printf("FindPicSimEx 结果: %s\n", findSimEx)
+
+			// 方法8: 多图片查找 (用|分隔多个图片)
+			fmt.Println("\n--- 方法8: 多图片查找 ---")
+			multiResult := dm.FindPicE(x1, y1, x2, y2, "template.bmp|window_capture.bmp", "000000", 0.8, 0)
+			fmt.Printf("多图片查找结果: %s\n", multiResult)
+
+			// 方法9: AiFindPic - AI找图 (如果支持)
+			fmt.Println("\n--- 方法9: AiFindPic AI找图 ---")
+			aiFindResult := dm.AiFindPic(x1, y1, x2, y2, "template.bmp", 0.9, 0, &findX, &findY)
+			if aiFindResult == 1 {
+				fmt.Printf("AiFindPic 找到图片！\n")
+				fmt.Printf("  坐标: (%d, %d)\n", findX, findY)
+			} else {
+				fmt.Printf("AiFindPic 未找到图片或功能不支持，返回值: %d\n", aiFindResult)
+			}
+
+			// 释放图片资源
+			fmt.Println("\n--- 释放图片资源 ---")
+			freeResult := dm.FreePic("template.bmp|window_capture.bmp")
+			fmt.Printf("释放图片资源结果: %d (1=成功)\n", freeResult)
+
+			// ========== 第十步：解绑窗口 ==========
 			fmt.Println("\n========== 解绑窗口 ==========")
 			unbindResult := dm.UnBindWindow()
 			fmt.Printf("解绑窗口结果: %d (1=成功)\n", unbindResult)
