@@ -546,6 +546,36 @@ defer mainDm.Release()  // 最后释放主对象
 
 ## 📝 更新日志
 
+### v1.5.0 (2026-03-21)
+
+- 🐛 **全面修复 32 位 int64 参数传递问题** - 在 32 位程序中，int64 需要 8 字节，必须拆分为两个 uintptr 传递
+- 🐛 修复 19 个函数的 int64 参数传递：
+  - `DisAssemble` - int64 base_addr 参数
+  - `WriteDataAddr` - int64 addr 参数
+  - `GetRemoteApiAddress` - int64 base_addr 参数
+  - `ReadIntAddr` - int64 addr 参数
+  - `Assemble` - int64 base_addr 参数
+  - `ReadDataAddrToBin` - int64 addr 参数
+  - `ReadStringAddr` - int64 addr 参数
+  - `WriteDataAddrFromBin` - int64 addr 参数
+  - `VirtualQueryEx` - int64 addr 参数
+  - `WriteStringAddr` - int64 addr 参数
+  - `VirtualAllocEx` - int64 addr 参数
+  - `ReadDataAddr` - int64 addr 参数
+  - `WriteIntAddr` - int64 addr + int64 v 参数
+  - `ReadFloatAddr` - int64 addr 参数
+  - `ReadDoubleAddr` - int64 addr 参数
+  - `VirtualProtectEx` - int64 addr 参数
+  - `VirtualFreeEx` - int64 addr 参数
+- 🐛 修复 4 个函数的 float32/float64 参数传递：
+  - `FindDouble` - float64 double_value_min/max 参数
+  - `FindDoubleEx` - float64 double_value_min/max 参数
+  - `FindFloat` - float32 float_value_min/max 参数
+  - `FindFloatEx` - float32 float_value_min/max 参数
+- 🔧 修复多个函数的 syscall 参数数量问题
+- ✅ 完成所有 428 个函数参数类型和数量的全面验证
+- 🏷️ 添加版本标签 v1.5.0
+
 ### v1.4.0 (2026-03-21)
 
 - 🐛 **修复 32 位 float64/float32 参数传递问题** - 在 32 位程序中，float64 需要 8 字节，必须拆分为两个 uintptr 传递
