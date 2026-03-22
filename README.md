@@ -546,6 +546,22 @@ defer mainDm.Release()  // 最后释放主对象
 
 ## 📝 更新日志
 
+### v1.6.0 (2026-03-22)
+
+- 🐛 **修复返回字符串的编码转换问题** - 大漠DLL返回GBK编码，需要转换为UTF-8
+- 🐛 修复 `bytePtrToString` 函数，添加 GBK → UTF-8 转换
+- ✨ 新增 `gbkToUtf8` 函数进行编码转换
+- ✅ 验证所有 428 个函数的编码处理：
+  - 309 处输入字符串参数：UTF-8 → GBK ✅
+  - 124 处返回字符串：GBK → UTF-8 ✅
+- 📝 影响的函数类型：
+  - OCR 识别结果（`Ocr`, `OcrEx`, `OcrExOne`）
+  - 找图结果（`FindPicE`, `FindPicS`, `FindPicExS`）
+  - 找字结果（`FindStrE`, `FindStrEx`）
+  - 窗口信息（`GetWindowTitle`, `GetWindowClass`）
+  - 其他所有返回字符串的函数
+- 🏷️ 添加版本标签 v1.6.0
+
 ### v1.5.0 (2026-03-21)
 
 - 🐛 **全面修复 32 位 int64 参数传递问题** - 在 32 位程序中，int64 需要 8 字节，必须拆分为两个 uintptr 传递
