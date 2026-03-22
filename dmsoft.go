@@ -1162,16 +1162,25 @@ func int32Ptr(v int32) *int32 {
 	return &v
 }
 
+// gbkToUtf8 将GBK编码的字节切片转换为UTF-8字符串
+// 参数: data - GBK编码的字节切片
+// 返回: UTF-8编码的字符串
+func gbkToUtf8(data []byte) string {
+	result, _ := simplifiedchinese.GBK.NewDecoder().Bytes(data)
+	return string(result)
+}
+
 // bytePtrToString 将C风格字符串指针转换为Go字符串
 // 参数:
-//   - ptr: C风格字符串指针（以\0结尾）
+//   - ptr: C风格字符串指针（以\0结尾，GBK编码）
 //
 // 返回:
-//   - Go字符串
+//   - Go字符串（UTF-8编码）
 //
 // 注意:
 //   - 如果ptr为nil，返回空字符串
 //   - 自动计算字符串长度直到遇到\0
+//   - 自动将GBK编码转换为UTF-8编码，以兼容Go程序
 func bytePtrToString(ptr *byte) string {
 	if ptr == nil {
 		return ""
@@ -1180,5 +1189,5 @@ func bytePtrToString(ptr *byte) string {
 	for p := ptr; *p != 0; p = (*byte)(unsafe.Pointer(uintptr(unsafe.Pointer(p)) + 1)) {
 		n++
 	}
-	return string(unsafe.Slice(ptr, n))
+	return gbkToUtf8(unsafe.Slice(ptr, n))
 }
