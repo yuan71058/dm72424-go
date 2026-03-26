@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/yuan71058/dm72424-go)](https://goreportcard.com/report/github.com/yuan71058/dm72424-go)
 
-> 大漠插件 7.2424 版本的 Go 语言封装库，支持 428 个函数接口，开箱即用！
+> 大漠插件 7.2424 破解版本的 Go 语言封装库，支持 428 个函数接口，开箱即用！
 
 ---
 
@@ -24,7 +24,7 @@
 
 ## 🎯 项目简介
 
-本项目是大漠插件（dm.dll）的 Go 语言封装库，将原 C++ 版本的大漠插件接口完整翻译为 Go 语言。
+本项目是大漠插件（dm.dll）7.2424破解版的 Go 语言封装库，将原 C++ 版本的大漠插件接口完整翻译为 Go 语言。
 
 ### ✨ 特性
 
