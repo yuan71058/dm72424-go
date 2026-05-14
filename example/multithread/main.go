@@ -70,7 +70,11 @@ func (w *TextWorker) Init() bool {
 		w.Result <- fmt.Sprintf("[线程%d] 创建子对象失败", w.ID)
 		return false
 	}
-	w.Dm.Init()
+	err := w.Dm.Init()
+	if err != nil {
+		w.Result <- fmt.Sprintf("[线程%d] 子对象初始化失败: %v", w.ID, err)
+		return false
+	}
 	w.Result <- fmt.Sprintf("[线程%d] 子对象初始化完成，地址: %p", w.ID, w.Dm)
 	return true
 }
@@ -175,7 +179,10 @@ func main() {
 	if mainDm == nil {
 		log.Fatal("创建主对象失败")
 	}
-	mainDm.Init()
+	err = mainDm.Init()
+	if err != nil {
+		log.Fatalf("初始化主对象失败: %v", err)
+	}
 
 	nret := mainDm.Reg("", "")
 	if nret == 1 {

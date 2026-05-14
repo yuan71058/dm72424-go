@@ -30,8 +30,10 @@
 package dmsoft
 
 import (
+	"sync"
 	"unsafe"
 
+	ole "github.com/go-ole/go-ole"
 	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
@@ -1120,8 +1122,11 @@ type DmSoftInterface interface {
 // DmSoftBase 基础结构体，包含通用字段
 // 用于存储大漠插件对象句柄和模块句柄
 type DmSoftBase struct {
-	obj     uintptr // 大漠插件COM对象指针
-	hModule uintptr // DLL模块句柄
+	obj     uintptr
+	hModule uintptr
+	disp    *ole.IDispatch
+	mu      sync.RWMutex
+	dispCache map[string]int32
 }
 
 // utf8ToGbk 将UTF-8字符串转换为GBK编码的字节切片

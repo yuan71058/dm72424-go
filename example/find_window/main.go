@@ -73,7 +73,10 @@ func main() {
 	if dm == nil {
 		log.Fatal("创建大漠对象失败")
 	}
-	dm.Init()
+	err = dm.Init()
+	if err != nil {
+		log.Fatalf("初始化大漠对象失败: %v", err)
+	}
 	defer dm.Release()
 
 	// ========== 第四步：注册大漠插件 ==========

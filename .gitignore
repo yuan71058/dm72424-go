@@ -1,7 +1,7 @@
 # 编译输出
 *.exe
 *.exe~
-# *.dll  # 注释掉，允许DLL文件上传
+# *.dll  # 不排除DLL文件
 *.so
 *.dylib
 
