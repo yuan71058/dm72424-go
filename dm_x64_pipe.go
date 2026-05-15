@@ -1,3 +1,6 @@
+// Package dmsoft 提供大漠插件的 Go 绑定
+// 本文件实现了64位模式下的管道通信机制（TCP + gob序列化）
+// 用于与32位helper进程(dm_com_server.exe)进行跨进程通信
 package dmsoft
 
 import (
@@ -5,31 +8,43 @@ import (
 	"fmt"
 )
 
+// callRequest 管道调用请求结构体
+// 通过TCP发送到32位helper进程，包含要调用的方法信息
 type callRequest struct {
-	Offset  uint32
-	RetType uint8
-	NOut    uint8
-	Args    []callArg
+	Offset  uint32    // 方法在DLL中的偏移量（对应methodOffsets表）
+	RetType uint8     // 返回值类型: 0=int32, 1=string, 2=float64, 3=int64
+	NOut    uint8     // 输出参数个数（用于带输出参数的方法）
+	Args    []callArg // 参数列表
 }
 
+// callArg 管道调用参数结构体
+// 支持多种数据类型的参数传递
+// callArg 管道调用参数结构体
+// 支持多种数据类型的参数传递
 type callArg struct {
-	Type   uint8
-	IVal   int32
-	SVal   string
-	FVal   float64
-	I64Val int64
+	Type   uint8    // 参数类型: 0=int32, 1=string, 2=float64, 3=输出参数指针, 4=float32, 5=int64
+	IVal   int32    // 整数值（Type=0时使用）
+	SVal   string   // 字符串值（Type=1时使用）
+	FVal   float64  // 浮点数值（Type=2时使用）
+	I64Val int64    // 64位整数值（Type=5时使用）
 }
 
+// callResponse 管道调用响应结构体
+// 从32位helper进程接收的返回数据
 type callResponse struct {
-	RetType uint8
-	IRet    int32
-	SRet    string
-	FRet    float64
-	IRet64  int64
-	OutVals []int32
-	Err     string
+	RetType uint8     // 返回值类型（与请求中的RetType对应）
+	IRet    int32     // int32类型返回值
+	SRet    string    // string类型返回值（已转换为UTF-8）
+	FRet    float64   // float64类型返回值
+	IRet64  int64     // int64类型返回值
+	OutVals []int32   // 输出参数值列表
+	Err     string    // 错误信息，为空表示成功
 }
 
+// methodOffsets 大漠插件API方法偏移量表
+// 键: 方法名称（如"FindPic"、"GetColor"等）
+// 值: 该方法在dm.dll中的偏移地址（相对于DLL基址）
+// 说明: 这些偏移量是固定的，用于通过函数指针直接调用大漠插件功能
 var methodOffsets = map[string]uint32{
 	"GetDiskReversion":              109040,
 	"LoadAiMemory":                  108256,
@@ -459,6 +474,19 @@ var methodOffsets = map[string]uint32{
 	"FoobarFillRect":                103136,
 }
 
+// buildPipeArgs 将Go的interface{}参数列表转换为callArg切片
+// 用于序列化后通过TCP发送到32位helper进程
+// 参数:
+//   - params: 可变参数列表，支持int32, string, float64, *int32, float32, int64类型
+//
+// 返回值: []callArg 切片，每个元素包含类型标识和对应的值
+// 说明: 类型映射规则：
+//   - int32 -> Type=0, IVal
+//   - string -> Type=1, SVal
+//   - float64 -> Type=2, FVal
+//   - *int32 (输出参数) -> Type=3
+//   - float32 -> Type=4, FVal (转换为float64)
+//   - int64 -> Type=5, I64Val
 func buildPipeArgs(params []interface{}) []callArg {
 	args := make([]callArg, 0, len(params))
 	for _, p := range params {
@@ -482,6 +510,18 @@ func buildPipeArgs(params []interface{}) []callArg {
 	return args
 }
 
+// pipeCall 通过TCP管道执行方法调用（无输出参数版本）
+// 参数:
+//   - offset: 方法在DLL中的偏移量
+//   - retType: 返回值类型 (0=int32, 1=string, 2=float64, 3=int64)
+//   - params: 参数列表
+//
+// 返回值: callResponse 包含调用结果或错误信息
+// 说明:
+//   1. 使用互斥锁保证线程安全（多个goroutine可能同时调用）
+//   2. 将参数序列化为callRequest并通过gob编码发送到helper进程
+//   3. 接收并解码helper进程返回的callResponse
+//   4. 如果管道未连接，返回错误响应
 func (dm *DmSoft) pipeCall(offset uint32, retType uint8, params []interface{}) callResponse {
 	dm.mu.Lock()
 	defer dm.mu.Unlock()
@@ -510,6 +550,18 @@ func (dm *DmSoft) pipeCall(offset uint32, retType uint8, params []interface{}) c
 	return resp
 }
 
+// pipeCallWithOut 通过TCP管道执行方法调用（带输出参数版本）
+// 参数:
+//   - offset: 方法在DLL中的偏移量
+//   - retType: 返回值类型 (0=int32, 1=string, 2=float64, 3=int64)
+//   - inParams: 输入参数列表
+//   - outVars: 输出参数指针列表（用于接收返回值，如坐标等）
+//
+// 返回值: callResponse 包含调用结果、输出参数值或错误信息
+// 说明:
+//   - 与pipeCall类似，但额外处理输出参数
+//   - 输出参数在参数列表中用nil占位，helper进程会填充实际值
+//   - 返回的callResponse.OutVals包含所有输出参数的值
 func (dm *DmSoft) pipeCallWithOut(offset uint32, retType uint8, inParams []interface{}, outVars ...*int32) callResponse {
 	dm.mu.Lock()
 	defer dm.mu.Unlock()
@@ -580,6 +632,9 @@ func (dm *DmSoft) pipeCallStrWithOutVars(offset uint32, inParams []interface{}, 
 	return resp.SRet
 }
 
+// init 注册gob序列化所需的类型
+// gob需要预先注册所有可能通过TCP传输的自定义类型
+// 这样helper进程才能正确解码这些类型
 func init() {
 	gob.Register(callRequest{})
 	gob.Register(callArg{})

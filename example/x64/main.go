@@ -1,3 +1,28 @@
+// Package main 大漠插件64位单线程示例程序
+//
+// 本示例展示如何在64位环境下使用大漠插件Go绑定库
+// 通过TCP+gob与32位helper进程通信，实现跨架构调用大漠DLL
+//
+// 功能演示：
+//   - 基础信息获取（版本号、屏幕分辨率等）
+//   - 窗口操作（查找、枚举窗口）
+//   - 窗口绑定与截图（BMP和PNG格式）
+//   - 取色功能（RGB/BGR/HSV）
+//   - 鼠标键盘模拟操作
+//   - 找图找色（含输出参数）
+//   - OCR文字识别
+//   - 剪贴板操作
+//   - 内存读写操作
+//
+// 编译运行：
+//   1. 先编译helper进程：GOARCH=386 go build -o dm_com_server.exe ../../cmd/dm_com_server/
+//   2. 编译本程序：set GOARCH=amd64 && go build -o x64_example.exe .
+//   3. 运行：x64_example.exe
+//
+// 注意事项：
+//   - 必须以64位编译（amd64）
+//   - 需要dm_com_server.exe在同级目录或../cmd/dm_com_server/目录
+//   - 需要xd47243.dll（大漠DLL）和Go.dll（破解DLL）在同级目录
 package main
 
 import (
@@ -12,11 +37,24 @@ import (
 	dmsoft "github.com/yuan71058/dm72424-go"
 )
 
+// 常量定义：DLL文件路径
 const (
-	DmPluginPath = "xd47243.dll"
-	CrackDllPath = "Go.dll"
+	DmPluginPath = "xd47243.dll" // 大漠插件DLL文件名
+	CrackDllPath = "Go.dll"        // 破解DLL文件名（用于激活大漠插件）
 )
 
+// main 主函数：64位大漠插件使用示例入口
+//
+// 执行流程：
+//   1. 检查编译架构（必须是amd64）
+//   2. LoadDm - 加载大漠DLL（记录路径，定位helper）
+//   3. CrackDm - 设置破解DLL路径
+//   4. New + Init - 创建实例并启动helper进程，建立TCP连接
+//   5. Reg - 注册大漠插件
+//   6. 执行各项功能测试
+//   7. Release - 释放资源（关闭helper进程）
+//
+// 控制台输出包含详细的步骤说明和原理讲解，便于理解64位调用机制
 func main() {
 	fmt.Println("╔══════════════════════════════════════════════════════════╗")
 	fmt.Println("║         大漠插件 64位 TCP+gob 跨进程调用示例            ║")
@@ -153,6 +191,8 @@ func main() {
 	dm.UnBindWindow()
 }
 
+// testBasicInfo 测试基础信息获取功能
+// 演示：版本号、屏幕分辨率、色深、DPI、机器码等
 func testBasicInfo(dm *dmsoft.DmSoft) {
 	fmt.Println("  ── 基础信息 ──")
 
@@ -183,6 +223,8 @@ func testBasicInfo(dm *dmsoft.DmSoft) {
 	fmt.Println()
 }
 
+// testWindowOps 测试窗口操作功能
+// 演示：获取前台窗口、窗口标题、类名、进程信息、枚举窗口等
 func testWindowOps(dm *dmsoft.DmSoft) {
 	fmt.Println("  ── 窗口操作 ──")
 
@@ -216,6 +258,8 @@ func testWindowOps(dm *dmsoft.DmSoft) {
 	fmt.Println()
 }
 
+// testBindAndCapture 测试窗口绑定与截图功能
+// 演示：绑定窗口（GDI模式）、获取客户区大小、截图保存为BMP和PNG
 func testBindAndCapture(dm *dmsoft.DmSoft) {
 	fmt.Println("  ── 窗口绑定与截图 ──")
 
@@ -243,6 +287,8 @@ func testBindAndCapture(dm *dmsoft.DmSoft) {
 	fmt.Println()
 }
 
+// testColorOps 测试取色功能
+// 演示：获取指定坐标的颜色（RGB/BGR/HSV格式）、区域平均颜色
 func testColorOps(dm *dmsoft.DmSoft) {
 	fmt.Println("  ── 取色测试 ──")
 
@@ -263,6 +309,8 @@ func testColorOps(dm *dmsoft.DmSoft) {
 	fmt.Println()
 }
 
+// testMouseKeyboard 测试鼠标键盘操作
+// 演示：获取鼠标位置、移动鼠标、获取鼠标形状、检测按键状态
 func testMouseKeyboard(dm *dmsoft.DmSoft) {
 	fmt.Println("  ── 鼠标键盘 ──")
 
@@ -285,6 +333,9 @@ func testMouseKeyboard(dm *dmsoft.DmSoft) {
 	fmt.Println()
 }
 
+// testFindPic 测试找图找色功能（含输出参数）
+// 演示：FindPic/FindPicE/FindPicEx、FindColor、FindMultiColor
+// 特别说明：64位TCP模式下，输出参数(*int32)通过gob序列化跨进程回传
 func testFindPic(dm *dmsoft.DmSoft) {
 	fmt.Println("  ── 找图测试（含输出参数） ──")
 	fmt.Println("  说明：64位TCP模式下，输出参数(*int32)通过gob序列化跨进程回传")
@@ -315,6 +366,9 @@ func testFindPic(dm *dmsoft.DmSoft) {
 	fmt.Println()
 }
 
+// testOCR 测试OCR文字识别功能
+// 演示：Ocr文字识别、FindStr文字查找（含输出参数）
+// 说明：TCP传输自动处理UTF-8↔GBK编码转换
 func testOCR(dm *dmsoft.DmSoft) {
 	fmt.Println("  ── OCR文字识别 ──")
 	fmt.Println("  说明：TCP传输自动处理UTF-8↔GBK编码转换")
@@ -331,6 +385,8 @@ func testOCR(dm *dmsoft.DmSoft) {
 	fmt.Println()
 }
 
+// testClipboard 测试剪贴板操作
+// 演示：设置和获取剪贴板内容（包含中文）
 func testClipboard(dm *dmsoft.DmSoft) {
 	fmt.Println("  ── 剪贴板 ──")
 
@@ -343,6 +399,8 @@ func testClipboard(dm *dmsoft.DmSoft) {
 	fmt.Println()
 }
 
+// testMemory 测试内存操作功能
+// 演示：获取进程ID、打开进程、获取模块基址
 func testMemory(dm *dmsoft.DmSoft) {
 	fmt.Println("  ── 内存操作 ──")
 
@@ -360,6 +418,11 @@ func testMemory(dm *dmsoft.DmSoft) {
 	fmt.Println()
 }
 
+// truncate 截断字符串到指定长度，超出部分用"..."代替
+// 参数:
+//   - s: 原始字符串
+//   - maxLen: 最大长度
+// 返回值: 截断后的字符串
 func truncate(s string, maxLen int) string {
 	if len(s) <= maxLen {
 		return s

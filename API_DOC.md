@@ -27,6 +27,7 @@
 17. [INI配置文件函数](#17-ini配置文件函数)
 18. [字库相关函数](#18-字库相关函数)
 19. [杂项函数](#19-杂项函数)
+20. [64位(x64)支持说明](#20-64位x64支持说明)
 
 ---
 
@@ -3794,6 +3795,332 @@ func (dm *DmSoft) ReadInt(hwnd int32, addr string, type_ int32) int32
 | 类型 | 说明 |
 |------|------|
 | int32 | 读取的整数值 |
+
+---
+
+## 20. 64位(x64)支持说明
+
+### 概述
+
+本库完整支持64位(x64/amd64)架构，通过跨进程通信机制实现与32位大漠DLL的交互。
+
+### 架构原理
+
+由于大漠插件DLL（dm.dll等）是32位的，无法直接在64位进程中加载，因此采用以下方案：
+
+```
+┌─────────────────────────────────────┐
+│         64位主进程 (Go程序)          │
+│  ┌─────────────────────────────┐   │
+│  │     DmSoft 实例              │   │
+│  │  - comCall*() 封装函数       │   │
+│  │  - gob 编解码器             │   │
+│  └──────────┬──────────────────┘   │
+│             │ TCP连接               │
+│             │ gob序列化             │
+└─────────────┼───────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────┐
+│    32位helper进程 (dm_com_server)   │
+│  ┌─────────────────────────────┐   │
+│  │  - 加载dm.dll (32位)        │   │
+│  │  - 可选: 加载crack.dll      │   │
+│  │  - 创建COM对象              │   │
+│  │  - 通过偏移量调用API        │   │
+│  │  - 返回结果                 │   │
+│  └─────────────────────────────┘   │
+└─────────────────────────────────────┘
+```
+
+### 使用方式
+
+#### 基础用法
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    
+    dmsoft "github.com/yuan71058/dm72424-go"
+)
+
+func main() {
+    // 1. 加载大漠DLL（记录路径）
+    _, err := dmsoft.LoadDm("xd47243.dll")
+    if err != nil {
+        log.Fatalf("LoadDm失败: %v", err)
+    }
+
+    // 2. 设置破解DLL路径（可选）
+    err = dmsoft.CrackDm("Go.dll")
+    if err != nil {
+        log.Fatalf("CrackDm失败: %v", err)
+    }
+
+    // 3. 创建实例并初始化（会启动32位helper进程）
+    dm := dmsoft.New()
+    if dm == nil {
+        log.Fatal("创建实例失败")
+    }
+    
+    err = dm.Init()  // 启动helper进程，建立TCP连接
+    if err != nil {
+        log.Fatalf("Init失败: %v", err)
+    }
+    defer dm.Release()
+
+    // 4. 注册并使用
+    ret := dm.Reg("", "")
+    fmt.Printf("注册结果: %d\n", ret)
+    
+    // 5. 调用各种API（自动通过TCP转发到helper）
+    version := dm.Ver()
+    fmt.Printf("版本号: %s\n", version)
+}
+```
+
+#### 多线程用法
+
+```go
+package main
+
+import (
+    "sync"
+    
+    dmsoft "github.com/yuan71058/dm72424-go"
+)
+
+func worker(id int, wg *sync.WaitGroup) {
+    defer wg.Done()
+    
+    // 每个线程创建独立的DmSoft实例
+    // 每个实例会启动独立的helper进程
+    dm := dmsoft.New()
+    dm.Init()
+    defer dm.Release()
+    
+    dm.Reg("", "")
+    
+    // 各线程独立操作，互不干扰
+    var x, y int32
+    dm.GetCursorPos(&x, &y)
+}
+
+func main() {
+    dmsoft.LoadDm("xd47243.dll")
+    dmsoft.CrackDm("Go.dll")
+    
+    var wg sync.WaitGroup
+    for i := 0; i < 3; i++ {
+        wg.Add(1)
+        go worker(i, &wg)
+    }
+    wg.Wait()
+}
+```
+
+### 关键文件说明
+
+| 文件 | 说明 |
+|------|------|
+| `dm_x64_helpers.go` | 64位模式下的COM调用封装函数（comCallInt32、comCallStr等） |
+| `dm_x64_pipe.go` | 管道通信实现（结构体定义、偏移量表、gob编解码） |
+| `cmd/dm_com_server/main.go` | 32位helper进程源码（必须以GOARCH=386编译） |
+
+### 编译要求
+
+#### 编译helper进程（必须32位）
+
+```bash
+# Windows
+set GOARCH=386
+go build -o dm_com_server.exe ./cmd/dm_com_server/
+
+# Linux/Mac
+GOARCH=386 go build -o dm_com_server ./cmd/dm_com_server/
+```
+
+#### 编译64位主程序
+
+```bash
+# Windows
+set GOARCH=amd64
+go build -o myapp.exe .
+
+# Linux/Mac
+GOARCH=amd64 go build -o myapp .
+```
+
+### 工作流程详解
+
+#### 初始化阶段
+
+1. **LoadDm(path)** 
+   - 记录大漠DLL路径
+   - 检测当前架构（32/64位）
+   - 查找helper可执行文件位置
+   
+2. **CrackDm(crackPath)**
+   - 记录破解DLL路径（不立即加载）
+   
+3. **New() + Init()**
+   - 启动32位helper进程：`dm_com_server.exe <dm.dll> [crack.dll]`
+   - helper进程：
+     a. LoadLibrary加载dm.dll
+     b. （可选）LoadLibrary加载crack.dll并调用Go()函数
+     c. 通过偏移量0x18000调用创建COM对象的函数
+     d. 监听随机TCP端口
+     e. 输出"READY <port>"到stdout
+   - 主进程读取端口号
+   - 建立TCP连接到127.0.0.1:<port>
+   - 创建gob Encoder/Decoder用于后续通信
+
+#### 方法调用阶段
+
+```go
+// 用户代码
+var x, y int32
+result := dm.FindPic(0, 0, 800, 600, "test.bmp", "000000", 0.9, 0, &x, &y)
+
+// 内部执行流程：
+// 1. comCallWithOutVars("FindPic", [...], &x, &y)
+// 2. getMethodOffset("FindPic") -> 返回104032
+// 3. pipeCallWithOut(104032, 0, [...], &x, &y)
+// 4. 构建callRequest{Offset:104032, RetType:0, NOut:2, Args:[...]}
+// 5. gob.Encode(&req) -> 通过TCP发送到helper
+// 6. helper接收并解码
+// 7. handleCall(req):
+//    - 计算函数地址: dmModule + 104032
+//    - 构建参数数组（处理类型转换、UTF-8转GBK）
+//    - syscall.Syscall12(fnAddr, ...)
+//    - 收集返回值和输出参数
+// 8. 构建callResponse并通过gob发送回主进程
+// 9. 主进程解码响应，提取IRet和OutVals
+// 10. 将OutVals[0]写入*x, OutVals[1]写入*y
+// 11. 返回IRet给用户
+```
+
+### 数据类型映射
+
+| Go类型 | callArg.Type | 传输方式 | 说明 |
+|--------|-------------|---------|------|
+| int32 | 0 | IVal | 直接传递整数 |
+| string | 1 | SVal | UTF-8→GBK转换后传递 |
+| float64 | 2 | FVal | IEEE 754双精度 |
+| *int32 (输出参数) | 3 | - | 占位符，helper填充实际值 |
+| float32 | 4 | FVal | 转换为float64后传递 |
+| int64 | 5 | I64Val | 高低32位分别传递 |
+
+### 返回值类型
+
+| RetType | 含义 | callResponse字段 |
+|---------|------|-----------------|
+| 0 | int32 | IRet |
+| 1 | string | SRet（GBK→UTF-8） |
+| 2 | float64 | FRet |
+| 3 | int64 | IRet64（高低32位组合） |
+
+### 特殊注意事项
+
+#### 1. 字符串编码
+
+- 大漠DLL使用GBK编码
+- 64位模式下自动处理编码转换：
+  - 发送请求时：UTF-8 → GBK
+  - 接收响应时：GBK → UTF-8
+- 无需手动处理编码问题
+
+#### 2. 输出参数处理
+
+- 带`*int32`输出参数的方法（如FindPic、FindColor等）
+- 输出参数通过gob序列化跨进程传递
+- 在helper进程中收集实际值，返回后在主进程写入指针指向的变量
+- 完全透明，使用方式与32位模式相同
+
+#### 3. 多线程安全
+
+- 每个`DmSoft`实例有独立的helper进程和TCP连接
+- 使用`sync.RWMutex`保证单个实例的线程安全
+- 不同实例之间完全独立，互不影响
+- 推荐每个goroutine使用独立的`DmSoft`实例
+
+#### 4. 资源管理
+
+- **必须调用`Release()`**释放资源
+- Release会：
+  - 关闭TCP连接
+  - 关闭helper进程的stdin（发送退出信号）
+  - 终止helper进程
+- 建议使用`defer dm.Release()`确保释放
+
+#### 5. 性能考虑
+
+- 每次API调用都需要：
+  - gob序列化/反序列化
+  - TCP网络传输
+  - 进程间上下文切换
+- 相比32位直接调用有一定开销
+- 对于性能敏感场景，建议：
+  - 批量操作减少调用次数
+  - 使用扩展方法（如FindPicEx代替多次FindPic）
+  - 合理设置超时时间
+
+#### 6. 错误处理
+
+常见错误及解决方案：
+
+| 错误信息 | 原因 | 解决方案 |
+|---------|------|---------|
+| 未找到dm_com_server.exe | helper未编译或路径错误 | 以GOARCH=386编译helper并放在正确位置 |
+| 连接helper TCP失败 | helper启动失败或崩溃 | 检查stderr输出，确认DLL路径正确 |
+| pipe not connected | 未调用Init()或已Release | 确保先Init()再调用API |
+| helper进程无输出 | DLL加载失败 | 检查DLL是否存在、位数是否正确 |
+| encode/decode error | 网络断开或数据损坏 | 检查helper进程是否存活 |
+
+### 与32位模式的对比
+
+| 特性 | 32位模式 | 64位模式 |
+|------|---------|---------|
+| DLL加载方式 | 直接LoadLibrary到当前进程 | 由helper进程加载 |
+| COM对象创建 | 当前进程内创建 | helper进程内创建 |
+| API调用方式 | 直接syscall | TCP+gob转发到helper |
+| 性能 | 无额外开销 | 有网络序列化开销 |
+| 多线程 | 需要同步保护 | 天然隔离（每实例独立helper） |
+| 内存占用 | 较低 | 较高（每个helper约5-10MB） |
+| 兼容性 | 仅限32位系统 | 支持64位系统 |
+
+### 示例项目
+
+项目中包含完整的示例代码：
+
+- **example/x64/** - 单线程64位示例
+  - 展示基础功能：找图、取色、OCR、鼠标键盘操作等
+  - 详细的控制台输出，展示调用流程
+  
+- **example/x64_mt/** - 多线程64位示例
+  - 展示多线程并发操作不同窗口
+  - 每个线程独立helper进程，真正并行执行
+  - 包含记事本自动化测试场景
+
+### 常见问题FAQ
+
+**Q: 为什么需要helper进程？**
+A: 大漠DLL是32位的，无法在64位进程中直接加载。helper作为32位桥梁进程负责实际的DLL调用。
+
+**Q: 可以在Linux/macOS上运行吗？**
+A: 可以，但需要Wine或其他Windows兼容层来运行32位Windows DLL。helper进程本身可以交叉编译为Linux/macOS的32位版本。
+
+**Q: 如何调试helper进程？**
+A: helper会将错误信息输出到stderr。也可以设置环境变量`DM_HELPER_DEBUG=1`启用详细日志。
+
+**Q: 支持哪些大漠DLL版本？**
+A: 支持所有7.24xx系列的大漠DLL。偏移量表定义了所有已知API的位置。
+
+**Q: 如何更新helper？**
+A: 当主库更新时，需要重新编译helper：`GOARCH=386 go build -o dm_com_server.exe ./cmd/dm_com_server/`
 
 ---
 

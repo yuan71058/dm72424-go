@@ -1,3 +1,22 @@
+// Package dmsoft 提供大漠插件的 Go 语言绑定
+// 支持两种运行模式：
+//   - 32位模式: 直接通过syscall调用大漠DLL的COM接口
+//   - 64位模式: 通过TCP+gob序列化与32位helper进程通信，实现跨进程调用
+//
+// 主要功能：
+//   - 窗口操作：绑定、查找、枚举窗口
+//   - 鼠标键盘模拟：点击、移动、按键等
+//   - 图像识别：找图、找色、OCR文字识别
+//   - 内存操作：读写内存、搜索数据
+//   - 屏幕截图：捕获屏幕或窗口内容
+//
+// 使用流程：
+//   1. LoadDm() 加载DLL
+//   2. CrackDm() 破解（可选）
+//   3. New() 创建实例
+//   4. Init() 初始化COM对象
+//   5. 调用各种API方法
+//   6. Release() 释放资源
 package dmsoft
 
 import (
@@ -18,20 +37,30 @@ import (
 	ole "github.com/go-ole/go-ole"
 )
 
+// 全局变量定义
 var (
-	DmHModule     uintptr
-	GoHModule     uintptr
-	comInitOnce   sync.Once
-	is64bit       bool
-	dmDllPath     string
-	crackDllPath  string
-	helperExePath string
+	DmHModule     uintptr // 大漠DLL模块句柄（32位模式下使用）
+	GoHModule     uintptr // 破解DLL模块句柄（32位模式下使用）
+	comInitOnce   sync.Once // 确保COM初始化只执行一次
+	is64bit       bool      // 当前是否为64位架构
+	dmDllPath     string    // 大漠DLL文件路径
+	crackDllPath  string    // 破解DLL文件路径
+	helperExePath string    // 32位helper进程路径（dm_com_server.exe）
 )
 
+// uintptrSize 获取当前系统的指针大小
+// 返回值: 4表示32位系统，8表示64位系统
+// 用于判断当前运行架构，选择不同的调用方式
 func uintptrSize() int {
 	return int(unsafe.Sizeof(uintptr(0)))
 }
 
+// findHelperExe 查找32位helper进程可执行文件(dm_com_server.exe)
+// 搜索顺序：
+//   1. 当前可执行文件所在目录
+//   2. ../cmd/dm_com_server/ 目录（开发环境）
+//
+// 返回值: 找到返回绝对路径，未找到返回空字符串
 func findHelperExe() string {
 	exePath, _ := os.Executable()
 	dir := filepath.Dir(exePath)
@@ -48,6 +77,18 @@ func findHelperExe() string {
 	return ""
 }
 
+// LoadDm 加载大漠插件DLL
+// 参数:
+//   - dmPath: 大漠DLL文件路径（如"dm.dll"、"xd47243.dll"等）
+//
+// 返回值:
+//   - uintptr: 32位模式下返回DLL模块句柄，64位模式下返回1（表示成功）
+//   - error: 错误信息
+//
+// 说明:
+//   - 32位模式: 直接调用syscall.LoadLibrary加载DLL到当前进程
+//   - 64位模式: 仅记录DLL路径并查找helper进程，实际加载在Init()时由helper完成
+//   - 首次调用时会初始化COM库并检测当前架构（32/64位）
 func LoadDm(dmPath string) (uintptr, error) {
 	comInitOnce.Do(func() {
 		ole.CoInitializeEx(0, ole.COINIT_MULTITHREADED)
@@ -77,6 +118,16 @@ func LoadDm(dmPath string) (uintptr, error) {
 	return DmHModule, nil
 }
 
+// CrackDm 加载破解DLL并激活大漠插件
+// 参数:
+//   - crackPath: 破解DLL文件路径（如"Go.dll"等）
+//
+// 返回值: error 错误信息，成功时为nil
+//
+// 说明:
+//   - 32位模式: 直接加载破解DLL并调用其导出函数Go()来激活大漠
+//   - 64位模式: 仅记录破解DLL路径，实际破解在Init()时由helper进程完成
+//   - 必须在LoadDm()之后、Init()之前调用
 func CrackDm(crackPath string) error {
 	if is64bit {
 		crackDllPath = crackPath
@@ -146,18 +197,27 @@ func Free() bool {
 	return true
 }
 
+// DmSoft 大漠插件实例结构体
+// 封装了大漠COM对象的所有操作，支持32位和64位两种模式
 type DmSoft struct {
-	obj          uintptr
-	disp         *ole.IDispatch
-	mu           sync.RWMutex
-	dispCache    map[string]int32
-	helperCmd    *exec.Cmd
-	helperStdin  io.WriteCloser
-	pipeConn     net.Conn
-	pipeEnc      *gob.Encoder
-	pipeDec      *gob.Decoder
+	obj          uintptr       // COM对象指针（32位模式下使用）
+	disp         *ole.IDispatch // COM IDispatch接口（预留，当前未使用）
+	mu           sync.RWMutex  // 读写锁，保证线程安全
+	dispCache    map[string]int32 // 调度ID缓存（预留）
+	helperCmd    *exec.Cmd     // helper进程命令（64位模式下使用）
+	helperStdin  io.WriteCloser // helper进程标准输入（用于发送退出信号）
+	pipeConn     net.Conn      // TCP连接（64位模式下与helper通信）
+	pipeEnc      *gob.Encoder  // gob编码器（用于发送请求到helper）
+	pipeDec      *gob.Decoder  // gob解码器（用于接收helper的响应）
 }
 
+// New 创建大漠插件实例
+// 返回值: *DmSoft 大漠实例指针，32位模式下如果DLL未加载则返回nil
+//
+// 说明:
+//   - 每个DmSoft实例代表一个独立的大漠COM对象
+//   - 64位模式下每个实例会启动独立的helper进程
+//   - 多线程场景下，每个线程应创建独立的DmSoft实例
 func New() *DmSoft {
 	if is64bit {
 		return &DmSoft{dispCache: make(map[string]int32)}
@@ -170,6 +230,19 @@ func New() *DmSoft {
 	return &DmSoft{dispCache: make(map[string]int32)}
 }
 
+// Init 初始化大漠对象，创建内部COM对象实例
+// 返回值: error 错误信息
+//
+// 说明:
+//   - 32位模式: 通过偏移量调用DLL中的创建函数，生成COM对象
+//   - 64位模式: 启动32位helper进程(dm_com_server.exe)，建立TCP连接
+//
+// 64位模式的详细流程：
+//   1. 启动helper进程，传入dm.dll和crack.dll路径作为参数
+//   2. helper进程加载DLL、执行破解、创建dm对象
+//   3. helper进程监听随机TCP端口并输出端口号到stdout
+//   4. 主进程读取端口号，建立TCP连接
+//   5. 创建gob编解码器用于后续通信
 func (dm *DmSoft) Init() error {
 	if is64bit {
 		if helperExePath == "" {
@@ -237,6 +310,12 @@ func (dm *DmSoft) Init() error {
 	return nil
 }
 
+// Release 释放大漠对象和所有相关资源
+//
+// 说明:
+//   - 64位模式: 关闭TCP连接、关闭helper进程的stdin（发送退出信号）、终止helper进程
+//   - 32位模式: 调用DLL中的释放函数销毁COM对象
+//   - 释放后该DmSoft实例不可再用，需要重新New()和Init()
 func (dm *DmSoft) Release() {
 	if dm.pipeConn != nil {
 		dm.pipeConn.Close()
