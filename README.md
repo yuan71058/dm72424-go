@@ -2,27 +2,32 @@
 
 [![Go Version](https://img.shields.io/badge/Go-1.16%2B-00ADD8?style=flat&logo=go)](https://golang.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=flat&logo=windows)](https://www.microsoft.com/windows)
+[![Arch](https://img.shields.io/badge/Arch-386%20%7C%20amd64-orange?style=flat)]()
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat)](LICENSE)
 
-> 大漠插件 7.2424 破解版本的 Go 语言封装库，支持 428 个函数接口，开箱即用！
+> 大漠插件 7.2424 破解版本的 Go 语言封装库，支持 428 个函数接口，**完整支持32位和64位架构**，开箱即用！
 
 ---
 
 ## 特性
 
 - **完整封装** - 支持大漠插件 7.2424 版本全部 428 个函数
+- **双架构支持** - 完整支持32位(x86)和64位(x64/amd64)架构
 - **开箱即用** - 简单导入即可使用，无需复杂配置
 - **详细注释** - 所有函数都有完整的中文注释
 - **类型安全** - 完整的类型定义，编译时检查
-- **示例丰富** - 提供完整的使用示例
+- **示例丰富** - 提供完整的32位和64位使用示例
 - **自动编码转换** - 内置 UTF-8 到 GBK 自动转换，中文参数无需手动处理
 
 ---
 
 ## 目录
 
+- [架构选择](#架构选择)
 - [环境要求](#环境要求)
 - [快速开始](#快速开始)
+  - [32位模式](#32位模式)
+  - [64位模式](#64位模式)
 - [安装方法](#安装方法)
 - [核心函数](#核心函数)
 - [使用示例](#使用示例)
@@ -33,15 +38,37 @@
 
 ---
 
+## 架构选择
+
+本库支持两种编译架构，请根据需求选择：
+
+| 架构 | 编译目标 | 适用场景 | 性能 | 文档 |
+|------|---------|---------|------|------|
+| **32位** | `GOARCH=386` | 传统应用、高性能需求 | 微秒级 | 本文档 |
+| **64位** | `GOARCH=amd64` | 现代应用、大内存需求 | 毫秒级 | [README_x64.md](README_x64.md) |
+
+### 如何选择？
+
+- 如果你的主程序是32位的，或者对性能要求极高 → 选择 **32位模式**
+- 如果你的主程序是64位的，或者需要访问超过4GB内存 → 选择 **64位模式**
+
+> **重要**：大漠插件DLL本身是32位的。64位模式通过启动独立的32位helper进程来调用DLL，通过TCP+gob进行跨进程通信。
+
+---
+
 ## 环境要求
 
 - **操作系统**: Windows（32位或64位均可）
 - **Go 版本**: Go 1.16 或更高版本
-- **编译要求**: 必须编译为 32 位程序
+- **编译要求**: 
+  - 32位模式：必须编译为 32 位程序 (`GOARCH=386`)
+  - 64位模式：必须编译为 64 位程序 (`GOARCH=amd64`)，并需要helper进程
 
 ---
 
 ## 快速开始
+
+### 32位模式
 
 ```go
 package main
@@ -80,6 +107,72 @@ func main() {
 }
 ```
 
+**编译命令**：
+```powershell
+$env:GOARCH="386"; go build -o myapp.exe
+```
+
+### 64位模式
+
+64位模式需要先编译helper进程，然后编译主程序：
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "path/filepath"
+    dmsoft "github.com/yuan71058/dm72424-go"
+)
+
+func main() {
+    absPluginPath, _ := filepath.Abs("xd47243.dll")
+    absCrackPath, _ := filepath.Abs("Go.dll")
+
+    // 1. 加载大漠插件（记录路径）
+    _, err := dmsoft.LoadDm(absPluginPath)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // 2. 设置破解DLL路径
+    err = dmsoft.CrackDm(absCrackPath)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // 3. 创建对象并初始化（启动helper进程）
+    dm := dmsoft.New()
+    err = dm.Init()
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer dm.Release()
+
+    // 4. 注册（每个helper进程都需要注册）
+    if dm.Reg("", "") == 1 {
+        fmt.Println("注册成功")
+    }
+
+    // 5. 正常使用，API与32位完全一致
+    fmt.Printf("版本: %s\n", dm.Ver())
+}
+```
+
+**编译命令**：
+```powershell
+# 1. 编译32位helper进程
+cd cmd\dm_com_server
+$env:GOARCH="386"; $env:CGO_ENABLED="0"; go build -o dm_com_server.exe .
+cd ..\..
+
+# 2. 编译64位主程序
+$env:GOARCH="amd64"; go build -o myapp.exe
+```
+
+> 📖 **完整64位文档**：请参考 [README_x64.md](README_x64.md) 获取详细的64位使用说明、架构原理和多线程示例。
+
 ---
 
 ## 安装方法
@@ -103,12 +196,26 @@ replace github.com/yuan71058/dm72424-go => ./dm72424-go
 
 ### 编译说明
 
-**重要**：大漠插件是 32 位 DLL，必须编译为 32 位程序！
+**32位模式**：大漠插件是 32 位 DLL，必须编译为 32 位程序！
 
 ```powershell
 go env -w GOARCH=386
 go build -o myapp.exe
 ```
+
+**64位模式**：需要先编译helper进程，再编译主程序
+
+```powershell
+# 编译helper进程（32位）
+cd cmd\dm_com_server
+$env:GOARCH="386"; $env:CGO_ENABLED="0"; go build -o dm_com_server.exe .
+cd ..\..
+
+# 编译主程序（64位）
+$env:GOARCH="amd64"; go build -o myapp.exe
+```
+
+> 📖 64位模式详细说明请参考 [README_x64.md](README_x64.md)
 
 ---
 
@@ -252,14 +359,21 @@ addr := dm.FindData(hwnd, 0x400000, 0x500000, "FF ?? 00 ??")
 
 ## 多线程操作
 
-### 多线程要点
+### 32位模式
 
 - **主对象**：全局唯一，负责注册，最后释放
 - **子对象**：每线程独立创建，各自 Init/Release
 - **注册**：只需在主对象中注册一次
 - **绑定**：每个子对象独立绑定自己的目标窗口
 
-### 多线程示例
+### 64位模式
+
+- **独立进程**：每个 `DmSoft` 对象启动独立的 helper 进程
+- **并行执行**：多个 helper 进程互不干扰，真正并行
+- **注册要求**：每个 helper 进程必须单独调用 `Reg()`
+- **资源占用**：每个 helper 进程约占用 5-10MB 内存
+
+### 32位多线程示例
 
 ```go
 // 主线程：创建主对象并注册
@@ -282,7 +396,27 @@ for i := 0; i < 3; i++ {
 defer mainDm.Release()  // 最后释放主对象
 ```
 
-完整示例请参考 `example/multithread/main.go`
+### 64位多线程示例
+
+```go
+// 每个goroutine创建独立对象和helper进程
+for i := 0; i < 3; i++ {
+    go func(id int) {
+        dm := dmsoft.New()
+        dm.Init()
+        dm.Reg("", "")  // 64位模式下每个helper必须单独注册！
+        defer dm.Release()
+
+        dm.BindWindow(hwnd, "gdi", "windows", "windows", 0)
+        // ... 操作 ...
+        dm.UnBindWindow()
+    }(i)
+}
+```
+
+完整示例请参考：
+- 32位：`example/multithread/main.go`
+- 64位：`example/x64_mt/main.go`
 
 ---
 
@@ -300,6 +434,28 @@ defer mainDm.Release()  // 最后释放主对象
 | 系统信息 | ~20 | Ver, GetOsType, GetTime |
 | 文件操作 | ~15 | ReadFile, WriteFile, IsFileExist |
 | AI功能 | ~10 | LoadAi, FindPicAi |
+
+---
+
+## 项目结构
+
+```
+go-dm72424/
+├── dmsoft.go              # DmSoftInterface + DmSoftBase + GBK工具函数
+├── dmsoft_impl.go         # DmSoft实现 + LoadDm/CrackDm/Init/Release
+├── dm_x64_pipe.go         # TCP客户端 + 方法偏移量表 + pipeCall
+├── dm_x64_helpers.go      # comCall→pipeCall 桥接层
+├── cmd/
+│   └── dm_com_server/     # 32位helper进程（64位模式必需）
+│       └── main.go        # TCP服务器 + 偏移量调用dm.dll
+├── example/
+│   ├── main.go            # 32位基础示例
+│   ├── multithread/       # 32位多线程示例
+│   ├── x64/               # 64位基础示例
+│   └── x64_mt/            # 64位多线程示例
+├── README.md              # 本文档（32位模式为主）
+└── README_x64.md          # 64位模式详细文档
+```
 
 ---
 
@@ -367,6 +523,19 @@ dm.SetPath("C:\\测试目录")
 
 - 确保编译为32位程序：`go env -w GOARCH=386`
 - 大漠插件是32位DLL，不能在64位程序中调用
+
+### Q5: 如何在64位程序中使用大漠插件？
+
+- 使用本库的64位支持方案，通过TCP+gob跨进程调用
+- 先编译32位helper进程：`GOARCH=386 go build -o dm_com_server.exe cmd/dm_com_server/`
+- 再编译64位主程序：`GOARCH=amd64 go build`
+- 详细说明请参考 [README_x64.md](README_x64.md)
+
+### Q6: 64位模式性能如何？
+
+- 64位模式通过TCP跨进程调用，延迟约毫秒级（32位为微秒级）
+- 对于大多数自动化场景（找图、找色、OCR等），性能差异可忽略
+- 高频调用场景（如每秒数千次）建议使用32位模式
 
 ---
 
