@@ -355,6 +355,39 @@ dm.WriteInt(hwnd, 0x12345678, 0, 12345)
 addr := dm.FindData(hwnd, 0x400000, 0x500000, "FF ?? 00 ??")
 ```
 
+### AI 模型加载与找图
+
+```go
+// 1. 从文件加载 AI 模型（仅需调用一次）
+//    模型文件使用大漠专用 .module 格式，本项目附带 ai.module（约 4.77MB）
+//    返回值: 1=成功, -1=打开文件失败, -2=内存初始化失败, -3=参数错误,
+//           -4=加载错误, -5=Ai模块初始化失败, -6=内存分配失败
+ret := dm.LoadAi("ai.module")
+fmt.Printf("LoadAi 返回值: %d\n", ret)
+if ret != 1 {
+    log.Fatalf("AI 模型加载失败: %d", ret)
+}
+
+// 2. AI 找图（sim 范围 0.1~1.0，与 FindPic 一致）
+var x, y int32
+idx := dm.AiFindPic(0, 0, 1920, 1080, "target.bmp", 0.8, 0, &x, &y)
+if idx >= 0 {
+    fmt.Printf("找到图片，索引: %d, 坐标: (%d, %d)\n", idx, x, y)
+}
+
+// 3. AI 高级找图（返回所有匹配位置，格式: "idx|x|y,idx|x|y,..."）
+result := dm.AiFindPicEx(0, 0, 1920, 1080, "target.bmp", 0.8, 0)
+fmt.Printf("所有匹配: %s\n", result)
+
+// 4. 多图查找（pic_name 用 | 分隔，返回匹配索引）
+idx = dm.AiFindPic(0, 0, 1920, 1080, "a.bmp|b.bmp", 0.8, 0, &x, &y)
+
+// 5. 释放图片缓存
+dm.FreePic("target.bmp")
+```
+
+完整示例请参考：`example/load_ai/main.go`
+
 ---
 
 ## 多线程操作
@@ -450,6 +483,8 @@ go-dm72424/
 │       └── main.go        # TCP服务器 + 偏移量调用dm.dll
 ├── example/
 │   ├── main.go            # 32位基础示例
+│   ├── find_window/       # 窗口查找与找图示例
+│   ├── load_ai/           # AI 模型加载与 AI 找图示例
 │   ├── multithread/       # 32位多线程示例
 │   ├── x64/               # 64位基础示例
 │   └── x64_mt/            # 64位多线程示例
@@ -540,6 +575,13 @@ dm.SetPath("C:\\测试目录")
 ---
 
 ## 更新日志
+
+### v1.7.0 (2026-07-06)
+
+- 新增 `example/load_ai` AI 模型加载与 AI 找图完整示例
+- 附带 `ai.module` 模型文件（约 4.77MB）
+- README 新增「AI 模型加载与找图」章节，含 LoadAi 完整返回值说明
+- 项目结构补充 `find_window` 与 `load_ai` 示例目录
 
 ### v1.6.0 (2026-03-22)
 
