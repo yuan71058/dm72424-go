@@ -478,6 +478,7 @@ go-dm72424/
 ├── dmsoft_impl.go         # DmSoft实现 + LoadDm/CrackDm/Init/Release
 ├── dm_x64_pipe.go         # TCP客户端 + 方法偏移量表 + pipeCall
 ├── dm_x64_helpers.go      # comCall→pipeCall 桥接层
+├── API_DOC.md             # 完整API函数文档（428个函数）
 ├── cmd/
 │   └── dm_com_server/     # 32位helper进程（64位模式必需）
 │       └── main.go        # TCP服务器 + 偏移量调用dm.dll
@@ -487,7 +488,9 @@ go-dm72424/
 │   ├── load_ai/           # AI 模型加载与 AI 找图示例
 │   ├── multithread/       # 32位多线程示例
 │   ├── x64/               # 64位基础示例
-│   └── x64_mt/            # 64位多线程示例
+│   ├── x64_mt/            # 64位多线程示例
+│   ├── dm_yolo/           # YOLO目标检测示例
+│   └── load_ai/           # AI模型加载示例
 ├── README.md              # 本文档（32位模式为主）
 └── README_x64.md          # 64位模式详细文档
 ```
@@ -576,10 +579,13 @@ dm.SetPath("C:\\测试目录")
 
 ## 更新日志
 
-### v1.7.0 (2026-07-06)
+### v1.7.0 (2026-07-10)
 
-- 新增 `example/load_ai` AI 模型加载与 AI 找图完整示例
-- 附带 `ai.module` 模型文件（约 4.77MB）
+- 全面更新 API_DOC.md，对照官方文档补充 62 个缺失函数
+- API_DOC.md 现包含 428 个函数的完整中文文档
+- 新增 后台设置函数 章节（11个函数）
+- 新增 dm_yolo YOLO目标检测示例
+- 新增 load_ai AI模型加载示例（附带 ai.module 模型文件）
 - README 新增「AI 模型加载与找图」章节，含 LoadAi 完整返回值说明
 - 项目结构补充 `find_window` 与 `load_ai` 示例目录
 
