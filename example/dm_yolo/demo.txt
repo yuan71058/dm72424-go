@@ -1,0 +1,1 @@
+dm_yolo.exe -image "yolov5-7.0\data\images\bus.jpg"

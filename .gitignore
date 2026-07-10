@@ -27,3 +27,6 @@ Thumbs.db
 # 临时文件
 *.tmp
 *.log
+
+# YOLO检测结果图片（可能包含敏感信息）
+example/dm_yolo/*.bmp
